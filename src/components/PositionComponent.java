@@ -4,16 +4,14 @@ import entities.IEntity;
 
 public class PositionComponent implements IComponent
 {
-	public static final int LOCALX_INDEX = 0;
-	public static final int LOCALY_INDEX = 1;
-	public static final int GLOBALX_INDEX = 2;
-	public static final int GLOBALY_INDEX = 3;
-	
 	private long id;
 	private IEntity parent;
 	private int localX;
 	private int localY;
 	private int localZ;
+	private int globalX;
+	private int globalY;
+	private int globalZ;
 	private int lastValidX;
 	private int lastValidY;
 	private boolean needsCheck;
@@ -36,6 +34,18 @@ public class PositionComponent implements IComponent
 	public int getLocalZ()
 	{
 		return this.localZ;
+	}	
+	public int getGlobalX()
+	{
+		return this.globalX;
+	}
+	public int getGlobalY()
+	{
+		return this.globalY;
+	}
+	public int getGlobalZ()
+	{
+		return this.globalZ;
 	}
 	public boolean needsCheck()
 	{
@@ -49,12 +59,24 @@ public class PositionComponent implements IComponent
 	}
 	public void setLocalY(final int localY)
 	{
-		this.lastValidY = this.localY;
 		this.localY = localY;
 	}
 	public void setLocalZ(final int localZ)
 	{
 		this.localZ = localZ;
+	}
+	
+	public void setGlobalX(final int globalX)
+	{
+		this.globalX = globalX;
+	}
+	public void setGlobalY(final int globalY)
+	{
+		this.globalY = globalY;
+	}
+	public void setGlobalZ(final int globalZ)
+	{
+		this.globalZ = globalZ;
 	}
 	public void setNeedsCheck(final boolean needsCheck)
 	{

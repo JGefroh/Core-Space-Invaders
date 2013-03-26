@@ -4,6 +4,7 @@ package main;
 
 
 import infopacks.AnimationInfoPackFactory;
+import infopacks.CameraInfoPackFactory;
 import infopacks.CollisionInfoPackFactory;
 import infopacks.CursorInfoPackFactory;
 import infopacks.InputInfoPackFactory;
@@ -78,6 +79,7 @@ public class Game
 		core.addFactory(new MovementInfoPackFactory());
 		core.addFactory(new CursorInfoPackFactory());
 		core.addFactory(new CollisionInfoPackFactory());
+		core.addFactory(new CameraInfoPackFactory());
 	}
 	
 	/**
@@ -126,6 +128,7 @@ public class Game
 	{
 		core.getSystem(EntityForgeSystem.class).createPlayer();
 		core.getSystem(EntityForgeSystem.class).createCursor();
+		core.getSystem(EntityForgeSystem.class).createCamera();
 	}
 	
 	

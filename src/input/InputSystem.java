@@ -8,6 +8,12 @@ import org.lwjgl.input.Keyboard;
 
 import systems.Core;
 import systems.ISystem;
+import actions.ActionCameraMoveDown;
+import actions.ActionCameraMoveLeft;
+import actions.ActionCameraMoveRight;
+import actions.ActionCameraMoveUp;
+import actions.ActionCameraStopX;
+import actions.ActionCameraStopY;
 import actions.ActionExit;
 import actions.ActionMoveDown;
 import actions.ActionMoveLeft;
@@ -172,10 +178,18 @@ public class InputSystem implements IInputSystem, ISystem
 		kbs.bind(Keyboard.KEY_D, new ActionMoveRight(core, IAction.MOVERIGHT), kbs.HOLD);
 		kbs.bind(Keyboard.KEY_W, new ActionMoveUp(core, IAction.MOVEUP), kbs.HOLD);
 		kbs.bind(Keyboard.KEY_S, new ActionMoveDown(core, IAction.MOVEDOWN), kbs.HOLD);
+		kbs.bind(Keyboard.KEY_J, new ActionCameraMoveLeft(core, "MOVECLEFT"), kbs.HOLD);
+		kbs.bind(Keyboard.KEY_L, new ActionCameraMoveRight(core, "MOVECRIGHT"), kbs.HOLD);
+		kbs.bind(Keyboard.KEY_I, new ActionCameraMoveUp(core, "MOVECUP"), kbs.HOLD);
+		kbs.bind(Keyboard.KEY_K, new ActionCameraMoveDown(core, "MOVECDOWN"), kbs.HOLD);
 		kbs.bind(Keyboard.KEY_W, new ActionStopY(core, IAction.STOPY), kbs.RELEASE);
 		kbs.bind(Keyboard.KEY_S, new ActionStopY(core, IAction.STOPY), kbs.RELEASE);
 		kbs.bind(Keyboard.KEY_D, new ActionStopX(core, IAction.STOPX), kbs.RELEASE);
 		kbs.bind(Keyboard.KEY_A, new ActionStopX(core, IAction.STOPX), kbs.RELEASE);
+		kbs.bind(Keyboard.KEY_J, new ActionCameraStopX(core, "STOPCX"), kbs.RELEASE);
+		kbs.bind(Keyboard.KEY_L, new ActionCameraStopX(core, "STOPCX"), kbs.RELEASE);
+		kbs.bind(Keyboard.KEY_I, new ActionCameraStopY(core, "STOPCY"), kbs.RELEASE);
+		kbs.bind(Keyboard.KEY_K, new ActionCameraStopY(core, "STOPCY"), kbs.RELEASE);
 		kbs.bind(Keyboard.KEY_ESCAPE, new ActionExit("EXIT"), kbs.HOLD);
 		setBindSystem(IInputSystem.KEYBOARD, kbs);
 		

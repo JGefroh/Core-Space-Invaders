@@ -17,11 +17,11 @@ public class CursorInfoPack implements IInfoPack
 	
 	public void setXPos(final int xPos)
 	{
-		pc.setLocalX(xPos);
+		pc.setGlobalX(xPos);
 	}
 	public void setYPos(final int yPos)
 	{
-		pc.setLocalY(yPos);
+		pc.setGlobalY(yPos);
 	}
 	@Override
 	public IEntity getParent()

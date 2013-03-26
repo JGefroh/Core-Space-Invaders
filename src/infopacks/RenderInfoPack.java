@@ -26,15 +26,15 @@ public class RenderInfoPack implements IInfoPack
 	
 	public int getXPos()
 	{
-		return pc.getLocalX();
+		return pc.getGlobalX();
 	}
 	public int getYPos()
 	{
-		return pc.getLocalY();
+		return pc.getGlobalY();
 	}
 	public int getZPos()
 	{
-		return pc.getLocalZ();
+		return pc.getGlobalZ();
 	}
 	public int getWidth()
 	{

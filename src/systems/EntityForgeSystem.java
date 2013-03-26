@@ -1,17 +1,12 @@
 package systems;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
-
-import org.lwjgl.input.Cursor;
 import org.lwjgl.input.Mouse;
 
 import components.AnimationComponent;
 import components.AnimationComponent.LoopType;
+import components.CameraComponent;
 import components.CollisionComponent;
 import components.CursorComponent;
 import components.InputComponent;
@@ -38,8 +33,8 @@ public class EntityForgeSystem implements ISystem
 	public IEntity makePositionable(final IEntity entity, final int xPos, final int yPos)
 	{
 		PositionComponent pc = new PositionComponent(entity);
-		pc.setLocalX(xPos);
-		pc.setLocalY(yPos);
+		pc.setGlobalX(xPos);
+		pc.setGlobalY(yPos);
 		entity.addComponent(PositionComponent.class, pc);
 		return entity;
 	}
@@ -173,6 +168,29 @@ public class EntityForgeSystem implements ISystem
 		core.addEntity(player);
 		player.getComponent(PositionComponent.class).setLocalZ(-1);
 
+	}
+	
+	public void createCamera()
+	{
+		IEntity camera = createEntity();
+		camera.setName("camera");
+		makePositionable(camera, 0, 0);
+		makeMovable(camera, 0, 0);
+		makeControllable(camera);
+		camera.addComponent(CameraComponent.class, new CameraComponent(camera));
+		camera.getComponent(InputComponent.class).setInterested("MOVECRIGHT", true);
+		camera.getComponent(InputComponent.class).setInterested("MOVECLEFT", true);
+		camera.getComponent(InputComponent.class).setInterested("MOVECUP", true);
+		camera.getComponent(InputComponent.class).setInterested("MOVECDOWN", true);
+		camera.getComponent(InputComponent.class).setInterested("STOPCX", true);
+		camera.getComponent(InputComponent.class).setInterested("STOPCY", true);
+		camera.getComponent(CameraComponent.class).setActive(true);
+		
+		camera.getComponent(CameraComponent.class).setWidth(2560);
+		camera.getComponent(CameraComponent.class).setHeight(1440);
+
+		
+		core.addEntity(camera);
 	}
 
 }

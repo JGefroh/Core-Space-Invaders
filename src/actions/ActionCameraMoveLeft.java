@@ -7,15 +7,15 @@ import components.VelocityComponent;
 
 import entities.IEntity;
 
-public class ActionMoveLeft implements IAction
+public class ActionCameraMoveLeft implements IAction
 {
 	private String command;
 	private Core core;
-	private ActionMoveLeft()
+	private ActionCameraMoveLeft()
 	{
 		
 	}
-	public ActionMoveLeft(final Core core, final String command)
+	public ActionCameraMoveLeft(final Core core, final String command)
 	{
 		this.core = core;
 		setCommand(command);

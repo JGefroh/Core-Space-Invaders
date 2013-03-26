@@ -1,5 +1,6 @@
 package systems;
 
+import infopacks.CameraInfoPack;
 import infopacks.RenderInfoPack;
 
 import java.io.IOException;
@@ -33,6 +34,12 @@ public class RenderSystem implements ISystem
 	
 	/**The maximum Y position visible on the screen.*/
 	private int screenYMax;
+	
+	/**The width of the display area, in pixels.*/
+	private int windowWidth;
+	
+	/**The height of the window, in pixels.*/
+	private int windowHeight;
 	
 	/**A reference to the core powering this system.*/
 	private Core core;
@@ -74,6 +81,9 @@ public class RenderSystem implements ISystem
 		this.screenXMax = width;		
 		this.screenYMin = 0;
 		this.screenYMax = height;
+		
+		this.windowWidth = width;
+		this.windowHeight = height;
 		
 		textures = new HashMap<String, Texture>();
 		textureMetaData = new HashMap<String, TextureData>();
@@ -150,7 +160,7 @@ public class RenderSystem implements ISystem
 		{//For each renderable entity
 			if(pack.updateReferences()&&pack.isVisible())
 			{//If the entity is visible...
-				if(isOnScreen(pack.getXPos(), pack.getYPos(), pack.getWidth(), pack.getHeight()))
+				//if(isOnScreen(pack.getXPos(), pack.getYPos(), pack.getWidth(), pack.getHeight()))
 				{//If the entity is on the screen
 					//Bind the texture the entity should be drawn with
 					bind(pack.getTexturePath());
@@ -165,6 +175,23 @@ public class RenderSystem implements ISystem
 		}
 	}
 	
+	public void updateCamera()
+	{
+		ArrayList<CameraInfoPack> infoPacks 
+			= core.getInfoPacksOfType(CameraInfoPack.class);
+		
+		for(CameraInfoPack pack:infoPacks)
+		{
+			if(pack.updateReferences()&&pack.isActive())
+			{
+				setScreenXMin(pack.getXPos());
+				setScreenXMax(screenXMin+pack.getWidth());
+				setScreenYMin(pack.getYPos());
+				setScreenYMax(screenYMin+pack.getHeight());
+				break;	//quit loop
+			}
+		}
+	}
 	private TextureCoordinateData getCoordinatesFor(final String texturePath, final int spriteNum)
 	{
 		return textureMetaData.get(texturePath).getCoordinatesFor(spriteNum);
@@ -214,7 +241,14 @@ public class RenderSystem implements ISystem
 	{
 		return this.screenYMax;
 	}
-	
+	public int getWindowWidth()
+	{
+		return this.windowWidth;
+	}
+	public int getWindowHeight()
+	{
+		return this.windowHeight;
+	}
 	/**
 	 * Get the ID of the texture for the image at the given path.
 	 * @param path		the image path
@@ -377,7 +411,7 @@ public class RenderSystem implements ISystem
 	{
 
 		GL11.glPushMatrix();		//Save current matrix
-		GL11.glTranslatef(x, y, z);	//Move to specified draw location
+		GL11.glTranslatef(x+screenXMin, y+screenYMin, z);	//Move to specified draw location
 		GL11.glScalef(1, 1, 0);
 		GL11.glColor3f(1, 1, 1);
 		GL11.glBegin(GL11.GL_QUADS);
@@ -398,6 +432,7 @@ public class RenderSystem implements ISystem
 		GL11.glEnd();
 		GL11.glPopMatrix();
 	}
+	
 	/**
 	 * Print a debug statement.
 	 * @param msg	the String message to print.
@@ -419,7 +454,8 @@ public class RenderSystem implements ISystem
 	public void work()
 	{
 		if(this.isRunning)
-		{			
+		{
+			updateCamera();
 			render();
 		}
 	}

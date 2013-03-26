@@ -1,21 +1,21 @@
 package actions;
 
-import systems.Core;
-
 import components.AnimationComponent;
 import components.VelocityComponent;
 
+import systems.Core;
+import systems.MovementSystem;
 import entities.IEntity;
 
-public class ActionMoveLeft implements IAction
+public class ActionCameraMoveRight implements IAction
 {
 	private String command;
 	private Core core;
-	private ActionMoveLeft()
+	private ActionCameraMoveRight()
 	{
 		
 	}
-	public ActionMoveLeft(final Core core, final String command)
+	public ActionCameraMoveRight(final Core core, final String command)
 	{
 		this.core = core;
 		setCommand(command);
@@ -38,12 +38,12 @@ public class ActionMoveLeft implements IAction
 		AnimationComponent ac = entity.getComponent(AnimationComponent.class);
 		if(ac!=null)
 		{
-			ac.setCurrentAnimation("MOVELEFT");
+			ac.setCurrentAnimation("MOVERIGHT");
 		}
 			
 		if(vc!=null)
 		{			
-			vc.setXVelocity(-5);
+			vc.setXVelocity(5);
 		}
 	}
 

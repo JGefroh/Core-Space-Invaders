@@ -22,11 +22,11 @@ public class MovementInfoPack implements IInfoPack
 	}
 	public int getPosX()
 	{
-		return pc.getLocalX();
+		return pc.getGlobalX();
 	}
 	public int getPosY()
 	{
-		return pc.getLocalY();
+		return pc.getGlobalY();
 	}
 	public int getVelocityX()
 	{
@@ -62,11 +62,11 @@ public class MovementInfoPack implements IInfoPack
 	}
 	public void setPosX(final int posX)
 	{
-		pc.setLocalX(posX);
+		pc.setGlobalX(posX);
 	}
 	public void setPosY(final int posY)
 	{
-		pc.setLocalY(posY);
+		pc.setGlobalY(posY);
 	}
 	public void setPos(final int posX, final int posY)
 	{

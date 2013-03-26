@@ -36,7 +36,11 @@ public class ActionMoveRight implements IAction
 	{
 		VelocityComponent vc = entity.getComponent(VelocityComponent.class);
 		AnimationComponent ac = entity.getComponent(AnimationComponent.class);
-		ac.setCurrentAnimation("MOVERIGHT");
+		if(ac!=null)
+		{
+			ac.setCurrentAnimation("MOVERIGHT");
+		}
+			
 		if(vc!=null)
 		{			
 			vc.setXVelocity(5);

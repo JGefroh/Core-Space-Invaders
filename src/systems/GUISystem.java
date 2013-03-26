@@ -34,8 +34,15 @@ public class GUISystem implements ISystem
 		{
 			if(each.updateReferences())
 			{
-				each.setXPos(Mouse.getX());
-				each.setYPos(core.getSystem(RenderSystem.class).getScreenYMax()-Mouse.getY());
+				int xPos = Mouse.getX();
+				int yPos = core.getSystem(RenderSystem.class).getWindowHeight()-Mouse.getY();
+				
+				xPos -= core.getSystem(RenderSystem.class).getScreenXMin();
+				yPos -= core.getSystem(RenderSystem.class).getScreenYMin();
+				
+				each.setXPos(xPos);
+				each.setYPos(yPos);
+				System.out.println(Mouse.getX() + "|" + Mouse.getY());
 			}
 		}
 	}
