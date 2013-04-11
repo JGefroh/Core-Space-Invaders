@@ -6,16 +6,9 @@ import org.newdawn.slick.opengl.Texture;
  * Contains data necessary to treat an image or texture as a sprite sheet.
  * It also calculates sprite locations within a given sheet.
  * @author Joseph Gefroh
- * TODO: Move calculation out of metadata.
  */
 public class TextureData
 {
-	/**The number of columns of sprites this texture contains.*/
-	private int numCols;
-	
-	/**The number of rows of sprites this texture contains.*/
-	private int numRows;
-	
 	/**The total number of sprite cells on this sheet.*/
 	private int numSprites;
 	
@@ -45,19 +38,9 @@ public class TextureData
 	
 	/**
 	 * Create a new texture data object for a texture.
-	 * @param texture	the Texture object this data is associated with
-	 * @param numCols	the number of columns of sprites the texture has
-	 * @param numRows	the number of rows of sprites the texture has
 	 */
-	public TextureData(final Texture texture, final int numCols, final int numRows)
+	public TextureData()
 	{
-		this.texture = texture;
-		this.normalWidth = texture.getWidth();
-		this.normalHeight = texture.getHeight();
-		this.numRows = numRows;
-		this.numCols = numCols;
-		this.numSprites = numRows*numCols;
-		spriteCoords = new TextureCoordinateData[numSprites];
 	}
 	
 	/**
@@ -95,42 +78,10 @@ public class TextureData
 		}
 	}
 	
-	/**
-	 * Set the number of columns the sprite sheet has.
-	 * @param numCols	the number of columns the sheet has
-	 */
-	public void setNumCols(final int numCols)
+	public void setNumSprites(final int numSprites)
 	{
-		this.numCols = numCols;
+		this.numSprites = numSprites;
 	}
-	
-	/**
-	 * Set the number of rows of sprites the texture has.
-	 * @param numRows	the number of rows the texture has
-	 */
-	public void setNumRows(final int numRows)
-	{
-		this.numRows = numRows;
-	}
-	
-	/**
-	 * Get the number of column of sprites the texture has
-	 * @return	the number of columns of sprites the texture has
-	 */
-	public int getNumCols()
-	{
-		return this.numCols;
-	}
-	
-	/**
-	 * Get the number of rows of sprites the texture has
-	 * @return	the number of rows of the sprites the texture has
-	 */
-	public int getNumRows()
-	{
-		return this.numRows;
-	}
-	
 	/**
 	 * Get the normal width of the texture
 	 * @return	the normal width of the texture
@@ -148,7 +99,33 @@ public class TextureData
 	{
 		return this.normalHeight;
 	}
+	/**
+	 * Get the normal width of the texture
+	 * @return	the normal width of the texture
+	 */
+	public float getImageWidth()
+	{
+		return this.imageWidth;
+	}
 	
+	/**
+	 * Get the image height of the texture
+	 * @return	the image height of the texture
+	 */
+	public float getImageHeight()
+	{
+		return this.imageHeight;
+	}
+	
+	public void setImageWidth(final int imageWidth)
+	{
+		this.imageWidth = imageWidth;
+	}
+	
+	public void setImageHeight(final int imageHeight)
+	{
+		this.imageHeight = imageHeight;
+	}
 	
 	/**
 	 * Get the ID of the owner of this data.

@@ -15,7 +15,6 @@ public class CollisionInfoPackFactory implements IInfoPackFactory
 			&&entity.getComponent(PositionComponent.class)!=null
 			&&entity.getComponent(CollisionComponent.class)!=null)
 		{
-			System.out.println("Made new CollisionInfoPack for " + entity);
 			return new CollisionInfoPack(entity);
 		}
 		return null;

@@ -50,7 +50,6 @@ public class Core
 	 */
 	public void addEntity(final IEntity entity)
 	{
-		DEBUG("addEntity(" + entity + ")");
 		if(entity!=null&&entities.contains(entity)==false)
 		{//if the entity exists and it is not already being tracked...
 			entities.add(entity);
@@ -96,7 +95,6 @@ public class Core
 	 */
 	public void addSystem(final ISystem system, final int priority)
 	{
-		DEBUG("addSystem(" + system + " with priority " + priority);
 		if(system!=null&&systems.contains(system)==false)
 		{
 			system.start();
@@ -224,7 +222,6 @@ public class Core
 	{
 		if(factory!=null&&packFactories.contains(factory)==false)
 		{			
-			DEBUG("Adding IPackFactory: " + factory);
 			packFactories.add(factory);
 		}
 	}
@@ -266,17 +263,5 @@ public class Core
 			}
 		}
 		return null;
-	}
-	
-	/**
-	 * Print a debug statement.
-	 * @param msg	the String message to print.
-	 */
-	private void DEBUG(final String msg)
-	{
-		if(debug==true)
-		{			
-			System.out.println("[" + (System.currentTimeMillis()/100) +"] DBG: " + msg + "");
-		}
 	}
 }

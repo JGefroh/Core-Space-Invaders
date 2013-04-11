@@ -42,7 +42,6 @@ public class GUISystem implements ISystem
 				
 				each.setXPos(xPos);
 				each.setYPos(yPos);
-				System.out.println(Mouse.getX() + "|" + Mouse.getY());
 			}
 		}
 	}

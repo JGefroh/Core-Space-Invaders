@@ -30,7 +30,6 @@ public class MovementSystem implements ISystem
 		{
 			if(each.isMoveRequested())
 			{
-				System.out.println("MOVING: " + each.getParent().getName() + "|"+ each);
 				each.setPosX(each.getPosX()+each.getVelocityX());
 				each.setPosY(each.getPosY()+each.getVelocityY());
 				each.setNeedsCheck(true);

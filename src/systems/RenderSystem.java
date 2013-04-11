@@ -4,8 +4,11 @@ import infopacks.CameraInfoPack;
 import infopacks.RenderInfoPack;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.Texture;
@@ -48,16 +51,20 @@ public class RenderSystem implements ISystem
 	private Texture currentBound;
 	
 	/**Loaded textures are stored here for easy reference later.*/
-	private HashMap<String, Texture> textures;
+	private HashMap<Integer, Texture> textures;
 	
 	/**Texture Meta Data is stored here.*/
-	private HashMap<String, TextureData> textureMetaData;
-	
-	/**FLAG: Output debug messages into console*/
-	private boolean debug = true;
+	private HashMap<Integer, TextureData> textureMetaData;
 	
 	/**FLAG: Determine whether to render objects.*/
 	private boolean isRunning;
+	
+	private final static Logger LOGGER = Logger.getLogger(ResourceLoader.class.getName());
+	
+	private void initLogger()
+	{
+		LOGGER.setLevel(Level.ALL);
+	}
 	
 	/**
 	 * Initialize a new renderer with the given width and height.
@@ -68,14 +75,13 @@ public class RenderSystem implements ISystem
 	{		
 		this.core = core;
 		/*Set up the little options and hints, etc.*/
-		GL11.glEnable(GL11.GL_TEXTURE_2D);	//Enables 2D Textures (do once)
-		GL11.glEnable(GL11.GL_DEPTH_TEST);	//Disables depth testing (we are 2D!) (do once)
+		GL11.glDepthFunc(GL11.GL_LEQUAL);
 	//	GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_FASTEST);	//Hint to increase performance (do once)
 		GL11.glEnable(GL11.GL_BLEND);	//Enables blending? (do once)
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		GL11.glOrtho(0, width, height, 0, 100, -1);
+		GL11.glOrtho(0, width, height, 0, -1, 100);
 		
 		this.screenXMin = 0;
 		this.screenXMax = width;		
@@ -85,59 +91,19 @@ public class RenderSystem implements ISystem
 		this.windowWidth = width;
 		this.windowHeight = height;
 		
-		textures = new HashMap<String, Texture>();
-		textureMetaData = new HashMap<String, TextureData>();
-		
-		loadTextures();
+		textures = new HashMap<Integer, Texture>();
+		textureMetaData = new HashMap<Integer, TextureData>();
 	}
 
 	///////////////////////////////////////////////////////////////////////
-	
-	
-	/**
-	 * Load a texture into memory.
-	 * @param path		the String path of the texture
-	 * @param numCols	the number of columns of sprites the texture contains
-	 * @param numRows	the number of rows of sprites the texture contains
-	 * @return			the texture id if loaded, -1 otherwise
-	 */
-	public int load(final String path, final int numCols, final int numRows)
-	{
-		Texture texture = null;
-		TextureData textureData = null;
-		if(isLoaded(path)==false)
-		{//If the texture is not already loaded...
-			try
-			{
-				texture = TextureLoader.getTexture(".PNG", 
-						ResourceLoader.getResourceAsStream(path));
-				textures.put(path, texture);	//Load the texture
-				
-				//Create meta data for the texture, including sprite info
-				textureData = new TextureData(texture, numCols, numRows);
-				
-				//Calculate the locations of all of the sprites
-				calculateSpriteLocations(textureData);
-				textureMetaData.put(path, textureData);
-				
-				//Return the texture ID associated with the loaded texture.
-				return texture.getTextureID();
-			}
-			catch(IOException e)
-			{
-				e.printStackTrace();
-			}
-		}
-		return -1;
-	}
 
 	/**
 	 * Bind the texture and use it for rendering.
 	 * @param texturePath	the path of the texture to bind
 	 */
-	public void bind(final String texturePath)
+	public void bind(final int textureID)
 	{
-		Texture texture = textures.get(texturePath);
+		Texture texture = textures.get(textureID);
 		if(texture!=null&&currentBound!=texture)
 		{
 			texture.bind();
@@ -163,13 +129,14 @@ public class RenderSystem implements ISystem
 				//if(isOnScreen(pack.getXPos(), pack.getYPos(), pack.getWidth(), pack.getHeight()))
 				{//If the entity is on the screen
 					//Bind the texture the entity should be drawn with
-					bind(pack.getTexturePath());
+					bind(pack.getTextureID());
 					//Get the texture coordinates for its current sprite
-					TextureCoordinateData tcd = getCoordinatesFor(pack.getTexturePath(), pack.getSpriteIndex());
+					//TextureCoordinateData tcd = getCoordinatesFor(pack.getTextureID(), pack.getSpriteIndex());
 					//Draw the sprite
 					drawQuadAt(pack.getXPos(), pack.getYPos(), pack.getZPos(),
-								pack.getHeight(), pack.getHeight(),
-								tcd.getXMin(), tcd.getXMax(), tcd.getYMin(), tcd.getYMax());
+								pack.getWidth(), pack.getHeight(),
+								0, 1, 0, 1);
+						//		tcd.getXMin(), tcd.getXMax(), tcd.getYMin(), tcd.getYMax());
 				}
 			}
 		}
@@ -192,9 +159,9 @@ public class RenderSystem implements ISystem
 			}
 		}
 	}
-	private TextureCoordinateData getCoordinatesFor(final String texturePath, final int spriteNum)
+	private TextureCoordinateData getCoordinatesFor(final int textureID, final int spriteNum)
 	{
-		return textureMetaData.get(texturePath).getCoordinatesFor(spriteNum);
+		return textureMetaData.get(textureID).getCoordinatesFor(spriteNum);
 	}
 	public void setScreenXMin(final int screenXMin)
 	{
@@ -249,20 +216,6 @@ public class RenderSystem implements ISystem
 	{
 		return this.windowHeight;
 	}
-	/**
-	 * Get the ID of the texture for the image at the given path.
-	 * @param path		the image path
-	 * @return			the id of the texture if loaded, -1 otherwise
-	 */
-	public int getTextureID(final String path)
-	{
-		Texture texture = textures.get(path);
-		if(texture!=null)
-		{
-			return texture.getTextureID();
-		}
-		return -1;
-	}
 
 	/**
 	 * Get the Texture object for the image at the given path.
@@ -270,9 +223,9 @@ public class RenderSystem implements ISystem
 	 * @return		the Texture object if the image at the path was loaded
 	 * 				</br>null if the image has not been loaded
 	 */
-	public Texture getTexture(final String texturePath)
+	public Texture getTexture(final int textureID)
 	{
-		return textures.get(texturePath);
+		return textures.get(textureID);
 	}
 
 	/**
@@ -298,9 +251,9 @@ public class RenderSystem implements ISystem
 	 * @param path		the path of the texture to check
 	 * @return	true if loaded, false otherwise
 	 */
-	public boolean isLoaded(final String path)
+	public boolean isLoaded(final int textureID)
 	{
-		if(textures.get(path)!=null)
+		if(textures.get(textureID)!=null)
 		{
 			return true;
 		}
@@ -329,15 +282,11 @@ public class RenderSystem implements ISystem
 		tcd.setYMin(calcYMin(spriteRow, numRows, normalHeight));
 		tcd.setYMax(calcYMax(spriteRow, numRows, normalHeight));
 
-		DEBUG(tcd.getSpriteNum() + " | " + spriteCol + "/" + numCols +", " 
-					+ spriteRow + "/" + numRows +" | " 
-					+ tcd.getXMin() + ", " + tcd.getXMax() 
-					+  ", " + tcd.getYMin() +  ", "+ tcd.getYMax());
 		return tcd;
 	}
 	
 	///////////////////////////////
-	
+	/*
 	private void calculateSpriteLocations(final TextureData textureData)
 	{
 		int numCols = textureData.getNumCols();
@@ -352,7 +301,7 @@ public class RenderSystem implements ISystem
 				textureData.setCoords(calcCoords(spriteCol, spriteRow, numCols, numRows, normalWidth, normalHeight));
 			}
 		}
-	}
+	}*/
 
 	/**
 	 * Get the sprite number of a sprite at a given column and row.
@@ -381,13 +330,6 @@ public class RenderSystem implements ISystem
 		return ((float)(spriteRow+1)/numRows)*normalHeight;
 	}
 	//////////////////////
-	
-	private void loadTextures()
-	{
-		DEBUG("Loaded texture with ID: " + load("res/player.png", 2, 3));
-		DEBUG("Loaded texture with ID: " + load("res/enemy.png", 1, 1));
-		DEBUG("Loaded texture with ID: " + load("res/gui.png", 1, 1));
-	}
 
 	/**
 	 * Clear the previous frame.
@@ -433,17 +375,6 @@ public class RenderSystem implements ISystem
 		GL11.glPopMatrix();
 	}
 	
-	/**
-	 * Print a debug statement.
-	 * @param msg	the String message to print.
-	 */
-	private void DEBUG(final String msg)
-	{
-		if(debug==true)
-		{			
-			System.out.println("[" + (System.currentTimeMillis()/100) +"] DBG: " + msg + "");
-		}
-	}
 	@Override
 	public void start()
 	{
@@ -465,5 +396,13 @@ public class RenderSystem implements ISystem
 	{
 		this.isRunning = false;
 	}
-
+	
+	
+	public void createTexture(final ByteBuffer buffer, final TextureData meta)
+	{
+		//Get a new texture ID from OpenGL
+		int textureID = GL11.glGenTextures();
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB8, 4, 4, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
+		
+	}
 }

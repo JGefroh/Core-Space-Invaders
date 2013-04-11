@@ -57,9 +57,9 @@ public class RenderInfoPack implements IInfoPack
 	{
 		return rc.getSpriteIndex();
 	}
-	public String getTexturePath()
+	public int getTextureID()
 	{
-		return rc.getTexturePath();
+		return rc.getTextureID();
 	}
 
 	@Override
