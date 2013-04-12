@@ -28,12 +28,8 @@ public class MovementSystem implements ISystem
 	{//TODO: Process each axis independently.
 		for(MovementInfoPack each:infoPacks)
 		{
-			if(each.isMoveRequested())
-			{
-				each.setPosX(each.getPosX()+each.getVelocityX());
-				each.setPosY(each.getPosY()+each.getVelocityY());
-				each.setNeedsCheck(true);
-			}
+			each.setPosX(each.getPosX()+each.getVelocityX());
+			each.setPosY(each.getPosY()+each.getVelocityY());
 		}
 	}
 

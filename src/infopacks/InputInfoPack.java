@@ -8,6 +8,7 @@ public class InputInfoPack implements IInfoPack
 {
 	private IEntity parent;
 	
+	private InputComponent ic;
 	public InputInfoPack(final IEntity parent)
 	{
 		this.parent = parent;
@@ -19,15 +20,20 @@ public class InputInfoPack implements IInfoPack
 	
 	public boolean isInterested(final String command)
 	{
-		return parent.getComponent(InputComponent.class).isInterested(command);
+		return ic.isInterested(command);
 	}
 	public boolean isEnabled()
 	{
-		return parent.getComponent(InputComponent.class).isEnabled();
+		return ic.isEnabled();
 	}
 	@Override
 	public boolean updateReferences()
 	{
-		return true;
+		ic = parent.getComponent(InputComponent.class);
+		if(ic!=null)
+		{
+			return true;
+		}
+		return false;
 	}
 }

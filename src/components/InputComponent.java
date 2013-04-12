@@ -7,7 +7,7 @@ import entities.IEntity;
 public class InputComponent implements IComponent
 {
 	private IEntity parent;
-	private boolean isEnabled;
+	private boolean isEnabled = false;
 	
 	private HashMap<String, Boolean> watchList; 
 	

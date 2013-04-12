@@ -6,9 +6,9 @@ import org.lwjgl.input.Mouse;
 
 import components.AnimationComponent;
 import components.AnimationComponent.LoopType;
-import components.CameraComponent;
 import components.CollisionComponent;
 import components.CursorComponent;
+import components.GravityComponent;
 import components.InputComponent;
 import components.PositionComponent;
 import components.RenderComponent;
@@ -63,6 +63,7 @@ public class EntityForgeSystem implements ISystem
 		{
 			ic.setInterested(each, true);
 		}
+		ic.setEnabled(true);
 		entity.addComponent(InputComponent.class, ic);
 		return entity;
 	}
@@ -101,6 +102,20 @@ public class EntityForgeSystem implements ISystem
 		return entity;
 	}
 	
+	public IEntity makeBlock(final int x, final int y)
+	{
+		IEntity block = new Entity();
+		makeRenderable(block, 16, 16, -1);
+		makePositionable(block, x, y);
+		makeMovable(block, 0, 0);
+		GravityComponent gc = new GravityComponent(block);
+		gc.setUpdateInterval(200);
+		gc.setGravity(1);
+		block.addComponent(GravityComponent.class, gc);
+		core.addEntity(block);
+		return block;
+	}
+	
 	@Override
 	public void start()
 	{	
@@ -117,15 +132,17 @@ public class EntityForgeSystem implements ISystem
 	{
 	}
 	
-	public void createCursor()
+	public IEntity createCursor()
 	{
 		IEntity cursor = createEntity();
 		cursor.setName("Cursor");
 		makePositionable(cursor, 0, 0);
 		makeRenderable(cursor, 16, 16, 1);
+		makeControllable(cursor);
 		cursor.addComponent(CursorComponent.class,new CursorComponent());
 		core.addEntity(cursor);
 		Mouse.setGrabbed(true);
+		return cursor;
 	}
 
 

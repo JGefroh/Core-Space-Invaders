@@ -143,7 +143,7 @@ public class InputSystem implements IInputSystem, ISystem
 			ArrayList<InputInfoPack> entities = core.getInfoPacksOfType(InputInfoPack.class);
 			for(InputInfoPack each:entities)
 			{
-				if(each.isEnabled()&&each.isInterested(command))
+				if(each.updateReferences()==true&&each.isEnabled()&&each.isInterested(command))
 				{
 					action.execute(each.getParent());
 				}
