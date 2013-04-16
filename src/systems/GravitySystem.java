@@ -4,6 +4,10 @@ import infopacks.GravityInfoPack;
 
 import java.util.ArrayList;
 
+/**
+ * This system accelerates objects downward up to a maximum velocity.
+ * @author Joseph Gefroh
+ */
 public class GravitySystem implements ISystem
 {
 	private Core core;
@@ -17,7 +21,8 @@ public class GravitySystem implements ISystem
 	public void start() 
 	{
 	}
-
+	
+	
 	@Override
 	public void work()
 	{
@@ -26,24 +31,27 @@ public class GravitySystem implements ISystem
 		{
 			if(each.updateReferences())
 			{
-				//For each entity affected by gravity...
-				//Check the last time they fell
 				if(core.getSystem(TimerSystem.class).getNow()-each.getLastUpdate()>=each.getUpdateInterval())
 				{//If it is time to make them fall again...
-					each.addGravity();
+					accelerate(each);
 					each.setLastUpdate(core.getSystem(TimerSystem.class).getNow());
 
 				}
-				//Set velocity to gravity (so movement system can pick it up)
 			}
 		}
 	}
-
+	
+	private void accelerate(final GravityInfoPack each)
+	{
+		if(each.getGravity()+each.getYVelocity()<each.getMaxGravity())
+		{//If max gravity not yet reached...
+			each.setYVelocity(each.getYVelocity()+each.getGravity());
+		}
+	}
+	
 	@Override
 	public void stop()
-	{
-		// TODO Auto-generated method stub
-		
+	{	
 	}
 
 }

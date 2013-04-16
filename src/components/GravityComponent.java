@@ -15,6 +15,9 @@ public class GravityComponent implements IComponent
 	/**Time to wait between updates*/
 	private long updateInterval;
 	
+	/**The maximum acceleration*/
+	private int maxGravity;
+	
 	public GravityComponent(final IEntity parent)
 	{
 		this.parent = parent;
@@ -37,9 +40,18 @@ public class GravityComponent implements IComponent
 	{
 		this.gravity = gravity;
 	}
+	
+	public void setMaxGravity(final int maxGravity)
+	{
+		this.maxGravity = maxGravity;
+	}
 	public int getGravity()
 	{
 		return this.gravity;
+	}
+	public int getMaxGravity()
+	{
+		return this.maxGravity;
 	}
 	
 	public long getLastUpdate()

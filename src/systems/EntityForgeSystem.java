@@ -109,8 +109,9 @@ public class EntityForgeSystem implements ISystem
 		makePositionable(block, x, y);
 		makeMovable(block, 0, 0);
 		GravityComponent gc = new GravityComponent(block);
-		gc.setUpdateInterval(200);
+		gc.setUpdateInterval(100);
 		gc.setGravity(1);
+		gc.setMaxGravity(10);
 		block.addComponent(GravityComponent.class, gc);
 		core.addEntity(block);
 		return block;

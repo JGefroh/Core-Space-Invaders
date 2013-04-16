@@ -13,7 +13,6 @@ public class GravityInfoPackFactory implements IInfoPackFactory
 		if(entity.getComponent(GravityComponent.class)!=null
 				&& entity.getComponent(VelocityComponent.class)!=null)
 		{
-			System.out.println("Generated gravity info pack for: " + entity);
 			return new GravityInfoPack(entity);
 		}
 		return null;

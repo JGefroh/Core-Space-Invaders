@@ -19,13 +19,25 @@ public class GravityInfoPack implements IInfoPack
 	{
 		return this.parent;
 	}
-	public void addGravity()
+	public int getMaxGravity()
 	{
-		vc.setYVelocity(vc.getYVelocity()+gc.getGravity());
+		return gc.getMaxGravity();
+	}
+	public int getGravity()
+	{
+		return gc.getGravity();
+	}
+	public int getYVelocity()
+	{
+		return vc.getYVelocity();
 	}
 	public long getLastUpdate()
 	{
 		return gc.getLastUpdate();
+	}
+	public void setYVelocity(final int yVel)
+	{
+		vc.setYVelocity(yVel);
 	}
 	public long getUpdateInterval()
 	{
