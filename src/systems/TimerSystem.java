@@ -1,6 +1,10 @@
 package systems;
 
 import java.lang.reflect.Field;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.newdawn.slick.util.ResourceLoader;
 
 
 /**
@@ -26,6 +30,16 @@ public class TimerSystem implements ISystem
 	/**The sequence number of the current tick (starts at 0)*/
 	private long currentTick;
 	
+	/**Is the system running or not?*/
+	private boolean isRunning;
+	
+	private final static Logger LOGGER 
+		= Logger.getLogger(TimerSystem.class.getName());
+	private void initLogger()
+	{
+		LOGGER.setLevel(Level.ALL);
+	}
+
 	/**
 	 * Create a default timer that ticks once per second.
 	 */
@@ -61,6 +75,22 @@ public class TimerSystem implements ISystem
 			return true;
 		}
 		return false;
+	}
+	
+	public boolean isUpdateTime(final long interval, final long lastUpdated)
+	{
+		if(this.now-lastUpdated<interval)
+		{
+			return false;
+		}
+		else if(lastUpdated==0)
+		{
+			return true;
+		}
+		else
+		{
+			return true;
+		}
 	}
 	
 	/**
@@ -189,18 +219,27 @@ public class TimerSystem implements ISystem
 	@Override
 	public void start()
 	{
-		
+		LOGGER.log(Level.INFO, "Starting System: TimerSystem.");
+		this.isRunning = true;
 	}
 
 	@Override
 	public void work()
 	{
-		updateNow();
+		if(this.isRunning)
+		{
+			updateNow();			
+		}
+		else
+		{
+			stop();
+		}
 	}
 
 	@Override
-	public void stop() {
-		// TODO Auto-generated method stub
-		
+	public void stop()
+	{
+		LOGGER.log(Level.INFO, "Stopping System: TimerSystem.");
+		this.isRunning = false;
 	}
 }

@@ -1,9 +1,7 @@
 package infopacks;
 
-import components.AnimationComponent;
-import components.CollisionComponent;
-import components.PositionComponent;
 import components.RenderComponent;
+import components.TransformComponent;
 
 import entities.IEntity;
 
@@ -16,7 +14,7 @@ import entities.IEntity;
 public class RenderInfoPack implements IInfoPack
 {
 	private IEntity parent;
-	private PositionComponent pc;
+	private TransformComponent tc;
 	private RenderComponent rc;
 	
 	public RenderInfoPack(final IEntity parent)
@@ -24,17 +22,17 @@ public class RenderInfoPack implements IInfoPack
 		this.parent = parent;
 	}
 	
-	public int getXPos()
+	public long getXPos()
 	{
-		return pc.getGlobalX();
+		return tc.getXPos();
 	}
-	public int getYPos()
+	public long getYPos()
 	{
-		return pc.getGlobalY();
+		return tc.getYPos();
 	}
-	public int getZPos()
+	public long getZPos()
 	{
-		return pc.getGlobalZ();
+		return tc.getZPos();
 	}
 	public int getWidth()
 	{
@@ -65,9 +63,9 @@ public class RenderInfoPack implements IInfoPack
 	@Override
 	public boolean updateReferences()
 	{
-		pc = parent.getComponent(PositionComponent.class);
+		tc = parent.getComponent(TransformComponent.class);
 		rc = parent.getComponent(RenderComponent.class);
-		if(pc!=null&&rc!=null)
+		if(tc!=null&&rc!=null)
 		{
 			return true;
 		}

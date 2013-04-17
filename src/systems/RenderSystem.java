@@ -59,7 +59,7 @@ public class RenderSystem implements ISystem
 	/**FLAG: Determine whether to render objects.*/
 	private boolean isRunning;
 	
-	private final static Logger LOGGER = Logger.getLogger(ResourceLoader.class.getName());
+	private final static Logger LOGGER = Logger.getLogger(RenderSystem.class.getName());
 	
 	private void initLogger()
 	{
@@ -348,7 +348,7 @@ public class RenderSystem implements ISystem
 	 * @param sizeX		the width of the quad
 	 * @param sizeY		the height of the quad
 	 */
-	private void drawQuadAt(final int x, final int y, final int z, final int sizeX, final int sizeY,
+	private void drawQuadAt(final long x, final long y, final long z, final int sizeX, final int sizeY,
 							final float texXMin, final float texXMax, final float texYMin, final float texYMax)
 	{
 
@@ -378,6 +378,7 @@ public class RenderSystem implements ISystem
 	@Override
 	public void start()
 	{
+		LOGGER.log(Level.INFO, "Starting System: RenderSystem.");
 		this.isRunning = true;
 	}
 
@@ -394,6 +395,7 @@ public class RenderSystem implements ISystem
 	@Override
 	public void stop()
 	{
+		LOGGER.log(Level.INFO, "Stopping System: Renderystem.");
 		this.isRunning = false;
 	}
 	

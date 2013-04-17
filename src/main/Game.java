@@ -12,26 +12,14 @@ import infopacks.MovementInfoPackFactory;
 import infopacks.RenderInfoPackFactory;
 import input.InputSystem;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
 import org.lwjgl.opengl.Display;
 
-import systems.AnimationSystem;
-import systems.CollisionSystem;
 import systems.Core;
 import systems.EntityForgeSystem;
-import systems.GUISystem;
-import systems.MovementSystem;
 import systems.RenderSystem;
 import systems.ResourceLoader;
 import systems.TimerSystem;
-
-import components.AnimationComponent.LoopType;
-import components.CollisionComponent;
-import components.PositionComponent;
-
-import entities.IEntity;
+import systems.TransformSystem;
 
 /**
  * The main game loop.
@@ -66,12 +54,10 @@ public class Game
 		core.addSystem(new TimerSystem(), 0);
 		core.addSystem(new WindowSystem(1680, 1050, "THE GAME"), -1);
 		core.addSystem(new RenderSystem(core, core.getSystem(WindowSystem.class).getWidth(), core.getSystem(WindowSystem.class).getHeight()), 1);
-		core.addSystem(new AnimationSystem(core), -1);
+		//core.addSystem(new AnimationSystem(core), -1);
 		core.addSystem(new InputSystem(core), -1);
-		core.addSystem(new MovementSystem(core), -1);
+		core.addSystem(new TransformSystem(core), -1);
 		core.addSystem(new EntityForgeSystem(core), -1);
-		core.addSystem(new CollisionSystem(core), -1);
-		core.addSystem(new GUISystem(core), -1);
 		rl = new ResourceLoader(core);
 	}
 	
@@ -103,8 +89,6 @@ public class Game
 	////////////
 	private void newGame()
 	{
-		rl.loadTexture("res/gui.png");
-		core.getSystem(EntityForgeSystem.class).createCursor();
 	}
 	
 

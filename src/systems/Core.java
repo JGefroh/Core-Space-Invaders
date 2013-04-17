@@ -9,6 +9,12 @@ import infopacks.RenderInfoPack;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.newdawn.slick.util.ResourceLoader;
 
 import components.AnimationComponent;
 import components.InputComponent;
@@ -32,12 +38,22 @@ public class Core
 	private ArrayList<ISystem> systems;	
 	private ArrayList<IInfoPackFactory> packFactories;
 	private boolean debug = true;
+	private final static Logger LOGGER 
+		= Logger.getLogger(Core.class.getName());
 	
+	private void initLogger()
+	{
+		ConsoleHandler ch = new ConsoleHandler();
+		ch.setLevel(Level.ALL);
+		LOGGER.addHandler(ch);
+		LOGGER.setLevel(Level.ALL);
+	}
 	/**
 	 * Create a new Core object.
 	 */
 	public Core()
 	{
+		initLogger();
 		infoPacks = new HashMap<IEntity, ArrayList<IInfoPack>>();
 		entities = new ArrayList<IEntity>();
 		systems = new ArrayList<ISystem>();
@@ -52,6 +68,7 @@ public class Core
 	{
 		if(entity!=null&&entities.contains(entity)==false)
 		{//if the entity exists and it is not already being tracked...
+			LOGGER.log(Level.FINER, "Adding new entity: " + entity);
 			entities.add(entity);
 			generateInfoPacks(entity);
 		}
@@ -66,6 +83,7 @@ public class Core
 	{	
 		if(infoPack!=null&&infoPacks.containsValue(infoPack)==false)
 		{//If the infopack is not already being tracked
+			LOGGER.log(Level.FINER, "Adding " + infoPack + " to: " + entity);
 			ArrayList<IInfoPack> entityPacks = infoPacks.get(entity);
 			if(entityPacks!=null)
 			{//If an arraylist already exists for the info pack
@@ -97,6 +115,8 @@ public class Core
 	{
 		if(system!=null&&systems.contains(system)==false)
 		{
+			LOGGER.log(Level.FINER, "Adding system: " + system 
+						+ " with priority: " + priority);
 			system.start();
 			if(priority>=0)
 			{
@@ -115,6 +135,7 @@ public class Core
 	 */
 	public void removeEntity(final IEntity entity)
 	{
+		LOGGER.log(Level.FINER, "Removing entity: " + entity);
 		if(entity!=null)
 		{
 			entities.remove(entity);
@@ -134,6 +155,7 @@ public class Core
 					infoPacks.get(infoPack.getParent());
 			if(entityPacks!=null)
 			{
+				LOGGER.log(Level.FINER, "Removing infoPack: " + infoPack);
 				entityPacks.remove(infoPack);
 			}
 		}
@@ -147,6 +169,7 @@ public class Core
 	{
 		if(system!=null)
 		{
+			LOGGER.log(Level.FINER, "Removing system: " + system);
 			system.stop();
 			systems.remove(system);
 		}
@@ -196,7 +219,7 @@ public class Core
 	}
 	
 	/**
-	 * Ensure all entities have updates InfoPacks, and then execute the system.
+	 * Ensure all entities have updated InfoPacks, and then execute the system.
 	 */
 	public void work()
 	{
@@ -222,6 +245,7 @@ public class Core
 	{
 		if(factory!=null&&packFactories.contains(factory)==false)
 		{			
+			LOGGER.log(Level.FINER, "Adding factory: " + factory);
 			packFactories.add(factory);
 		}
 	}
@@ -234,10 +258,15 @@ public class Core
 	{
 		if(entity!=null)
 		{
+			LOGGER.log(Level.FINER, "Generating infoPacks for: " + entity);
 			infoPacks.remove(entity);
 			for(IInfoPackFactory each:packFactories)
 			{
-				addInfoPack(entity, each.generate(entity));
+				IInfoPack pack = each.generate(entity);
+				if(pack!=null&&pack.updateReferences())
+				{					
+					addInfoPack(entity, pack);
+				}
 			}
 			entity.setChanged(false);
 		}
