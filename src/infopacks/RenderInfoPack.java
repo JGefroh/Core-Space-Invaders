@@ -36,11 +36,11 @@ public class RenderInfoPack implements IInfoPack
 	}
 	public int getWidth()
 	{
-		return rc.getWidth();
+		return tc.getWidth();
 	}
 	public int getHeight()
 	{
-		return rc.getHeight();
+		return tc.getHeight();
 	}
 	public boolean isVisible()
 	{

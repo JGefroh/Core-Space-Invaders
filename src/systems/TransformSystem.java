@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import components.VelocityComponent;
+import entities.IEntity;
 
 /**
  * System that handles movement and repositioning of entities.
@@ -18,6 +19,7 @@ public class TransformSystem implements ISystem
 	
 	/**Determines whether the system will run or not.*/
 	private boolean isRunning;
+
 	private TimerSystem timer;
 	
 	//////////
@@ -45,8 +47,10 @@ public class TransformSystem implements ISystem
 			if(timer.isUpdateTime(each.getInterval(), each.getLastUpdated()))
 			{
 				each.setLastUpdated(timer.getNow());
-				each.setXPos(each.getXPos()+each.getXVelocity());
-				each.setYPos(each.getYPos()+each.getYVelocity());
+				int newX = each.getXPos()+each.getXVelocity();
+				int newY = each.getYPos()+each.getYVelocity();
+				each.setXPos(newX);
+				each.setYPos(newY);
 			}
 		}
 	}
@@ -66,7 +70,64 @@ public class TransformSystem implements ISystem
 	{
 		
 	}
-
+	
+	public void shiftPosition(final IEntity entity, final int xPos, final int yPos)
+	{
+		MovementInfoPack mip 
+			= core.getInfoPackFrom(entity, MovementInfoPack.class);
+		mip.setXPos(mip.getXPos()+xPos);
+		mip.setYPos(mip.getYPos()+yPos);
+	}
+	//////////
+	/**
+	 * Set the X movement speed of an entity.
+	 * @param entity	the entity 
+	 * @param xVel		the X velocity
+	 */
+	public void setXVelocity(final IEntity entity, final int xVel)
+	{
+		MovementInfoPack pack = 
+				core.getInfoPackFrom(entity, MovementInfoPack.class);
+		pack.setXVelocity(xVel);
+	}
+	
+	/**
+	 * Set the Y movement speed of an entity.
+	 * @param entity	the entity 
+	 * @param xVel		the Y velocity
+	 */
+	public void setYVelocity(final IEntity entity, final int yVel)
+	{
+		MovementInfoPack pack = 
+				core.getInfoPackFrom(entity, MovementInfoPack.class);
+		pack.setYVelocity(yVel);
+	}
+	
+	/**
+	 * Adjust the X movement speed of an entity by the given amount.
+	 * @param entity	the entity
+	 * @param xVel		the x Velocity
+	 */
+	public void adjustXVelocity(final IEntity entity, final int xVel)
+	{
+		MovementInfoPack pack =
+				core.getInfoPackFrom(entity, MovementInfoPack.class);
+		pack.setXVelocity(pack.getXVelocity()+xVel);
+	}
+	
+	/**
+	 * Adjust the Y movement speed of an entity by the given amount.
+	 * @param entity	the entity
+	 * @param yVel		the y Velocity
+	 */
+	public void adjustYVelocity(final IEntity entity, final int yVel)
+	{
+		MovementInfoPack pack =
+				core.getInfoPackFrom(entity, MovementInfoPack.class);
+		pack.setYVelocity(pack.getYVelocity()+yVel);
+	}
+	
+	//////////
 	@Override
 	public void start()
 	{
@@ -75,6 +136,10 @@ public class TransformSystem implements ISystem
 		{	
 			LOGGER.log(Level.INFO, "Starting System: TransformSystem.");
 			this.isRunning = true;
+		}
+		else
+		{
+			LOGGER.log(Level.WARNING, "Failed to start (no timer)");
 		}
 	}
 

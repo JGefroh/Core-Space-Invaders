@@ -37,11 +37,11 @@ public class MovementInfoPack implements IInfoPack
 		return false;
 	}
 	////////////////////
-	public long getXPos()
+	public int getXPos()
 	{
 		return tc.getXPos();
 	}
-	public long getYPos()
+	public int getYPos()
 	{
 		return tc.getYPos();
 	}
@@ -63,11 +63,11 @@ public class MovementInfoPack implements IInfoPack
 	}
 	
 	////////////////////
-	public void setXPos(final long xPos)
+	public void setXPos(final int xPos)
 	{
 		tc.setXPos(xPos);
 	}
-	public void setYPos(final long yPos)
+	public void setYPos(final int yPos)
 	{
 		tc.setYPos(yPos);
 	}

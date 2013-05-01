@@ -7,67 +7,76 @@ import entities.IEntity;
 public class CollisionComponent implements IComponent
 {
 	private IEntity parent;
-	private boolean isColliding = false;
-	private int group;
-	private static boolean[][] collisionTable;
+	private int collisionGroup;
+	
+	private boolean left;
+	private boolean right;
+	private boolean top;
+	private boolean bottom;
+	
 	public CollisionComponent(final IEntity parent)
 	{
 		setParent(parent);
-		if(collisionTable==null)
-		{
-			collisionTable = new boolean[32][32];
-		}
 	}
 
 	@Override
 	public void init()
 	{	
 	}
-	public int getGroup()
-	{
-		return this.group;
-	}
-	
-	public void setGroup(final int group)
-	{
-		if(group>=0
-				&&group<collisionTable.length
-				&&group<collisionTable[0].length)
-		{			
-			this.group = group;
-		}
-	}
-	
-	public void setCollision(final int group, final int group2, final boolean collides)
-	{
-		if(group>=0&&group2>=0
-				&&group<collisionTable.length
-				&&group<collisionTable[0].length
-				&&group2<collisionTable.length
-				&&group2<collisionTable[0].length)
-		{
-			collisionTable[group][group2]=collides;
-		}
-
-	}
-	public boolean collidesWith(final int otherGroup)
-	{
-		if(group>=0&&group<collisionTable.length&&group<collisionTable[0].length)
-		{
-			return collisionTable[otherGroup][this.group];
-		}
-		return false;
-	}
+	///////////
 	@Override
 	public void setParent(final IEntity parent)
 	{
 		this.parent = parent;
+	}	
+	public void setCollisionGroup(final int collisionGroup)
+	{
+		this.collisionGroup = collisionGroup;
 	}
-
+	public void setCollidingLeft(final boolean left)
+	{
+		this.left = left;
+	}
+	public void setCollidingRight(final boolean right)
+	{
+		this.right = right;
+	}
+	public void setCollidingTop(final boolean top)
+	{
+		this.top = top;
+	}
+	public void setCollidingBottom(final boolean bottom)
+	{
+		this.bottom = bottom;
+	}
+	
+	//////////
 	@Override
 	public IEntity getParent()
 	{
 		return this.parent;
 	}
+	public int getCollisionGroup()
+	{
+		return this.collisionGroup;
+	}
+	
+	public boolean isCollidingLeft()
+	{
+		return left;
+	}
+	public boolean isCollidingRight()
+	{
+		return right;
+	}
+	public boolean isCollidingTop()
+	{
+		return top;
+	}
+	public boolean isCollidingBottom()
+	{
+		return bottom;
+	}
+	
 	
 }

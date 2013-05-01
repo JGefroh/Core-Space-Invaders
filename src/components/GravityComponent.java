@@ -10,55 +10,22 @@ public class GravityComponent implements IComponent
 	private long lastUpdate = 0;
 	
 	/**The acceleration per update*/
-	private int gravity;
+	private int acceleration;
 	
 	/**Time to wait between updates*/
-	private long updateInterval;
+	private long interval;
 	
 	/**The maximum acceleration*/
-	private int maxGravity;
+	private int maxAcceleration;
 	
 	public GravityComponent(final IEntity parent)
 	{
 		this.parent = parent;
 	}
-	
 	@Override
 	public void init()
 	{
 	}
-	public void setUpdateInterval(final long interval)
-	{
-		this.updateInterval = interval;
-	}
-	public void setLastUpdate(final long lastUpdate)
-	{
-		this.lastUpdate = lastUpdate;
-	}
-	
-	public void setGravity(final int gravity)
-	{
-		this.gravity = gravity;
-	}
-	
-	public void setMaxGravity(final int maxGravity)
-	{
-		this.maxGravity = maxGravity;
-	}
-	public int getGravity()
-	{
-		return this.gravity;
-	}
-	public int getMaxGravity()
-	{
-		return this.maxGravity;
-	}
-	
-	public long getLastUpdate()
-	{
-		return this.lastUpdate;
-	}
-	
 	@Override
 	public void setParent(final IEntity parent)
 	{
@@ -70,10 +37,40 @@ public class GravityComponent implements IComponent
 	{
 		return this.parent;
 	}
-
-	public long getUpdateInterval()
+	//////////
+	public void setUpdateInterval(final long interval)
 	{
-		return this.updateInterval;
+		this.interval = interval;
+	}
+	public void setLastUpdate(final long lastUpdate)
+	{
+		this.lastUpdate = lastUpdate;
+	}
+	public void setAcceleration(final int acceleration)
+	{
+		this.acceleration = acceleration;
+	}
+	public void setMaxAcceleration(final int maxAcceleration)
+	{
+		this.maxAcceleration = maxAcceleration;
+	}
+	//////////
+	public int getAccelerationy()
+	{
+		return this.acceleration;
+	}
+	public int getMaxAcceleration()
+	{
+		return this.maxAcceleration;
+	}
+	
+	public long getLastUpdate()
+	{
+		return this.lastUpdate;
+	}
+	public long getInterval()
+	{
+		return this.interval;
 	}
 
 }

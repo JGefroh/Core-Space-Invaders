@@ -6,7 +6,6 @@ package main;
 import infopacks.AnimationInfoPackFactory;
 import infopacks.CameraInfoPackFactory;
 import infopacks.CollisionInfoPackFactory;
-import infopacks.CursorInfoPackFactory;
 import infopacks.InputInfoPackFactory;
 import infopacks.MovementInfoPackFactory;
 import infopacks.RenderInfoPackFactory;
@@ -15,7 +14,6 @@ import input.InputSystem;
 import org.lwjgl.opengl.Display;
 
 import systems.Core;
-import systems.EntityForgeSystem;
 import systems.RenderSystem;
 import systems.ResourceLoader;
 import systems.TimerSystem;
@@ -57,7 +55,6 @@ public class Game
 		//core.addSystem(new AnimationSystem(core), -1);
 		core.addSystem(new InputSystem(core), -1);
 		core.addSystem(new TransformSystem(core), -1);
-		core.addSystem(new EntityForgeSystem(core), -1);
 		rl = new ResourceLoader(core);
 	}
 	
@@ -67,7 +64,6 @@ public class Game
 		core.addFactory(new AnimationInfoPackFactory());
 		core.addFactory(new InputInfoPackFactory());
 		core.addFactory(new MovementInfoPackFactory());
-		core.addFactory(new CursorInfoPackFactory());
 		core.addFactory(new CollisionInfoPackFactory());
 		core.addFactory(new CameraInfoPackFactory());
 	}

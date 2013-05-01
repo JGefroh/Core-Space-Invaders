@@ -1,16 +1,15 @@
 package infopacks;
 
 import components.CollisionComponent;
-import components.PositionComponent;
 import components.RenderComponent;
+import components.TransformComponent;
 
 import entities.IEntity;
 
 public class CollisionInfoPack implements IInfoPack
 {
 	private IEntity parent;
-	private PositionComponent pc;
-	private RenderComponent rc;
+	private TransformComponent tc;
 	private CollisionComponent cc;
 	public CollisionInfoPack(final IEntity parent)
 	{
@@ -18,24 +17,6 @@ public class CollisionInfoPack implements IInfoPack
 		updateReferences();
 	}
 	
-	public int getXMin()
-	{
-		return pc.getLocalX();
-	}
-	
-	public int getYMin()
-	{
-		return pc.getLocalY();
-	}
-	
-	public int getXMax()
-	{
-		return pc.getLocalX()+rc.getWidth();
-	}
-	public int getYMax()
-	{
-		return pc.getLocalY()+rc.getHeight();
-	}
 	@Override
 	public IEntity getParent()
 	{
@@ -45,43 +26,83 @@ public class CollisionInfoPack implements IInfoPack
 	@Override
 	public boolean updateReferences()
 	{
-		pc = parent.getComponent(PositionComponent.class);
+		tc = parent.getComponent(TransformComponent.class);
 		cc = parent.getComponent(CollisionComponent.class);
-		rc = parent.getComponent(RenderComponent.class);
-		if(pc!=null&&cc!=null&&rc!=null)
+		if(tc!=null&&cc!=null)
 		{
 			return true;
 		}
 		parent.setChanged(true);
 		return false;
 	}
-
+	////////////////////
 	public int getGroup()
 	{
-		return cc.getGroup();
+		return cc.getCollisionGroup();
 	}
-	public boolean collidesWith(final int group)
+	public int getXPos()
 	{
-		return cc.collidesWith(group);
+		return tc.getXPos();
 	}
-
-	public boolean needsCheck()
+	public int getYPos()
 	{
-		return pc.needsCheck();
+		return tc.getYPos();
 	}
-
-	public void rollback()
+	public int getLastXPos()
 	{
-		pc.rollback();
+		return tc.getLastXPos();
 	}
-	public void setNeedsCheck(final boolean needsCheck)
+	public int getLastYPos()
 	{
-		pc.setNeedsCheck(false);
+		return tc.getLastYPos();
 	}
-	public void approve()
+	public int getWidth()
 	{
-		pc.approve();
-		setNeedsCheck(false);
+		return tc.getWidth();
 	}
-
+	public int getHeight()
+	{
+		return tc.getHeight();
+	}
+	public boolean isCollidingTop()
+	{
+		return cc.isCollidingTop();
+	}
+	public boolean isCollidingBottom()
+	{
+		return cc.isCollidingBottom();
+	}
+	public boolean isCollidingLeft()
+	{
+		return cc.isCollidingLeft();
+	}
+	public boolean isCollidingRight()
+	{
+		return cc.isCollidingRight();
+	}
+	////////////////////
+	public void setXPos(final int xPos)
+	{
+		tc.setXPos(xPos);
+	}
+	public void setYPos(final int yPos)
+	{
+		tc.setYPos(yPos);
+	}
+	public void setCollidingTop(final boolean top)
+	{
+		cc.setCollidingTop(top);
+	}
+	public void setCollidingBottom(final boolean bottom)
+	{
+		cc.setCollidingBottom(bottom);
+	}
+	public void setCollidingLeft(final boolean left)
+	{
+		cc.setCollidingLeft(left);
+	}
+	public void setCollidingRight(final boolean right)
+	{
+		cc.setCollidingRight(right);
+	}
 }

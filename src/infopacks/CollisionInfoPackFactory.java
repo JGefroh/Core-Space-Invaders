@@ -1,8 +1,8 @@
 package infopacks;
 
 import components.CollisionComponent;
-import components.PositionComponent;
 import components.RenderComponent;
+import components.TransformComponent;
 
 import entities.IEntity;
 
@@ -11,8 +11,7 @@ public class CollisionInfoPackFactory implements IInfoPackFactory
 	@Override
 	public IInfoPack generate(final IEntity entity)
 	{
-		if(entity.getComponent(RenderComponent.class)!=null
-			&&entity.getComponent(PositionComponent.class)!=null
+		if(entity.getComponent(TransformComponent.class)!=null
 			&&entity.getComponent(CollisionComponent.class)!=null)
 		{
 			return new CollisionInfoPack(entity);

@@ -12,31 +12,29 @@ public class TransformComponent implements IComponent
 	private IEntity parent;
 	
 	/**The global X position of the object.*/
-	private long xPos;
+	private int xPos;
 	
 	/**The global Y position of the object.*/
-	private long yPos;
+	private int yPos;
 	
-	/**The Z position of the object.*/
-	private long zPos;
+	/**The global Z position of the object.*/
+	private int zPos;
 	
-	/**The rotation of the object on the X axis.*/
-	private long xRot;
+	/**The last global X position of the object.*/
+	private int lastXPos;
 	
-	/**The rotation of the object on the Y axis.*/
-	private long yRot;
+	/**The last global Y position of the object.*/
+	private int lastYPos;
 	
-	/**The rotation of the object on the Z axis.*/
-	private long zRot;
+	/**The last global Z position of the object.*/
+	private int lastZPos;
 	
-	/**The scale of the object's size on the X axis.*/
-	private long xScale;
+	/**The global width of the object.*/
+	private int width;
 	
-	/**The scale of the object's size on the Y axis.*/
-	private long yScale;
-	
-	/**The scale of the object's size on the Z axis.*/
-	private long zScale;
+	/**The global height of the object.*/
+	private int height;
+
 	
 	public TransformComponent(final IEntity parent)
 	{
@@ -60,79 +58,63 @@ public class TransformComponent implements IComponent
 	}
 	
 	////////////////////
-	public long getXPos()
+	public int getXPos()
 	{
 		return this.xPos;
 	}
-	public long getYPos()
+	public int getYPos()
 	{
 		return this.yPos;
 	}
-	public long getZPos()
+	public int getZPos()
 	{
 		return this.zPos;
 	}
-	public long getXRot()
+	public int getLastXPos()
 	{
-		return this.xRot;
+		return this.lastXPos;
 	}
-	public long getYRot()
+	public int getLastYPos()
 	{
-		return this.yRot;
+		return this.lastYPos;
 	}
-	public long getZRot()
+	public int getLastZPos()
 	{
-		return this.zRot;
+		return this.lastZPos;
 	}
-	public long getXScale()
+	public int getWidth()
 	{
-		return this.xScale;
+		return this.width;
 	}
-	public long getYScale()
+	public int getHeight()
 	{
-		return this.yScale;
+		return this.height;
 	}
-	public long getZScale()
-	{
-		return this.zScale;
-	}
+	
 
 	//////////
-	public void setXPos(final long xPos)
+	public void setXPos(final int xPos)
 	{
+		this.lastXPos = this.xPos;
 		this.xPos = xPos;
 	}
-	public void setYPos(final long yPos)
+	public void setYPos(final int yPos)
 	{
+		this.lastYPos = this.yPos;
 		this.yPos = yPos;
 	}
-	public void setZPos(final long zPos)
+	public void setZPos(final int zPos)
 	{
+		this.lastZPos = this.zPos;
 		this.zPos = zPos;
 	}
-	public void setXRot(final long xRot)
+	public void setWidth(final int width)
 	{
-		this.xRot = xRot;
+		this.width = width;
 	}
-	public void setYRot(final long yRot)
+	public void setHeight(final int height)
 	{
-		this.yRot = yRot;
-	}
-	public void setZRot(final long zRot)
-	{
-		this.zRot = zRot;
-	}
-	public void setXScale(final long xScale)
-	{
-		this.xScale = xScale;
-	}
-	public void setYScale(final long yScale)
-	{
-		this.yScale = yScale;
-	}
-	public void setZScale(final long zScale)
-	{
-		this.zScale = zScale;
+		this.height = height;
 	}
 
 }

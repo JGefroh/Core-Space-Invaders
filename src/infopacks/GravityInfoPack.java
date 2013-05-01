@@ -21,11 +21,11 @@ public class GravityInfoPack implements IInfoPack
 	}
 	public int getMaxGravity()
 	{
-		return gc.getMaxGravity();
+		return gc.getMaxAcceleration();
 	}
 	public int getGravity()
 	{
-		return gc.getGravity();
+		return gc.getAccelerationy();
 	}
 	public int getYVelocity()
 	{
@@ -41,7 +41,7 @@ public class GravityInfoPack implements IInfoPack
 	}
 	public long getUpdateInterval()
 	{
-		return gc.getUpdateInterval();
+		return gc.getInterval();
 	}
 	public void setLastUpdate(final long lastUpdate)
 	{

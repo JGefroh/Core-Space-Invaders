@@ -44,12 +44,10 @@ public class RenderComponent implements IComponent
 	 * @param parent	the IEntity owner of this component
 	 */
 	public RenderComponent(final IEntity parent, 
-			final int width, final int height, final int spriteIndex,
+			final int spriteIndex,
 			final boolean isVisible)
 	{
 		setParent(parent);
-		setWidth(width);
-		setHeight(height);
 		setSpriteIndex(spriteIndex);
 		setVisible(isVisible);
 	}

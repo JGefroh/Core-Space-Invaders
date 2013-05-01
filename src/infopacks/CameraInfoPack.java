@@ -1,16 +1,14 @@
 package infopacks;
 
 import components.CameraComponent;
-import components.CollisionComponent;
-import components.PositionComponent;
-import components.RenderComponent;
+import components.TransformComponent;
 
 import entities.IEntity;
 
 public class CameraInfoPack implements IInfoPack
 {
 	private IEntity parent;
-	private PositionComponent pc;
+	private TransformComponent tc;
 	private CameraComponent cc;
 	public CameraInfoPack(final IEntity parent)
 	{
@@ -18,14 +16,14 @@ public class CameraInfoPack implements IInfoPack
 		updateReferences();
 	}
 	
-	public int getXPos()
+	public long getXPos()
 	{
-		return pc.getGlobalX();
+		return tc.getXPos();
 	}
 	
-	public int getYPos()
+	public long getYPos()
 	{
-		return pc.getGlobalY();
+		return tc.getYPos();
 	}
 	
 	public int getHeight()
@@ -48,8 +46,8 @@ public class CameraInfoPack implements IInfoPack
 	public boolean updateReferences()
 	{
 		cc = parent.getComponent(CameraComponent.class);
-		pc = parent.getComponent(PositionComponent.class);
-		if(pc!=null&&cc!=null)
+		tc = parent.getComponent(TransformComponent.class);
+		if(tc!=null&&cc!=null)
 		{
 			return true;
 		}

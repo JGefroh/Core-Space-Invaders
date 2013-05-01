@@ -4,6 +4,7 @@ package SystemTests;
 
 
 import infopacks.CameraInfoPackFactory;
+import infopacks.GravityInfoPackFactory;
 import infopacks.InputInfoPackFactory;
 import infopacks.MovementInfoPackFactory;
 import infopacks.RenderInfoPackFactory;
@@ -13,11 +14,13 @@ import main.WindowSystem;
 import org.lwjgl.opengl.Display;
 
 import systems.Core;
+import systems.GravitySystem;
 import systems.RenderSystem;
 import systems.ResourceLoader;
 import systems.TimerSystem;
 import systems.TransformSystem;
 
+import components.GravityComponent;
 import components.InputComponent;
 import components.RenderComponent;
 import components.TransformComponent;
@@ -31,7 +34,7 @@ import entities.IEntity;
  * @author Joseph Gefroh
  *
  */
-public class Test_Render
+public class Test_Gravity
 {
 	private Core core;
 	private boolean continueGame = true;		//Continue
@@ -39,10 +42,10 @@ public class Test_Render
 	
 	public static void main(String[] args)
 	{
-		Test_Render ts = new Test_Render();
+		Test_Gravity ts = new Test_Gravity();
 		ts.loop();
 	}
-	public Test_Render()
+	public Test_Gravity()
 	{
 		init();
 	}
@@ -62,12 +65,10 @@ public class Test_Render
 		core = new Core();
 		core.addSystem(new TimerSystem(), 0);
 		core.addSystem(new WindowSystem(1680, 1050, "Test_Render"), -1);
-		core.addSystem(new RenderSystem(core, 
-					core.getSystem(WindowSystem.class).getWidth(), 
-					core.getSystem(WindowSystem.class).getHeight()),
-				1);
+		core.addSystem(new RenderSystem(core, core.getSystem(WindowSystem.class).getWidth(), core.getSystem(WindowSystem.class).getHeight()), 1);
 		core.addSystem(new TransformSystem(core), -1);
 		core.addSystem(new InputSystem(core), 0);
+		core.addSystem(new GravitySystem(core), 0);
 		rl = new ResourceLoader(core);
 	}
 	
@@ -77,6 +78,8 @@ public class Test_Render
 		core.addFactory(new MovementInfoPackFactory());
 		core.addFactory(new CameraInfoPackFactory());
 		core.addFactory(new InputInfoPackFactory());
+
+		core.addFactory(new GravityInfoPackFactory());
 	}
 	
 	/**
@@ -110,6 +113,10 @@ public class Test_Render
 		e.getComponent(InputComponent.class).setInterested("MOVE_UP");
 		e.getComponent(InputComponent.class).setInterested("MOVE_RIGHT");
 		e.getComponent(InputComponent.class).setInterested("MOVE_LEFT");
+		e.addComponent(GravityComponent.class, new GravityComponent(e));
+		e.getComponent(GravityComponent.class).setAcceleration(1);
+		e.getComponent(GravityComponent.class).setMaxAcceleration(20);
+		e.getComponent(GravityComponent.class).setUpdateInterval(100);
 		
 		core.addEntity(e);
 	}

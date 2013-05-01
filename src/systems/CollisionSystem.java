@@ -2,17 +2,15 @@ package systems;
 
 import infopacks.CollisionInfoPack;
 
+import java.awt.Rectangle;
 import java.util.ArrayList;
 
+import components.WeaponComponent;
+
 public class CollisionSystem implements ISystem
-{//TODO: Allow for multiple types of collision detection
-	//TODO: Including bounding box, sphereicals, malformed shapes, pixel level
-	//Check all entities that moved since the last collision check.
-	
-	//Get the collision group for each entity.
-	//Go through the collision groups.
-	
+{
 	private Core core;
+	private boolean[][] collisionTable = new boolean[9][9];
 	public CollisionSystem(final Core core)
 	{
 		this.core = core;
@@ -25,8 +23,26 @@ public class CollisionSystem implements ISystem
 
 	@Override
 	public void work()
-	{
-		checkCollided();
+	{//TODO: Make collision detection system independent of effects on collide
+		ArrayList<CollisionInfoPack> packs =
+				core.getInfoPacksOfType(CollisionInfoPack.class);
+
+		for(CollisionInfoPack each:packs)
+		{
+			for(CollisionInfoPack pack:packs)
+			{
+				if(checkCollidesWith(each.getGroup(), pack.getGroup())&&each!=pack)
+				{
+					if(checkCollided(each, pack))
+					{
+						if(each.getParent().getName().equals("bullet"))
+						{
+							core.getSystem(WeaponSystem.class).hit(each.getParent(), pack.getParent());
+						}
+					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -35,65 +51,44 @@ public class CollisionSystem implements ISystem
 		
 	}
 	
-	private void checkCollided()
+	public void alignX(final CollisionInfoPack one, final CollisionInfoPack two)
 	{
-		ArrayList<CollisionInfoPack> infoPacks =
-					core.getInfoPacksOfType(CollisionInfoPack.class);
-		for(CollisionInfoPack each:infoPacks)
+		one.setXPos(two.getXPos()+one.getWidth());
+	}
+	public void alignY(final CollisionInfoPack one, final CollisionInfoPack two)
+	{
+		one.setYPos(two.getYPos()+one.getHeight());
+	}
+	public void setCollision(final int groupOne, final int groupTwo, 
+								final boolean collides)
+	{
+		if(groupOne>=0&&groupTwo>=0
+				&&groupOne<collisionTable.length
+				&&groupTwo<collisionTable.length)
 		{
-			if(each.needsCheck())
-			{//Only check collision on objects that require collision checks
-				CollisionInfoPack collidedWith = checkCollision(each, infoPacks);
-				if(collidedWith!=null)
-				{//If a collision was detected, roll back the last move.
-					each.rollback();
-					handleCollision(each, collidedWith);
-				}
-				else
-				{
-					each.approve();
-				}
-			}
+			collisionTable[groupOne][groupTwo] = collides;
+			collisionTable[groupTwo][groupOne] = collides;
 		}
 	}
-
-	private void handleCollision(final CollisionInfoPack each,
-			final CollisionInfoPack collidedWith)
+	
+	public boolean checkCollidesWith(final int groupOne, final int groupTwo)
 	{
-		//IEvent source = each.getCollisionEvent();
-		//source.execute()
+		return collisionTable[groupOne][groupTwo];
 	}
 
-	public CollisionInfoPack checkCollision(final CollisionInfoPack pack, 
-			final ArrayList<CollisionInfoPack> infoPacks)
+	private boolean checkCollided(final CollisionInfoPack packOne, 
+			final CollisionInfoPack packTwo)
 	{
-		boolean isColliding = false;
-		for(CollisionInfoPack each:infoPacks)
+		Rectangle r1 = new Rectangle(packOne.getXPos(), packOne.getYPos(),
+						packOne.getWidth(), packOne.getHeight());
+		Rectangle r2 = new Rectangle(packTwo.getXPos(), packTwo.getYPos(),
+				packTwo.getWidth(), packTwo.getHeight());
+		if(r1.intersects(r2))
 		{
-			if(pack.collidesWith(each.getGroup()))
-			{//If the pack collides with this object group....
-				isColliding = performBoundingBoxCalc(pack, each);
-				if(isColliding == true)
-				{
-					return each;
-				}
-			}
+			return true;
 		}
-		return null;
+		return false;
 	}
+	
 
-	private boolean performBoundingBoxCalc(final CollisionInfoPack pack, 
-			final CollisionInfoPack each)
-	{
-		//Check to see if there is a collision
-		if(pack.getXMin()>each.getXMax()
-				||pack.getXMax()<each.getXMin()
-				||pack.getYMin()>each.getYMax()
-				||pack.getYMax()<each.getYMin())
-		{
-			return false;
-		}
-		return true;
-		
-	}
 }

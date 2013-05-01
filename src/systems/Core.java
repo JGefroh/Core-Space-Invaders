@@ -1,25 +1,14 @@
 package systems;
 
-import infopacks.AnimationInfoPack;
 import infopacks.IInfoPack;
 import infopacks.IInfoPackFactory;
-import infopacks.InputInfoPack;
-import infopacks.RenderInfoPack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.logging.ConsoleHandler;
-import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.newdawn.slick.util.ResourceLoader;
-
-import components.AnimationComponent;
-import components.InputComponent;
-import components.PositionComponent;
-import components.RenderComponent;
 
 import entities.IEntity;
 

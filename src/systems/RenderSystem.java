@@ -27,16 +27,16 @@ import data.TextureData;
 public class RenderSystem implements ISystem
 {
 	/**The minimum X position visible on the screen.*/
-	private int screenXMin;
+	private long screenXMin;
 	
 	/**The maximum X position visible on the screen.*/
-	private int screenXMax;
+	private long screenXMax;
 	
 	/**The minimum Y position visible on the screen.*/
-	private int screenYMin;
+	private long screenYMin;
 	
 	/**The maximum Y position visible on the screen.*/
-	private int screenYMax;
+	private long screenYMax;
 	
 	/**The width of the display area, in pixels.*/
 	private int windowWidth;
@@ -163,22 +163,22 @@ public class RenderSystem implements ISystem
 	{
 		return textureMetaData.get(textureID).getCoordinatesFor(spriteNum);
 	}
-	public void setScreenXMin(final int screenXMin)
+	public void setScreenXMin(final long screenXMin)
 	{
 		this.screenXMin = screenXMin;
 	}
 
-	public void setScreenYMin(final int screenYMin)
+	public void setScreenYMin(final long screenYMin)
 	{
-		this.screenYMin = screenYMin;;
+		this.screenYMin = screenYMin;
 	}
 
-	public void setScreenXMax(final int screenXMax)
+	public void setScreenXMax(final long screenXMax)
 	{
-		this.screenXMax = screenXMax;;
+		this.screenXMax = screenXMax;
 	}
 
-	public void setScreenYMax(final int screenYMax)
+	public void setScreenYMax(final long screenYMax)
 	{
 		this.screenYMax = screenYMax;;
 	}
@@ -192,19 +192,19 @@ public class RenderSystem implements ISystem
 	}
 
 	///////////////////////////////////////////////////////////////////////
-	public int getScreenXMin()
+	public long getScreenXMin()
 	{
 		return this.screenXMin;
 	}
-	public int getScreenYMin()
+	public long getScreenYMin()
 	{
 		return this.screenYMin;
 	}
-	public int getScreenXMax()
+	public long getScreenXMax()
 	{
 		return this.screenXMax;
 	}
-	public int getScreenYMax()
+	public long getScreenYMax()
 	{
 		return this.screenYMax;
 	}
@@ -354,7 +354,7 @@ public class RenderSystem implements ISystem
 
 		GL11.glPushMatrix();		//Save current matrix
 		GL11.glTranslatef(x+screenXMin, y+screenYMin, z);	//Move to specified draw location
-		GL11.glScalef(1, 1, 0);
+		//GL11.glRotatef(x, 0, 0, 1);
 		GL11.glColor3f(1, 1, 1);
 		GL11.glBegin(GL11.GL_QUADS);
 		{

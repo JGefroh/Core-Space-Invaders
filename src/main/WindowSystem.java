@@ -30,8 +30,8 @@ public class WindowSystem implements ISystem
 		setSize(width, height);
 		setTitle(title);
 		setFullScreenEnabled(false);
-		setDisplayMode(findDisplayMode(2560, 1440));
-		//setDisplayMode(new DisplayMode(width, height));
+		//setDisplayMode(findDisplayMode(2560, 1440));
+		setDisplayMode(new DisplayMode(width, height));
 		setVSyncEnabled(true);
 		lastFPS = getTime();
 		try

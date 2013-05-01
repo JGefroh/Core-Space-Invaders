@@ -4,8 +4,17 @@ import infopacks.InputInfoPack;
 
 import java.util.ArrayList;
 
+import org.lwjgl.input.Keyboard;
+
 import systems.Core;
 import systems.ISystem;
+import actions.ActionMoveDown;
+import actions.ActionMoveLeft;
+import actions.ActionMoveRight;
+import actions.ActionMoveUp;
+import actions.ActionShoot;
+import actions.ActionStopX;
+import actions.ActionStopY;
 import actions.IAction;
 
 
@@ -125,10 +134,10 @@ public class InputSystem implements IInputSystem, ISystem
 		if(action!=null)
 		{
 			String command = action.getCommand();
-			ArrayList<InputInfoPack> entities = core.getInfoPacksOfType(InputInfoPack.class);
-			for(InputInfoPack each:entities)
+			ArrayList<InputInfoPack> packs = core.getInfoPacksOfType(InputInfoPack.class);
+			for(InputInfoPack each:packs)
 			{
-				if(each.updateReferences()==true&&each.isEnabled()&&each.isInterested(command))
+				if(each.isInterested(command))
 				{
 					action.execute(each.getParent());
 				}
@@ -159,6 +168,16 @@ public class InputSystem implements IInputSystem, ISystem
 	private void initBinds()
 	{
 		BindMap kbs = new BindMap();
+		kbs.bind(Keyboard.KEY_W, new ActionMoveUp(core), InputSystem.HOLD);
+		kbs.bind(Keyboard.KEY_S, new ActionMoveDown(core), InputSystem.HOLD);
+		kbs.bind(Keyboard.KEY_A, new ActionMoveLeft(core), InputSystem.HOLD);
+		kbs.bind(Keyboard.KEY_D, new ActionMoveRight(core), InputSystem.HOLD);
+		kbs.bind(Keyboard.KEY_W, new ActionStopY(core), InputSystem.RELEASE);
+		kbs.bind(Keyboard.KEY_S, new ActionStopY(core), InputSystem.RELEASE);
+		kbs.bind(Keyboard.KEY_A, new ActionStopX(core), InputSystem.RELEASE);
+		kbs.bind(Keyboard.KEY_D, new ActionStopX(core), InputSystem.RELEASE);
+		kbs.bind(Keyboard.KEY_SPACE, new ActionShoot(core), InputSystem.PRESS);
+
 		setBindSystem(IInputSystem.KEYBOARD, kbs);
 		setBindSystem(IInputSystem.MOUSE, new BindMap());
 	}

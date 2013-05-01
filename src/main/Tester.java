@@ -1,8 +1,5 @@
 package main;
 
-import components.PositionComponent;
-
-import entities.Entity;
 
 public class Tester
 {
