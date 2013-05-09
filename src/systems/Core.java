@@ -33,9 +33,9 @@ public class Core
 	private void initLogger()
 	{
 		ConsoleHandler ch = new ConsoleHandler();
-		ch.setLevel(Level.ALL);
+		ch.setLevel(Level.FINE);
 		LOGGER.addHandler(ch);
-		LOGGER.setLevel(Level.ALL);
+		LOGGER.setLevel(Level.FINE);
 	}
 	/**
 	 * Create a new Core object.

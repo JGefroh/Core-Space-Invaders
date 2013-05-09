@@ -7,6 +7,7 @@ import infopacks.AIInfoPackFactory;
 import infopacks.BulletInfoPackFactory;
 import infopacks.CameraInfoPackFactory;
 import infopacks.CollisionInfoPackFactory;
+import infopacks.HealthInfoPackFactory;
 import infopacks.InputInfoPackFactory;
 import infopacks.MovementInfoPackFactory;
 import infopacks.RenderInfoPackFactory;
@@ -19,7 +20,10 @@ import org.lwjgl.opengl.Display;
 import systems.AISystem;
 import systems.CollisionSystem;
 import systems.Core;
+import systems.DamageSystem;
 import systems.EntityCreationSystem;
+import systems.EventSystem;
+import systems.HealthCheckSystem;
 import systems.RenderSystem;
 import systems.ResourceLoader;
 import systems.TimerSystem;
@@ -69,6 +73,9 @@ public class Test_SI
 		core.addSystem(new WeaponSystem(core), 0);
 		core.addSystem(new AISystem(core),0);
 		core.addSystem(new EntityCreationSystem(core), 1);
+		core.addSystem(new EventSystem(core), 1);
+		core.addSystem(new HealthCheckSystem(core), 1);
+		core.addSystem(new DamageSystem(core), 1);
 		rl = new ResourceLoader(core);
 	}
 	
@@ -82,6 +89,7 @@ public class Test_SI
 		core.addFactory(new WeaponInfoPackFactory());
 		core.addFactory(new BulletInfoPackFactory());
 		core.addFactory(new AIInfoPackFactory());
+		core.addFactory(new HealthInfoPackFactory());
 	}
 	
 	/**
@@ -99,7 +107,7 @@ public class Test_SI
 		}
 	}
 	////////////
-	private void newGame()
+	public void newGame()
 	{
 		core.getSystem(EntityCreationSystem.class).createPlayer(800, 950);
 		

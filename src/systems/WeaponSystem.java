@@ -76,11 +76,13 @@ public class WeaponSystem implements ISystem
 	
 	public void hit(final IEntity entity, final IEntity entityTwo)
 	{
-		if(entity.getName().equals("bullet"))
+		if(entity.getName().equals("BULLET"))
 		{
 			setReady(entity.getComponent(BulletComponent.class).getBulletOwner());
-			core.removeEntity(entity);
-			core.removeEntity(entityTwo);
+		}
+		else if(entityTwo.getName().equals("BULLET"))
+		{
+			setReady(entityTwo.getComponent(BulletComponent.class).getBulletOwner());		
 		}
 	}
 	public void fire(final IEntity entity)

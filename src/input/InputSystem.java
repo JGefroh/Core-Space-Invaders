@@ -12,6 +12,7 @@ import actions.ActionMoveDown;
 import actions.ActionMoveLeft;
 import actions.ActionMoveRight;
 import actions.ActionMoveUp;
+import actions.ActionQuit;
 import actions.ActionShoot;
 import actions.ActionStopX;
 import actions.ActionStopY;
@@ -177,7 +178,7 @@ public class InputSystem implements IInputSystem, ISystem
 		kbs.bind(Keyboard.KEY_A, new ActionStopX(core), InputSystem.RELEASE);
 		kbs.bind(Keyboard.KEY_D, new ActionStopX(core), InputSystem.RELEASE);
 		kbs.bind(Keyboard.KEY_SPACE, new ActionShoot(core), InputSystem.PRESS);
-
+		kbs.bind(Keyboard.KEY_ESCAPE, new ActionQuit(core), InputSystem.PRESS);
 		setBindSystem(IInputSystem.KEYBOARD, kbs);
 		setBindSystem(IInputSystem.MOUSE, new BindMap());
 	}

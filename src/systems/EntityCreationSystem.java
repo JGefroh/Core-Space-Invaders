@@ -3,6 +3,7 @@ package systems;
 import components.AIComponent;
 import components.BulletComponent;
 import components.CollisionComponent;
+import components.HealthComponent;
 import components.InputComponent;
 import components.RenderComponent;
 import components.TransformComponent;
@@ -50,7 +51,7 @@ public class EntityCreationSystem implements ISystem
 		//3 = alien bullet
 		//4 = fort
 		IEntity player = new Entity();
-		player.setName("Player");
+		player.setName("PLAYER");
 		player.addComponent(TransformComponent.class, new TransformComponent(player));
 		player.getComponent(TransformComponent.class).setYPos(y);
 		player.getComponent(TransformComponent.class).setXPos(x);
@@ -66,6 +67,7 @@ public class EntityCreationSystem implements ISystem
 		player.getComponent(InputComponent.class).setInterested("STOPX");
 		player.getComponent(InputComponent.class).setInterested("STOPY");
 		player.getComponent(InputComponent.class).setInterested("SHOOT");
+		player.getComponent(InputComponent.class).setInterested("QUIT");
 		player.addComponent(CollisionComponent.class, new CollisionComponent(player));
 		player.getComponent(CollisionComponent.class).setCollisionGroup(0);
 		
@@ -76,7 +78,7 @@ public class EntityCreationSystem implements ISystem
 	public void createAlien(final int x, final int y)
 	{
 		IEntity alien = new Entity();
-		alien.setName("alien");
+		alien.setName("ALIEN");
 		alien.addComponent(TransformComponent.class, new TransformComponent(alien));
 		alien.getComponent(TransformComponent.class).setXPos(x);
 		alien.getComponent(TransformComponent.class).setYPos(y);
@@ -97,7 +99,7 @@ public class EntityCreationSystem implements ISystem
 	public void createFort(final int x, final int y)
 	{
 		IEntity fort = new Entity();
-		fort.setName("Alien");
+		fort.setName("FORT");
 		fort.addComponent(TransformComponent.class, new TransformComponent(fort));
 		fort.getComponent(TransformComponent.class).setXPos(x);
 		fort.getComponent(TransformComponent.class).setYPos(y);
@@ -106,6 +108,8 @@ public class EntityCreationSystem implements ISystem
 		fort.addComponent(RenderComponent.class, new RenderComponent(fort, 0, true));
 		fort.addComponent(CollisionComponent.class, new CollisionComponent(fort));
 		fort.getComponent(CollisionComponent.class).setCollisionGroup(4);
+		fort.addComponent(HealthComponent.class, new HealthComponent(fort));
+		fort.getComponent(HealthComponent.class).setCurHealth(4);
 		core.addEntity(fort);
 	}
 	public void createBullet(final IEntity owner)
@@ -116,7 +120,7 @@ public class EntityCreationSystem implements ISystem
 		xPos+= owner.getComponent(TransformComponent.class).getWidth()/2;
 		xPos-=8;
 		int yPos = owner.getComponent(TransformComponent.class).getYPos();
-		bullet.setName("bullet");
+		bullet.setName("BULLET");
 		bullet.addComponent(BulletComponent.class, new BulletComponent(bullet));
 		bullet.getComponent(BulletComponent.class).setBulletOwner(owner);
 		bullet.addComponent(TransformComponent.class, new TransformComponent(bullet));
@@ -129,7 +133,7 @@ public class EntityCreationSystem implements ISystem
 		bullet.getComponent(VelocityComponent.class).setXVelocity(0);
 		bullet.addComponent(RenderComponent.class, new RenderComponent(bullet, 0, true));
 		bullet.addComponent(CollisionComponent.class, new CollisionComponent(bullet));
-		if(owner.getName().equals("alien"))
+		if(owner.getName().equals("ALIEN"))
 		{
 			bullet.getComponent(CollisionComponent.class).setCollisionGroup(3);		
 			bullet.getComponent(VelocityComponent.class).setYVelocity(10);

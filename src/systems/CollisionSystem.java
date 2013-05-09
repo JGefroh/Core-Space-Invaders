@@ -35,10 +35,7 @@ public class CollisionSystem implements ISystem
 				{
 					if(checkCollided(each, pack))
 					{
-						if(each.getParent().getName().equals("bullet"))
-						{
-							core.getSystem(WeaponSystem.class).hit(each.getParent(), pack.getParent());
-						}
+						core.getSystem(EventSystem.class).notify("COLLISION", each.getParent(), pack.getParent());
 					}
 				}
 			}

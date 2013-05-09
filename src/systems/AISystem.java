@@ -5,15 +5,34 @@ import infopacks.WeaponInfoPack;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import entities.IEntity;
 
-
+/**
+ * This system controls the behavior of the AI for the Space Invaders
+ * test.
+ * @author Joseph Gefroh
+ */
 public class AISystem implements ISystem
 {
 	private Core core;
+	
+	/**Contains the collision pairs that determines whether objects collide.*/
 	private boolean[][] collisionTable = new boolean[9][9];
+	
+	/**A flag for the aliens to see if the squadron is moving left or right.*/
 	private boolean isMovingLeft = false;
+
+	//////////LOGGER//////////
+	private final static Logger LOGGER 
+	= Logger.getLogger(AISystem.class.getName());
+	private void initLogger()
+	{
+		LOGGER.setLevel(Level.ALL);
+	}
+	
 	public AISystem(final Core core)
 	{
 		this.core = core;
@@ -56,7 +75,7 @@ public class AISystem implements ISystem
 			isMovingLeft = !isMovingLeft;
 			for(AIInfoPack each:packs)
 			{
-				core.getSystem(TransformSystem.class).shiftPosition(each.getParent(), 0, 51);
+				core.getSystem(TransformSystem.class).shiftPosition(each.getParent(), 0, 25);
 			}
 		}
 	}
