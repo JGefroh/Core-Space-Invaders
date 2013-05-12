@@ -44,9 +44,9 @@ public class HealthCheckSystem implements ISystem
 		{
 			if(each.getCurHealth()<=0)
 			{
-				core.removeEntity(each.getParent());
+				core.removeEntity(each.getOwner());
 				core.getSystem(EventSystem.class)
-					.notify("DEAD", each.getParent(), each.getParent());
+					.notify("DEAD", each.getOwner(), each.getOwner());
 			}
 		}
 	}

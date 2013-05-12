@@ -1,6 +1,7 @@
 package systems;
 
 import components.AIComponent;
+import components.AnimationComponent;
 import components.BulletComponent;
 import components.CollisionComponent;
 import components.HealthComponent;
@@ -57,7 +58,7 @@ public class EntityCreationSystem implements ISystem
 		player.getComponent(TransformComponent.class).setXPos(x);
 		player.getComponent(TransformComponent.class).setWidth(64);
 		player.getComponent(TransformComponent.class).setHeight(64);
-		player.addComponent(RenderComponent.class, new RenderComponent(player, 0, true));
+		player.addComponent(RenderComponent.class, new RenderComponent(player));
 		player.addComponent(VelocityComponent.class, new VelocityComponent(player));
 		player.getComponent(VelocityComponent.class).setInterval(4);
 		player.getComponent(VelocityComponent.class).setXVelocity(0);
@@ -69,8 +70,7 @@ public class EntityCreationSystem implements ISystem
 		player.getComponent(InputComponent.class).setInterested("SHOOT");
 		player.getComponent(InputComponent.class).setInterested("QUIT");
 		player.addComponent(CollisionComponent.class, new CollisionComponent(player));
-		player.getComponent(CollisionComponent.class).setCollisionGroup(0);
-		
+		player.getComponent(CollisionComponent.class).setCollisionGroup(0);		
 		player.addComponent(WeaponComponent.class, new WeaponComponent(player));
 		core.addEntity(player);
 	}
@@ -84,14 +84,15 @@ public class EntityCreationSystem implements ISystem
 		alien.getComponent(TransformComponent.class).setYPos(y);
 		alien.getComponent(TransformComponent.class).setWidth(32);
 		alien.getComponent(TransformComponent.class).setHeight(32);
-		alien.addComponent(RenderComponent.class, new RenderComponent(alien, 0, true));
+		alien.addComponent(RenderComponent.class, new RenderComponent(alien));
 		alien.addComponent(VelocityComponent.class, new VelocityComponent(alien));
-		alien.getComponent(VelocityComponent.class).setInterval(4);
+		alien.getComponent(VelocityComponent.class).setInterval(200);
 		alien.getComponent(VelocityComponent.class).setXVelocity(0);
 		alien.addComponent(CollisionComponent.class, new CollisionComponent(alien));
 		alien.getComponent(CollisionComponent.class).setCollisionGroup(1);
 		alien.addComponent(AIComponent.class, new AIComponent(alien));
-
+		alien.getComponent(RenderComponent.class).setTextureID(1);
+		alien.getComponent(RenderComponent.class).setTexturePath("res/enemy.png");
 		alien.addComponent(WeaponComponent.class, new WeaponComponent(alien));
 		core.addEntity(alien);
 	}
@@ -105,7 +106,7 @@ public class EntityCreationSystem implements ISystem
 		fort.getComponent(TransformComponent.class).setYPos(y);
 		fort.getComponent(TransformComponent.class).setWidth(128);
 		fort.getComponent(TransformComponent.class).setHeight(64);
-		fort.addComponent(RenderComponent.class, new RenderComponent(fort, 0, true));
+		fort.addComponent(RenderComponent.class, new RenderComponent(fort));
 		fort.addComponent(CollisionComponent.class, new CollisionComponent(fort));
 		fort.getComponent(CollisionComponent.class).setCollisionGroup(4);
 		fort.addComponent(HealthComponent.class, new HealthComponent(fort));
@@ -131,7 +132,7 @@ public class EntityCreationSystem implements ISystem
 		bullet.addComponent(VelocityComponent.class, new VelocityComponent(bullet));
 		bullet.getComponent(VelocityComponent.class).setInterval(4);
 		bullet.getComponent(VelocityComponent.class).setXVelocity(0);
-		bullet.addComponent(RenderComponent.class, new RenderComponent(bullet, 0, true));
+		bullet.addComponent(RenderComponent.class, new RenderComponent(bullet));
 		bullet.addComponent(CollisionComponent.class, new CollisionComponent(bullet));
 		if(owner.getName().equals("ALIEN"))
 		{

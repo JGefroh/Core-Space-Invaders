@@ -20,7 +20,7 @@ public class MovementInfoPack implements IInfoPack
 		this.parent = parent;
 	}
 	@Override
-	public IEntity getParent()
+	public IEntity getOwner()
 	{
 		return this.parent;
 	}

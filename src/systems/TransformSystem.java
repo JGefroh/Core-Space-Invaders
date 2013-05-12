@@ -126,7 +126,12 @@ public class TransformSystem implements ISystem
 				core.getInfoPackFrom(entity, MovementInfoPack.class);
 		pack.setYVelocity(pack.getYVelocity()+yVel);
 	}
-	
+	public void setInterval(final IEntity entity, final long interval)
+	{
+		MovementInfoPack pack =
+				core.getInfoPackFrom(entity, MovementInfoPack.class);
+		pack.setInterval(interval);
+	}
 	//////////
 	@Override
 	public void start()

@@ -9,7 +9,8 @@ import entities.IEntity;
  */
 public interface IInfoPack
 {
-	public IEntity getParent();
+	/**Get the owner of this info pack.*/
+	public IEntity getOwner();
 	
 	/**
 	 * Update the component references for this object.

@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 import entities.IEntity;
 
 /**
- * The core class is the heart of the game. 
+ * The core class is the heart of the game.
  * It keeps track of all Entities, InfoPacks, and Systems.
  * It monitors Entities for changes in their composition, and automatically
  * updates their associated InfoPacks.
@@ -21,27 +21,42 @@ import entities.IEntity;
  */
 public class Core
 {
-	//private ArrayList<IInfoPack> infoPacks;
+	/**Holds all of the InfoPacks associated with an entity.*/
 	private HashMap<IEntity, ArrayList<IInfoPack>> infoPacks;
+	
+	/**Holds all of the entities in the game.*/
 	private ArrayList<IEntity> entities;
+	
+	/**Holds all of the systems in the game.*/
 	private ArrayList<ISystem> systems;	
+	
+	/**Holds all of the InfoPack factories.*/
 	private ArrayList<IInfoPackFactory> packFactories;
-	private boolean debug = true;
+	
+	/**Logger for debugging.*/
 	private final static Logger LOGGER 
 		= Logger.getLogger(Core.class.getName());
 	
+	/**The level of detail in debug messages.*/
+	private Level debugLevel = Level.FINE;
+	
+	/**
+	 * Initialize the Logger's settings.
+	 */
 	private void initLogger()
 	{
 		ConsoleHandler ch = new ConsoleHandler();
-		ch.setLevel(Level.FINE);
+		ch.setLevel(debugLevel);
 		LOGGER.addHandler(ch);
-		LOGGER.setLevel(Level.FINE);
+		LOGGER.setLevel(debugLevel);
 	}
+	
 	/**
 	 * Create a new Core object.
 	 */
 	public Core()
 	{
+		//TODO: Change to LinkedLists later on for simplicity.
 		initLogger();
 		infoPacks = new HashMap<IEntity, ArrayList<IInfoPack>>();
 		entities = new ArrayList<IEntity>();
@@ -50,8 +65,9 @@ public class Core
 	}
 	
 	/**
-	 * Begin tracking an entity.
-	 * @param entity	the Entity to track.
+	 * Start tracking and using an entity.
+	 * This also generates all of the InfoPacks associated with the entity.
+	 * @param entity	the IEntity to track
 	 */
 	public void addEntity(final IEntity entity)
 	{
@@ -97,13 +113,12 @@ public class Core
 	 * 					being of lower priority.
 	 * 					</br> A priority of -1 is used to indicate the lowest 
 	 * 					current priority and should be used when the order
-	 * 					of execution does not matter for the system.
-	 * 					
+	 * 					of execution does not matter for the system.					
 	 */
 	public void addSystem(final ISystem system, final int priority)
 	{
 		if(system!=null&&systems.contains(system)==false)
-		{
+		{//If the system exists and is not already being tracked...
 			LOGGER.log(Level.FINER, "Adding system: " + system 
 						+ " with priority: " + priority);
 			system.start();
@@ -141,7 +156,7 @@ public class Core
 		if(infoPack!=null)
 		{
 			ArrayList<IInfoPack> entityPacks = 
-					infoPacks.get(infoPack.getParent());
+					infoPacks.get(infoPack.getOwner());
 			if(entityPacks!=null)
 			{
 				LOGGER.log(Level.FINER, "Removing infoPack: " + infoPack);

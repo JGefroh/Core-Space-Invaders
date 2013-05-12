@@ -140,7 +140,7 @@ public class InputSystem implements IInputSystem, ISystem
 			{
 				if(each.isInterested(command))
 				{
-					action.execute(each.getParent());
+					action.execute(each.getOwner());
 				}
 			}
 		}

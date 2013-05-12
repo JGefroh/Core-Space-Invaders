@@ -8,7 +8,11 @@ import entities.IEntity;
  */
 public class VelocityComponent implements IComponent
 {
-	private IEntity parent;
+	//////////
+	// DATA
+	//////////
+	/**The owner of the component.*/
+	private IEntity owner;
 	
 	/**The number of units to move on the X axis every interval.*/
 	private int xVelocity;
@@ -22,60 +26,118 @@ public class VelocityComponent implements IComponent
 	/**The time the velocity was last updated.*/
 	private long lastUpdated;
 	
-	public VelocityComponent(final IEntity parent)
+	
+	//////////
+	// INIT
+	//////////
+	/**
+	 * Create a new VelocityComponent.
+	 * @param owner	the IEntity owner of the component
+	 */
+	public VelocityComponent(final IEntity owner)
 	{
-		this.parent = parent;
+		setOwner(owner);
+		init();
 	}
 	
 	@Override
 	public void init()
 	{
+		setXVelocity(0);
+		setYVelocity(0);
+		setLastUpdated(-1);
+		setInterval(0);
 	}
-	@Override
-	public void setParent(final IEntity parent)
-	{
-		this.parent = parent;
-	}
-	@Override
-	public IEntity getParent()
-	{
-		return this.parent;
-	}
+	
+	
 	//////////
+	// GETTERS
+	//////////
+	@Override
+	public IEntity getOwner()
+	{
+		return this.owner;
+	}
+	
+	/**
+	 * Get the horizontal (X) velocity of the component.
+	 * @return	the horizontal (X) velocity of the component
+	 */
 	public int getXVelocity()
 	{
 		return this.xVelocity;
 	}
+	
+	/**
+	 * Get the vertical (Y) velocity of the component.
+	 * @return	the vertical (Y) velocity of the component
+	 */
 	public int getYVelocity()
 	{
 		return this.yVelocity;
 	}
+	
+	/**
+	 * Get the update interval of the component.
+	 * @return	the time, in ms, to wait before attempting an update
+	 */
 	public long getInterval()
 	{
 		return this.interval;
 	}
+	
+	/**
+	 * Get the time the component was last updated.
+	 * @return	the time, in ms, the component was last updated
+	 */
 	public long getLastUpdated()
 	{
 		return this.lastUpdated;
 	}
+	
+	
 	//////////
+	// SETTERS
+	//////////
+	@Override
+	public void setOwner(final IEntity owner)
+	{
+		this.owner = owner;
+	}
+	
+	/**
+	 * Set the horizontal (X) velocity of the component.
+	 * @param xVelocity	the horizontal (X) velocity of the component
+	 */
 	public void setXVelocity(final int xVelocity)
 	{
 		this.xVelocity = xVelocity;
 	}
+	
+	/**
+	 * Set the vertical (Y) velocity of the component.
+	 * @param yVelocity	the vertical (Y) velocity of the component
+	 */
 	public void setYVelocity(final int yVelocity)
 	{
 		this.yVelocity = yVelocity;
 	}
+	
+	/**
+	 * Set the update interval of the component.
+	 * @param interval	the time, in ms, to wait before attempting a move
+	 */
 	public void setInterval(final long interval)
 	{
 		this.interval = interval;
 	}
+	
+	/**
+	 * Set the time the component was last updated.
+	 * @param lastUpdated	the time, in ms, the component was last updated
+	 */
 	public void setLastUpdated(final long lastUpdated)
 	{
 		this.lastUpdated = lastUpdated;
 	}
-	
-
-
 }

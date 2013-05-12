@@ -24,7 +24,8 @@ public class AISystem implements ISystem
 	
 	/**A flag for the aliens to see if the squadron is moving left or right.*/
 	private boolean isMovingLeft = false;
-
+	private int movementInterval = 200;
+	private int movementSpeed = 10;
 	//////////LOGGER//////////
 	private final static Logger LOGGER 
 	= Logger.getLogger(AISystem.class.getName());
@@ -52,14 +53,14 @@ public class AISystem implements ISystem
 		for(AIInfoPack each:packs)
 		{
 			//SHOOT
-			shoot(each.getParent());
+			shoot(each.getOwner());
 			if(isMovingLeft==true)
 			{				
 				if(each.getXPos()<=0)
 				{
 					switched = true;
 				}
-				core.getSystem(TransformSystem.class).setXVelocity(each.getParent(), -5);
+				core.getSystem(TransformSystem.class).setXVelocity(each.getOwner(), -movementSpeed);
 			}
 			else if(isMovingLeft==false)
 			{
@@ -67,15 +68,17 @@ public class AISystem implements ISystem
 				{
 					switched = true;
 				}			
-				core.getSystem(TransformSystem.class).setXVelocity(each.getParent(), 5);
+				core.getSystem(TransformSystem.class).setXVelocity(each.getOwner(), movementSpeed);
 			}
 		}
 		if(switched==true)
 		{
 			isMovingLeft = !isMovingLeft;
+			movementInterval-=20;
 			for(AIInfoPack each:packs)
 			{
-				core.getSystem(TransformSystem.class).shiftPosition(each.getParent(), 0, 25);
+				core.getSystem(TransformSystem.class).shiftPosition(each.getOwner(), 0, 25);
+				core.getSystem(TransformSystem.class).setInterval(each.getOwner(), movementInterval);
 			}
 		}
 	}

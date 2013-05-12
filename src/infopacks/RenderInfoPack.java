@@ -47,7 +47,7 @@ public class RenderInfoPack implements IInfoPack
 		return rc.isVisible();
 	}
 	@Override
-	public IEntity getParent()
+	public IEntity getOwner()
 	{
 		return this.parent;
 	}

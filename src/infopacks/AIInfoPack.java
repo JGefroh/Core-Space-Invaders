@@ -23,7 +23,7 @@ public class AIInfoPack implements IInfoPack
 		this.parent = parent;
 	}
 
-	public IEntity getParent()
+	public IEntity getOwner()
 	{
 		return this.parent;
 	}

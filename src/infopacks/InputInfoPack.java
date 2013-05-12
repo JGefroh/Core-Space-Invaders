@@ -28,10 +28,10 @@ public class InputInfoPack implements IInfoPack
 	
 	public boolean isInterested(final String command)
 	{
-		return ic.isInterested(command);
+		return ic.checkInterested(command);
 	}
 
-	public IEntity getParent()
+	public IEntity getOwner()
 	{
 		return this.parent;
 	}

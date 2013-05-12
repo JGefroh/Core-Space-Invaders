@@ -1,42 +1,61 @@
 package components;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import entities.IEntity;
 
+/**
+ * This class contains all of the data necessary for an entity
+ * to react to input.
+ * @author Joseph Gefroh
+ */
 public class InputComponent implements IComponent
 {
-	private IEntity parent;
+	//////////
+	// DATA
+	//////////
+	/**The owner of this component.*/
+	private IEntity owner;
 	
 	/**Contains all of the commands this entity responds to.*/
-	private ArrayList<String> commandList;
+	private ArrayList<String> commandList; //TODO: Do without array list?
 
-	public InputComponent(final IEntity parent)
+	
+	//////////
+	// INIT
+	//////////
+	/**
+	 * Create a new InputComponent.
+	 * @param owner	the IEntity owner of this component
+	 */
+	public InputComponent(final IEntity owner)
 	{
-		this.parent = parent;
-		commandList = new ArrayList<String>();
+		setOwner(owner);
+		init();
 	}
 	
 	@Override
 	public void init()
 	{
+		commandList = new ArrayList<String>();
 	}
 
+
+	//////////
+	// GETTERS
+	//////////
 	@Override
-	public void setParent(final IEntity parent)
+	public IEntity getOwner()
 	{
-		this.parent = parent;
+		return this.owner;
 	}
 	
-	@Override
-	public IEntity getParent()
-	{
-		return this.parent;
-	}
-	
-	////////////////////////////////////
-	public boolean isInterested(final String command)
+	/**
+	 * Check to see if the entity is interested in the input command.
+	 * @param command	the String command of the input
+	 * @return	true if it is interested, false otherwise.
+	 */
+	public boolean checkInterested(final String command)
 	{
 		if(commandList.contains(command))
 		{
@@ -45,17 +64,34 @@ public class InputComponent implements IComponent
 		return false;
 	}
 	
+	
+	//////////
+	// SETTERS
+	//////////
+	@Override
+	public void setOwner(final IEntity owner)
+	{
+		this.owner = owner;
+	}
+	
+	/**
+	 * Make the entity respond to the command.
+	 * @param command the input command
+	 */
 	public void setInterested(final String command)
 	{
-		if(isInterested(command)==false)
+		if(checkInterested(command)==false)
 		{
 			commandList.add(command);
 		}
 	}
 	
-	////////////////////////////////////
-
-
-
-
+	/**
+	 * Make the entity ignore the command if it is not already.
+	 * @param command the input command
+	 */
+	public void setUninterested(final String command)
+	{
+		commandList.remove(command);
+	}
 }

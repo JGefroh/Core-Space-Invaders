@@ -2,43 +2,77 @@ package components;
 
 import entities.IEntity;
 
+/**
+ * This class contains data necessary to keep track of bullets
+ * and bullet ownership.
+ * @author Joseph Gefroh
+ */
 public class BulletComponent implements IComponent
 {
-	private IEntity parent;
+	//////////
+	// DATA
+	//////////
+	/**The owner of this component.*/
+	private IEntity owner;
 	
+	/**The owner of the bullet (the entity that fired the bullet*/
 	private IEntity bulletOwner;
 	
-	public BulletComponent(final IEntity parent)
+	
+	//////////
+	// INIT
+	//////////
+	/**
+	 * Create a new bullet component.
+	 * @param owner the IEntity owner of this component
+	 */
+	public BulletComponent(final IEntity owner)
 	{
-		this.parent = parent;
+		setOwner(owner);
+		init();
 	}
 	
 	@Override
-	public void init() {
-		// TODO Auto-generated method stub
+	public void init()
+	{
 		
 	}
 
+	
+	//////////
+	// GETTERS
+	//////////
 	@Override
-	public void setParent(final IEntity parent)
+	public IEntity getOwner()
 	{
-		this.parent = parent;
-	}
-
-	@Override
-	public IEntity getParent()
-	{
-		return this.parent;
+		return this.owner;
 	}
 	
-	public void setBulletOwner(final IEntity bulletOwner)
-	{
-		this.bulletOwner = bulletOwner;
-	}
-	
+	/**
+	 * Return a reference to the entity that fired the bullet.
+	 * @return	the entity that fired the bullet
+	 */
 	public IEntity getBulletOwner()
 	{
 		return this.bulletOwner;
 	}
 
+	
+	//////////
+	// SETTERS
+	//////////
+	@Override
+	public void setOwner(final IEntity owner)
+	{
+		this.owner = owner;
+	}
+	
+	/**
+	 * Set the firer of the bullet.
+	 * @param bulletOwner the entity that fired the bullet
+	 */
+	public void setBulletOwner(final IEntity bulletOwner)
+	{
+		this.bulletOwner = bulletOwner;
+	}
 }

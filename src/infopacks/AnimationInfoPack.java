@@ -36,7 +36,7 @@ public class AnimationInfoPack implements IInfoPack
 	 * Get the parent of this AnimationInfoPack.
 	 * @return	the parent of this AnimationInfoPack
 	 */
-	public IEntity getParent()
+	public IEntity getOwner()
 	{
 		return this.parent;
 	}

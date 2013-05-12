@@ -15,7 +15,7 @@ public class GravityInfoPack implements IInfoPack
 		this.parent = parent;
 	}
 	@Override
-	public IEntity getParent()
+	public IEntity getOwner()
 	{
 		return this.parent;
 	}
@@ -25,7 +25,7 @@ public class GravityInfoPack implements IInfoPack
 	}
 	public int getGravity()
 	{
-		return gc.getAccelerationy();
+		return gc.getAcceleration();
 	}
 	public int getYVelocity()
 	{
@@ -41,7 +41,7 @@ public class GravityInfoPack implements IInfoPack
 	}
 	public long getUpdateInterval()
 	{
-		return gc.getInterval();
+		return gc.getUpdateInterval();
 	}
 	public void setLastUpdate(final long lastUpdate)
 	{

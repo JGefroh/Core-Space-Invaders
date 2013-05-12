@@ -15,7 +15,7 @@ public class HealthInfoPack implements IInfoPack
 	}
 	
 	@Override
-	public IEntity getParent()
+	public IEntity getOwner()
 	{
 		return this.parent;
 	}

@@ -103,7 +103,7 @@ public class TextureData
 	 * Get the normal width of the texture
 	 * @return	the normal width of the texture
 	 */
-	public float getImageWidth()
+	public int getImageWidth()
 	{
 		return this.imageWidth;
 	}
@@ -112,7 +112,7 @@ public class TextureData
 	 * Get the image height of the texture
 	 * @return	the image height of the texture
 	 */
-	public float getImageHeight()
+	public int getImageHeight()
 	{
 		return this.imageHeight;
 	}

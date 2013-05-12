@@ -5,7 +5,6 @@ package SystemTests;
 
 import infopacks.AIInfoPackFactory;
 import infopacks.BulletInfoPackFactory;
-import infopacks.CameraInfoPackFactory;
 import infopacks.CollisionInfoPackFactory;
 import infopacks.HealthInfoPackFactory;
 import infopacks.InputInfoPackFactory;
@@ -56,6 +55,7 @@ public class Test_SI
 	{
 		initSystems();
 		initFactories();
+		loadTexture();
 	}
 	
 	/**
@@ -66,7 +66,7 @@ public class Test_SI
 		core = new Core();
 		core.addSystem(new TimerSystem(), 0);
 		core.addSystem(new WindowSystem(1680, 1050, "Test_SI"), -1);
-		core.addSystem(new RenderSystem(core, core.getSystem(WindowSystem.class).getWidth(), core.getSystem(WindowSystem.class).getHeight()), 1);
+		core.addSystem(new RenderSystem(core), 1);
 		core.addSystem(new TransformSystem(core), -1);
 		core.addSystem(new InputSystem(core), 0);
 		core.addSystem(new CollisionSystem(core), 0);
@@ -83,7 +83,6 @@ public class Test_SI
 	{
 		core.addFactory(new RenderInfoPackFactory());
 		core.addFactory(new MovementInfoPackFactory());
-		core.addFactory(new CameraInfoPackFactory());
 		core.addFactory(new InputInfoPackFactory());
 		core.addFactory(new CollisionInfoPackFactory());
 		core.addFactory(new WeaponInfoPackFactory());
@@ -162,6 +161,11 @@ public class Test_SI
 		core.getSystem(CollisionSystem.class).setCollision(2, 4, true);	//pBullet, fort
 		core.getSystem(CollisionSystem.class).setCollision(3, 4, true);	//aBullet, fort
 		core.getSystem(CollisionSystem.class).setCollision(3, 1, false);	//aBullet, alien
+	}
+	
+	public void loadTexture()
+	{
+		rl.loadTexture("res/enemy.png");
 	}
 	
 

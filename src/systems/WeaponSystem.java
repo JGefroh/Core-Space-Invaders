@@ -62,12 +62,12 @@ public class WeaponSystem implements ISystem
 	
 	public void createBullet(final WeaponInfoPack each)
 	{
-		core.getSystem(EntityCreationSystem.class).createBullet(each.getParent());
+		core.getSystem(EntityCreationSystem.class).createBullet(each.getOwner());
 	}
 	
 	private void destroyBullet(final BulletInfoPack each)
 	{
-		core.removeEntity(each.getParent());
+		core.removeEntity(each.getOwner());
 	}
 	@Override
 	public void stop()

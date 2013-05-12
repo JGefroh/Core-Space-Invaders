@@ -18,7 +18,7 @@ public class CollisionInfoPack implements IInfoPack
 	}
 	
 	@Override
-	public IEntity getParent()
+	public IEntity getOwner()
 	{
 		return this.parent;
 	}

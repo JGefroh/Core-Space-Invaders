@@ -35,7 +35,7 @@ public class CollisionSystem implements ISystem
 				{
 					if(checkCollided(each, pack))
 					{
-						core.getSystem(EventSystem.class).notify("COLLISION", each.getParent(), pack.getParent());
+						core.getSystem(EventSystem.class).notify("COLLISION", each.getOwner(), pack.getOwner());
 					}
 				}
 			}
