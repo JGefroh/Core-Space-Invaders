@@ -21,6 +21,7 @@ import entities.IEntity;
  */
 public class Core
 {
+	//TODO: Use iterator for concurrent modification of ALs.
 	/**Holds all of the InfoPacks associated with an entity.*/
 	private HashMap<IEntity, ArrayList<IInfoPack>> infoPacks;
 	
@@ -282,7 +283,8 @@ public class Core
 	 * @param type		the type of InfoPack to get
 	 * @return	an InfoPack of the type requested, null if not found.
 	 */
-	public <T extends IInfoPack>T getInfoPackFrom(final IEntity entity, final Class<T> type)
+	public <T extends IInfoPack>T getInfoPackFrom(final IEntity entity, 
+													final Class<T> type)
 	{
 		ArrayList<IInfoPack> packs = infoPacks.get(entity);
 		if(packs!=null)

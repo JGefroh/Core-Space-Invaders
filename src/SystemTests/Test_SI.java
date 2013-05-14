@@ -64,7 +64,7 @@ public class Test_SI
 	private void initSystems()
 	{
 		core = new Core();
-		core.addSystem(new TimerSystem(), 0);
+		core.addSystem(new TimerSystem(core), 0);
 		core.addSystem(new WindowSystem(1680, 1050, "Test_SI"), -1);
 		core.addSystem(new RenderSystem(core), 1);
 		core.addSystem(new TransformSystem(core), -1);

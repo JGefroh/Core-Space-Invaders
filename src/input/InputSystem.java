@@ -3,9 +3,13 @@ package input;
 import infopacks.InputInfoPack;
 
 import java.util.ArrayList;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.lwjgl.input.Keyboard;
 
+import systems.AnimationSystem;
 import systems.Core;
 import systems.ISystem;
 import actions.ActionMoveDown;
@@ -27,17 +31,118 @@ import actions.IAction;
  */
 public class InputSystem implements IInputSystem, ISystem
 {
+	//////////
+	// DATA
+	//////////
+	/**A reference to the core engine controlling this system.*/
+	private Core core;
+	
+	/**Flag that shows whether the system is running or not.*/
+	private boolean isRunning;
+	
+	/**Logger for debug purposes.*/
+	private final static Logger LOGGER 
+		= Logger.getLogger(InputSystem.class.getName());
+	
+	/**The level of detail in debug messages.*/
+	private Level debugLevel = Level.FINE;
+	
 	private InputDevice_Keyboard kir;
 	private InputDevice_Mouse mir;
 	private IBindMap kbs;
 	private IBindMap mbs;
-	private Core core;
 	
+	
+	//////////
+	// INIT
+	//////////
+	/**
+	 * Create a new InputSystem.
+	 * @param core	 a reference to the Core controlling this system
+	 */
 	public InputSystem(final Core core)
 	{
 		this.core = core;
+		init();
+	}
+	
+	/**
+	 * Initialize the Logger with default settings.
+	 */
+	private void initLogger()
+	{
+		ConsoleHandler ch = new ConsoleHandler();
+		ch.setLevel(debugLevel);
+		LOGGER.addHandler(ch);
+		LOGGER.setLevel(debugLevel);
+	}
+	
+	/**
+	 * Initialize binds.
+	 */
+	private void initBinds()
+	{
+		//TODO: Move somewhere else.
+		BindMap kbs = new BindMap();
+		kbs.bind(Keyboard.KEY_W, new ActionMoveUp(core), InputSystem.HOLD);
+		kbs.bind(Keyboard.KEY_S, new ActionMoveDown(core), InputSystem.HOLD);
+		kbs.bind(Keyboard.KEY_A, new ActionMoveLeft(core), InputSystem.HOLD);
+		kbs.bind(Keyboard.KEY_D, new ActionMoveRight(core), InputSystem.HOLD);
+		kbs.bind(Keyboard.KEY_W, new ActionStopY(core), InputSystem.RELEASE);
+		kbs.bind(Keyboard.KEY_S, new ActionStopY(core), InputSystem.RELEASE);
+		kbs.bind(Keyboard.KEY_A, new ActionStopX(core), InputSystem.RELEASE);
+		kbs.bind(Keyboard.KEY_D, new ActionStopX(core), InputSystem.RELEASE);
+		kbs.bind(Keyboard.KEY_SPACE, new ActionShoot(core), InputSystem.PRESS);
+		kbs.bind(Keyboard.KEY_ESCAPE, new ActionQuit(core), InputSystem.PRESS);
+		setBindSystem(IInputSystem.KEYBOARD, kbs);
+		setBindSystem(IInputSystem.MOUSE, new BindMap());
+	}
+	
+	//////////
+	// ISYSTEM INTERFACE
+	//////////
+	@Override
+	public void init()
+	{
+		initLogger();
 		kir = new InputDevice_Keyboard(this);
 		mir = new InputDevice_Mouse(this);
+		initBinds();	
+	}
+	
+	@Override
+	public void start()
+	{
+		LOGGER.log(Level.INFO, "System started.");
+		isRunning = true;
+	}
+
+
+	@Override
+	public void work()
+	{
+		if(isRunning)
+		{
+			kir.processAllEvents();
+			mir.processAllEvents();			
+		}
+	}
+
+	@Override
+	public void stop()
+	{
+		LOGGER.log(Level.INFO, "System stopped.");
+		isRunning = false;
+	}
+	
+	
+	//////////
+	// IIINPUTSYSTEM INTERFACE
+	//////////
+	@Override
+	public void poll()
+	{
+		kir.processAllEvents();
 	}
 	
 	/**
@@ -59,6 +164,10 @@ public class InputSystem implements IInputSystem, ISystem
 		}
 	}
 	
+	
+	//////////
+	// SYSTEM METHODS
+	//////////	
 	/**
 	 * Handle the keyboard event.
 	 * @param keyCode	the code of the key that has generated the input
@@ -108,28 +217,9 @@ public class InputSystem implements IInputSystem, ISystem
 	}
 	
 	/**
-	 * Set the bind system for a specific input device
-	 * @param device		the code of the device
-	 * @param bindSystem	the bind system
+	 * Execute the action associated with a command.
+	 * @param action	the action to execute
 	 */
-	public void setBindSystem(final int device, final IBindMap bindSystem)
-	{
-		if(device==KEYBOARD)
-		{
-			kbs = bindSystem;
-		}
-		else if(device==MOUSE)
-		{
-			mbs = bindSystem;
-		}
-	}
-	
-	@Override
-	public void poll()
-	{
-		kir.processAllEvents();
-	}
-	
 	public void processAction(final IAction action)
 	{
 		if(action!=null)
@@ -146,42 +236,24 @@ public class InputSystem implements IInputSystem, ISystem
 		}
 	}
 	
-
-	@Override
-	public void start()
-	{
-		initBinds();
-	}
-
-	@Override
-	public void work()
-	{
-		kir.processAllEvents();
-		mir.processAllEvents();
-	}
-
-	@Override
-	public void stop()
-	{
-		// TODO Auto-generated method stub
-		
-	}
-	private void initBinds()
-	{
-		BindMap kbs = new BindMap();
-		kbs.bind(Keyboard.KEY_W, new ActionMoveUp(core), InputSystem.HOLD);
-		kbs.bind(Keyboard.KEY_S, new ActionMoveDown(core), InputSystem.HOLD);
-		kbs.bind(Keyboard.KEY_A, new ActionMoveLeft(core), InputSystem.HOLD);
-		kbs.bind(Keyboard.KEY_D, new ActionMoveRight(core), InputSystem.HOLD);
-		kbs.bind(Keyboard.KEY_W, new ActionStopY(core), InputSystem.RELEASE);
-		kbs.bind(Keyboard.KEY_S, new ActionStopY(core), InputSystem.RELEASE);
-		kbs.bind(Keyboard.KEY_A, new ActionStopX(core), InputSystem.RELEASE);
-		kbs.bind(Keyboard.KEY_D, new ActionStopX(core), InputSystem.RELEASE);
-		kbs.bind(Keyboard.KEY_SPACE, new ActionShoot(core), InputSystem.PRESS);
-		kbs.bind(Keyboard.KEY_ESCAPE, new ActionQuit(core), InputSystem.PRESS);
-		setBindSystem(IInputSystem.KEYBOARD, kbs);
-		setBindSystem(IInputSystem.MOUSE, new BindMap());
-	}
 	
-
+	//////////
+	// SETTERS
+	//////////
+	/**
+	 * Set the bind system for a specific input device
+	 * @param device		the code of the device
+	 * @param bindSystem	the bind system
+	 */
+	public void setBindSystem(final int device, final IBindMap bindSystem)
+	{
+		if(device==KEYBOARD)
+		{
+			kbs = bindSystem;
+		}
+		else if(device==MOUSE)
+		{
+			mbs = bindSystem;
+		}
+	}
 }

@@ -1,20 +1,36 @@
 package systems;
 
 import java.lang.reflect.Field;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.newdawn.slick.util.ResourceLoader;
 
 
 /**
  * System to help control the timing of events.
  * @author 	Joseph Gefroh
- * @since 	23FEB13
- *
+ * @since 	13MAY13
  */
 public class TimerSystem implements ISystem
 {
+	//TODO: Clean up and fix, make consistent.
+	
+	//////////
+	// DATA
+	//////////
+	/**A reference to the core engine controlling this system.*/
+	private Core core;
+	
+	/**Flag that shows whether the system is running or not.*/
+	private boolean isRunning;
+	
+	/**Logger for debug purposes.*/
+	private final static Logger LOGGER 
+		= Logger.getLogger(TimerSystem.class.getName());
+	
+	/**The level of detail in debug messages.*/
+	private Level debugLevel = Level.FINE;
+	
 	/**The name of the timer*/
 	private String name;
 	
@@ -29,22 +45,18 @@ public class TimerSystem implements ISystem
 	
 	/**The sequence number of the current tick (starts at 0)*/
 	private long currentTick;
-	
-	/**Is the system running or not?*/
-	private boolean isRunning;
-	
-	private final static Logger LOGGER 
-		= Logger.getLogger(TimerSystem.class.getName());
-	private void initLogger()
-	{
-		LOGGER.setLevel(Level.ALL);
-	}
 
+
+	//////////
+	// INIT
+	//////////
 	/**
 	 * Create a default timer that ticks once per second.
+	 * @param core	a reference to the Core controlling this system
 	 */
-	public TimerSystem()
+	public TimerSystem(final Core core)
 	{
+		this.core = core;
 		setName("Default");
 		this.timeScale = 1000;
 	}
@@ -54,13 +66,66 @@ public class TimerSystem implements ISystem
 	 * @param tps	the desired ticks per second
 	 * @throws IllegalArgumentException	thrown if tps <= 0
 	 */
-	public TimerSystem(final String name, 
+	public TimerSystem(final Core core, final String name, 
 					final double tps) throws IllegalArgumentException
 	{
+		this.core = core;
 		setName(name);
 		setTPS(tps);
 	}
 	
+	/**
+	 * Initialize the Logger with default settings.
+	 */
+	private void initLogger()
+	{
+		ConsoleHandler ch = new ConsoleHandler();
+		ch.setLevel(debugLevel);
+		LOGGER.addHandler(ch);
+		LOGGER.setLevel(debugLevel);
+	}
+	
+	
+	//////////
+	// ISYSTEM INTERFACE
+	//////////
+	@Override
+	public void init()
+	{
+		initLogger();
+	}
+	
+	@Override
+	public void start()
+	{
+		LOGGER.log(Level.INFO, "System started.");
+		isRunning = true;
+	}
+
+	@Override
+	public void work()
+	{
+		if(this.isRunning)
+		{
+			updateNow();			
+		}
+		else
+		{
+			stop();
+		}
+	}
+
+	@Override
+	public void stop()
+	{
+		LOGGER.log(Level.INFO, "System stopped.");
+		isRunning = false;
+	}
+	
+	
+	//////////
+	// SYSTEM METHODS
+	//////////
 	/**
 	 * Advance to the next tick if the amount of time to wait has been exceeded.
 	 * @return true if the timer advanced to the next tick, false otherwise.
@@ -77,6 +142,12 @@ public class TimerSystem implements ISystem
 		return false;
 	}
 	
+	/**
+	 * Check to see the desired amount of time has passed.
+	 * @param interval		the amount of time to check
+	 * @param lastUpdated	the time the check was last conducted
+	 * @return		true if the interval has passed, false otherwise.
+	 */
 	public boolean isUpdateTime(final long interval, final long lastUpdated)
 	{
 		if(this.now-lastUpdated<interval)
@@ -94,21 +165,25 @@ public class TimerSystem implements ISystem
 	}
 	
 	/**
-	 * Get the time of the system.
-	 * @return the time according to System.currentTimeMillis()
-	 */
-	public long getNow()
-	{
-		return this.now;
-	}
-	
-	/**
 	 * Get the current time according to the system.
 	 * @return	the current time according to the system.
 	 */
 	public void updateNow()
 	{
 		this.now = System.currentTimeMillis();
+	}
+	
+	
+	//////////
+	// GETTERS
+	//////////
+	/**
+	 * Get the time of the system.
+	 * @return the time according to System.currentTimeMillis()
+	 */
+	public long getNow()
+	{
+		return this.now;
 	}
 	
 	/**
@@ -156,9 +231,10 @@ public class TimerSystem implements ISystem
 		return this.name;
 	}
 	
-	//
-	// Setters
-	//
+	
+	//////////
+	// SETTERS
+	//////////
 	/**
 	 * Set the expected ticks per second. The tps must be greater than 0.
 	 * @param tps the ticks per second
@@ -186,6 +262,9 @@ public class TimerSystem implements ISystem
 	}
 	
 	
+	//////////
+	// UTIL
+	//////////
 	/**
 	 * Returns a String representation of this object.
 	 * @return a String representation of the object
@@ -214,32 +293,5 @@ public class TimerSystem implements ISystem
 		result.append("}");
 		returnString = result.toString();
 		return returnString;
-	}
-
-	@Override
-	public void start()
-	{
-		LOGGER.log(Level.INFO, "Starting System: TimerSystem.");
-		this.isRunning = true;
-	}
-
-	@Override
-	public void work()
-	{
-		if(this.isRunning)
-		{
-			updateNow();			
-		}
-		else
-		{
-			stop();
-		}
-	}
-
-	@Override
-	public void stop()
-	{
-		LOGGER.log(Level.INFO, "Stopping System: TimerSystem.");
-		this.isRunning = false;
 	}
 }

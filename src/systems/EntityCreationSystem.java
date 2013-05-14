@@ -1,5 +1,9 @@
 package systems;
 
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import components.AIComponent;
 import components.AnimationComponent;
 import components.BulletComponent;
@@ -15,35 +19,95 @@ import entities.Entity;
 import entities.IEntity;
 
 /**
+ * This is a temporary system used to create specific entities.
+ * The eventual goal is to have this information read from an external file
+ * and the entities created from that (like loading a level).
  * @author Joseph Gefroh
  */
 public class EntityCreationSystem implements ISystem
 {
+	//////////
+	// DATA
+	//////////
+	/**A reference to the core engine controlling this system.*/
 	private Core core;
 	
+	/**Flag that shows whether the system is running or not.*/
+	private boolean isRunning;
+	
+	/**Logger for debug purposes.*/
+	private final static Logger LOGGER 
+		= Logger.getLogger(EntityCreationSystem.class.getName());
+	
+	/**The level of detail in debug messages.*/
+	private Level debugLevel = Level.FINE;
+	
+	
+	//////////
+	// INIT
+	//////////
+	/**
+	 * Create a new EntityCreationSystem.
+	 * @param core	 a reference to the Core controlling this system
+	 */
 	public EntityCreationSystem(final Core core)
 	{
 		this.core = core;
+		init();
+	}
+	
+	/**
+	 * Initialize the Logger with default settings.
+	 */
+	private void initLogger()
+	{
+		ConsoleHandler ch = new ConsoleHandler();
+		ch.setLevel(debugLevel);
+		LOGGER.addHandler(ch);
+		LOGGER.setLevel(debugLevel);
+	}
+	
+	
+	//////////
+	// ISYSTEM INTERFACE
+	//////////
+	@Override
+	public void init()
+	{
+		initLogger();
 	}
 	
 	@Override
 	public void start() 
 	{
+		LOGGER.log(Level.INFO, "System started.");
+		isRunning = true;
 	}
-	
 	
 	@Override
 	public void work()
 	{
+		if(isRunning)
+		{
+		}
 	}
 
 	@Override
 	public void stop()
 	{	
+		LOGGER.log(Level.INFO, "System stopped.");
+		isRunning = false;
 	}
 	
 
 	//////////
+	// SYSTEM METHODS
+	//////////
+	/**
+	 * Create a player entity.
+	 * @param x	the X Position to create the entity
+	 * @param y	the Y Position to create the entity
+	 */
 	public void createPlayer(final int x, final int y)
 	{	
 		//0 = player
@@ -75,6 +139,11 @@ public class EntityCreationSystem implements ISystem
 		core.addEntity(player);
 	}
 	
+	/**
+	 * Create an alien entity.
+	 * @param x	the X Position of the entity
+	 * @param y	the Y position of the entity
+	 */
 	public void createAlien(final int x, final int y)
 	{
 		IEntity alien = new Entity();
@@ -97,6 +166,11 @@ public class EntityCreationSystem implements ISystem
 		core.addEntity(alien);
 	}
 	
+	/**
+	 * Create a fort entity.
+	 * @param x the X Position of the entity
+	 * @param y	the Y positon of the entity
+	 */
 	public void createFort(final int x, final int y)
 	{
 		IEntity fort = new Entity();
@@ -113,6 +187,11 @@ public class EntityCreationSystem implements ISystem
 		fort.getComponent(HealthComponent.class).setCurHealth(4);
 		core.addEntity(fort);
 	}
+	
+	/**
+	 * Create a bullet entity at the owner's position.
+	 * @param owner	the owner of the bullet.
+	 */
 	public void createBullet(final IEntity owner)
 	{
 		IEntity bullet = new Entity();

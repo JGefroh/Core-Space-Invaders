@@ -1,37 +1,109 @@
 package systems;
 
 import infopacks.AnimationInfoPack;
-import infopacks.InputInfoPack;
 
 import java.util.ArrayList;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import components.AnimationComponent;
-import components.RenderComponent;
-
-import entities.Entity;
 
 /**
  * This system handles changing the sprite image at the required intervals.
  * The AnimationSystem keeps track of frames and animation sequences for 
  * entities. It provides methods to start and stop animations. 
  * @author Joseph Gefroh
- *
  */
 public class AnimationSystem implements ISystem
 {
+	//TODO: Needs update.
+	
+	//////////
+	// DATA
+	//////////
+	/**A reference to the core engine controlling this system.*/
 	private Core core;
 	
+	/**Flag that shows whether the system is running or not.*/
+	private boolean isRunning;
+	
+	/**Logger for debug purposes.*/
+	private final static Logger LOGGER 
+		= Logger.getLogger(AnimationSystem.class.getName());
+	
+	/**The level of detail in debug messages.*/
+	private Level debugLevel = Level.FINE;
+	
+	
+	//////////
+	// INIT
+	//////////
+	/**
+	 * Create a new AnimationSystem
+	 * @param core	a reference to the Core controlling this system
+	 */
 	public AnimationSystem(final Core core)
 	{
 		this.core = core;
+		init();
 	}
 	
+	/**
+	 * Initialize the Logger with default settings.
+	 */
+	private void initLogger()
+	{
+		ConsoleHandler ch = new ConsoleHandler();
+		ch.setLevel(debugLevel);
+		LOGGER.addHandler(ch);
+		LOGGER.setLevel(debugLevel);
+	}
+	
+	
+	//////////
+	// ISYSTEM INTERFACE
+	//////////
+	@Override
+	public void init()
+	{
+		initLogger();
+		isRunning = true;
+	}
+	
+	@Override
+	public void start()
+	{
+		LOGGER.log(Level.INFO, "System started.");
+		isRunning = true;
+	}
+
+	@Override
+	public void work()
+	{		
+		if(isRunning)
+		{			
+			updateFrames();
+		}
+	}
+
+	@Override
+	public void stop()
+	{
+		LOGGER.log(Level.INFO, "System stopped.");
+		isRunning = false;
+	}
+	
+	
+	//////////
+	// SYSTEM METHODS
+	//////////
 	/**
 	 * Go through all of the entities with AnimationInfoPacks and update
 	 * their frames.
 	 * @param entities the ArrayList of entities
 	 */
-	public void update()
+	private void updateFrames()
 	{
 		ArrayList<AnimationInfoPack> infoPacks = 
 				core.getInfoPacksOfType(AnimationInfoPack.class);
@@ -79,28 +151,11 @@ public class AnimationSystem implements ISystem
 	 */
 	public boolean isUpdateTime(final long lastUpdateTime, final long frameDelay)
 	{
+		//TODO: Remove direct references, go through Core or pass time?
 		if(core.getSystem(TimerSystem.class).getNow()-lastUpdateTime>=frameDelay)
 		{
 			return true;
 		}
 		return false;
 	}
-	
-	@Override
-	public void start()
-	{
-	}
-
-	@Override
-	public void work()
-	{		
-		update();
-	}
-
-	@Override
-	public void stop() {
-		// TODO Auto-generated method stub
-		
-	}
-	
 }

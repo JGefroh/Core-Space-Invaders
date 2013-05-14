@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Scanner;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,15 +23,87 @@ import data.TextureData;
  * @author Joseph Gefroh
  *
  */
-public class ResourceLoader
+public class ResourceLoader implements ISystem
 {
-	private final static Logger LOGGER = Logger.getLogger(ResourceLoader.class.getName());
+	//TODO: Finish.
+	//////////
+	// DATA
+	//////////
+	/**A reference to the core engine controlling this system.*/
 	private Core core;
+	
+	/**Flag that shows whether the system is running or not.*/
+	private boolean isRunning;
+	
+	/**Logger for debug purposes.*/
+	private final static Logger LOGGER 
+		= Logger.getLogger(ResourceLoader.class.getName());
+	
+	/**The level of detail in debug messages.*/
+	private Level debugLevel = Level.FINE;
+	
+	
+	//////////
+	// INIT
+	//////////	
+	/**
+	 * Create a new ResourceLoader.
+	 * @param core	a reference to the core Controlling this system
+	 */
 	public ResourceLoader(final Core core)
 	{
 		this.core = core;
-		initLogger();
+		init();
 	}
+	
+	/**
+	 * Initialize the Logger with default settings.
+	 */
+	private void initLogger()
+	{
+		ConsoleHandler ch = new ConsoleHandler();
+		ch.setLevel(debugLevel);
+		LOGGER.addHandler(ch);
+		LOGGER.setLevel(debugLevel);
+	}
+	
+	
+	//////////
+	// ISYSTEM INTERFACE
+	//////////
+	@Override
+	public void init()
+	{
+		initLogger();
+		isRunning = true;
+	}
+	
+	@Override
+	public void start() 
+	{
+		LOGGER.log(Level.INFO, "System started.");
+		isRunning = true;
+	}
+
+	@Override
+	public void work()
+	{
+		if(isRunning)
+		{			
+		}
+	}
+
+	@Override
+	public void stop()
+	{
+		LOGGER.log(Level.INFO, "System stopped.");
+		isRunning = false;
+	}
+	
+	
+	//////////
+	// SYSTEM METHODS
+	//////////
 	/**
 	 * Check to see if a file is valid.
 	 * @param path	the path of the file to load.
@@ -140,10 +213,5 @@ public class ResourceLoader
 			e.printStackTrace();
 		}
 		return null;
-	}
-	
-	private void initLogger()
-	{
-		LOGGER.setLevel(Level.ALL);
 	}
 }

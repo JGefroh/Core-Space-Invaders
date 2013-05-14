@@ -4,11 +4,11 @@ import infopacks.RenderInfoPack;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 
 import data.TextureData;
 
@@ -19,42 +19,51 @@ import data.TextureData;
  */
 public class RenderSystem implements ISystem
 {
-	/**A reference to the core powering this system.*/
+	//////////
+	// DATA
+	//////////
+	/**A reference to the core engine controlling this system.*/
 	private Core core;
 	
-	private final static Logger LOGGER = Logger.getLogger(RenderSystem.class.getName());
+	/**Flag that shows whether the system is running or not.*/
+	private boolean isRunning;
 	
-	private void initLogger()
-	{
-		LOGGER.setLevel(Level.ALL);
-	}
+	/**Logger for debug purposes.*/
+	private final static Logger LOGGER 
+		= Logger.getLogger(RenderSystem.class.getName());
 	
+	/**The level of detail in debug messages.*/
+	private Level debugLevel = Level.FINE;
+	
+	
+	//////////
+	// INIT
+	//////////
 	/**
-	 * Initialize a new renderer.
+	 * Create a new RenderSystem.
+	 * @param core	 a reference to the Core controlling this system
 	 */
 	public RenderSystem(final Core core)
 	{		
 		this.core = core;
+		init();
 	}
 	
-	@Override
-	public void start()
+	/**
+	 * Initialize the Logger with default settings.
+	 */
+	private void initLogger()
 	{
-		initOpenGL();
-	}
-
-	@Override
-	public void work()
-	{
-		render();
-	}
-
-	@Override
-	public void stop()
-	{
+		ConsoleHandler ch = new ConsoleHandler();
+		ch.setLevel(debugLevel);
+		LOGGER.addHandler(ch);
+		LOGGER.setLevel(debugLevel);
 	}
 	
-	public void initOpenGL()
+	/**
+	 * Initialize OpenGL settings.
+	 */
+	private void initOpenGL()
 	{
 		GL11.glDepthFunc(GL11.GL_LEQUAL);
 		GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_FASTEST);	//Hint to increase performance (do once)
@@ -65,8 +74,46 @@ public class RenderSystem implements ISystem
 		GL11.glLoadIdentity();
 		GL11.glOrtho(0, 1680, 1050, 0, -1, 100);
 	}
+	
+	
+	//////////
+	// ISYSTEM INTERFACE
+	//////////
+	@Override
+	public void init()
+	{
+		initLogger();
+		initOpenGL();
+		isRunning = true;
+	}
+	
+	@Override
+	public void start() 
+	{
+		LOGGER.log(Level.INFO, "System started.");
+		isRunning = true;
+	}
 
-	///////////////////////////////////////////////////////////////////////
+	@Override
+	public void work()
+	{
+		if(isRunning)
+		{			
+			render();
+		}
+	}
+
+	@Override
+	public void stop()
+	{
+		LOGGER.log(Level.INFO, "System stopped.");
+		isRunning = false;
+	}
+	
+	
+	//////////
+	// SYSTEM METHODS
+	//////////
 	/**
 	 * Render the entities that have render components.
 	 */
@@ -142,7 +189,7 @@ public class RenderSystem implements ISystem
 	public void createTexture(final ByteBuffer buffer, final TextureData meta)
 	{
 		//TODO: Set it so glTexImage2D is automatically fed the size of the texture.
-		//
+		//TODO: Make metadata part work.
 		int textureID = GL11.glGenTextures();
 		
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
@@ -156,6 +203,5 @@ public class RenderSystem implements ISystem
         int width = 128;
         int height = 128;
         GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB8, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
-        
 	}
 }
