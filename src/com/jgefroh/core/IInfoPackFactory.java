@@ -1,6 +1,5 @@
-package com.jgefroh.infopacks;
+package com.jgefroh.core;
 
-import com.jgefroh.core.IEntity;
 
 public interface IInfoPackFactory
 {

@@ -3,6 +3,8 @@ package com.jgefroh.infopacks;
 import com.jgefroh.components.AnimationComponent;
 import com.jgefroh.components.RenderComponent;
 import com.jgefroh.core.IEntity;
+import com.jgefroh.core.IInfoPack;
+import com.jgefroh.core.IInfoPackFactory;
 
 
 public class AnimationInfoPackFactory implements IInfoPackFactory

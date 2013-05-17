@@ -3,6 +3,7 @@ package com.jgefroh.infopacks;
 import com.jgefroh.components.GravityComponent;
 import com.jgefroh.components.VelocityComponent;
 import com.jgefroh.core.IEntity;
+import com.jgefroh.core.IInfoPack;
 
 
 public class GravityInfoPack implements IInfoPack

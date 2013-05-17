@@ -11,6 +11,8 @@ package com.jgefroh.core;
  * Components should be pure data.
  * Components should not communicate with other components directly.
  * @author Joseph Gefroh
+ * @version 0.1.0
+ * @since	16MAY13
  */
 public interface IComponent
 {

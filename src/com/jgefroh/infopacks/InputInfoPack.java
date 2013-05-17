@@ -2,6 +2,7 @@ package com.jgefroh.infopacks;
 
 import com.jgefroh.components.InputComponent;
 import com.jgefroh.core.IEntity;
+import com.jgefroh.core.IInfoPack;
 
 
 public class InputInfoPack implements IInfoPack

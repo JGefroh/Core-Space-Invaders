@@ -40,6 +40,7 @@ public class RenderSystem implements ISystem
 	/**The level of detail in debug messages.*/
 	private Level debugLevel = Level.FINE;
 	
+	/**Holds the texture metadata.*/
 	private HashMap<Integer, Texture> textures;
 	
 	//////////

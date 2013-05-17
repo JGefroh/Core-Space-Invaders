@@ -8,8 +8,6 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.jgefroh.infopacks.IInfoPack;
-import com.jgefroh.infopacks.IInfoPackFactory;
 
 
 /**
@@ -18,6 +16,8 @@ import com.jgefroh.infopacks.IInfoPackFactory;
  * It monitors Entities for changes in their composition, and automatically
  * updates their associated InfoPacks.
  * @author Joseph Gefroh
+ * @version 0.1.0
+ * @since	16MAY13
  */
 public class Core
 {

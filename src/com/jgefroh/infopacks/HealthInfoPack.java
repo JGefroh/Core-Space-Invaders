@@ -2,6 +2,7 @@ package com.jgefroh.infopacks;
 
 import com.jgefroh.components.HealthComponent;
 import com.jgefroh.core.IEntity;
+import com.jgefroh.core.IInfoPack;
 
 
 public class HealthInfoPack implements IInfoPack

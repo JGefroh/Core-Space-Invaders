@@ -4,6 +4,7 @@ import com.jgefroh.components.CollisionComponent;
 import com.jgefroh.components.RenderComponent;
 import com.jgefroh.components.TransformComponent;
 import com.jgefroh.core.IEntity;
+import com.jgefroh.core.IInfoPack;
 
 
 public class CollisionInfoPack implements IInfoPack

@@ -1,11 +1,11 @@
-package com.jgefroh.infopacks;
+package com.jgefroh.core;
 
-import com.jgefroh.core.IEntity;
 
 /**
  * Provides an interface to deal with sending data to a system
  * @author Joseph Gefroh
- *
+ * @version 0.1.0
+ * @since	16MAY13
  */
 public interface IInfoPack
 {
