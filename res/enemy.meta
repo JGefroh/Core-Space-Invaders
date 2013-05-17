@@ -1,13 +1,35 @@
-<texture>
-	<width>128</width>
-	<height>128</height>
-	<sprite>
-		<seqid>0</seqid>
-		<id>0</id>
-		<name></name>
-		<uMin></uMin>
-		<yMin></yMin>
-		<uMax></uMax>
-		<yMax></yMax>
-	</sprite>
-</texture>
+{
+	"width":128,
+	"height":128,
+	"sprites":
+		[
+			{
+				"id":0,
+				"xmin":0,
+				"xmax":63,
+				"ymin":0,
+				"ymax":63
+			},
+			{
+				"id":1,
+				"xmin":64,
+				"xmax":128,
+				"ymin":0,
+				"ymax":63
+			},
+			{
+				"id":2,
+				"xmin":0,
+				"xmax":63,
+				"ymin":64,
+				"ymax":128
+			},
+			{
+				"id":3,
+				"xmin":64,
+				"xmax":128,
+				"ymin":64,
+				"ymax":128
+			}
+		]
+}

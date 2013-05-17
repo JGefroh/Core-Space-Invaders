@@ -165,7 +165,9 @@ public class Test_SI
 	
 	public void loadTexture()
 	{
+		System.out.println("test");
 		rl.loadTexture("res/enemy.png");
+		System.out.println("endtest");
 	}
 	
 

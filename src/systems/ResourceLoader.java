@@ -2,10 +2,9 @@ package systems;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Scanner;
+import java.util.HashMap;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,7 +13,12 @@ import javax.imageio.ImageIO;
 
 import org.lwjgl.BufferUtils;
 
-import data.TextureData;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+
+import data.Sprite;
+import data.Texture;
 
 /**
  * This class handles the loading of resources.
@@ -138,11 +142,11 @@ public class ResourceLoader implements ISystem
 	 * @param path	the path of the file to load
 	 * @return the texture meta data
 	 */
-	public TextureData loadTextureMeta(final String path)
+	public Texture loadTextureMeta(final String path)
 	{
-		TextureData metaData = new TextureData();
 		if(isValidFile(path))
 		{
+			return convertJSONToMeta(new File(path));
 		}
 		return null;
 	}
@@ -157,8 +161,8 @@ public class ResourceLoader implements ISystem
 		{
 			File file = new File(path);
 			ByteBuffer imageData = convertImageToBuffer(file);
-			TextureData metaData = loadTextureMeta(path.replace(".png", ".meta"));
-			core.getSystem(RenderSystem.class).createTexture(imageData, metaData);	
+			Texture meta = loadTextureMeta(path.replace(".png", ".meta"));
+			core.getSystem(RenderSystem.class).createTexture(imageData, meta);	
 		}
 	}
 	
@@ -210,6 +214,94 @@ public class ResourceLoader implements ISystem
 		catch(ArrayIndexOutOfBoundsException e)
 		{
 			LOGGER.log(Level.SEVERE, "Error converting: " + file.getName());
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private Texture convertJSONToMeta(final File file)
+	{//TODO: parse Json, change to interface so it can parse anything.
+		//TODO: Error check
+		Texture meta = new Texture();
+		try
+		{
+			JsonFactory jFact = new JsonFactory();
+			JsonParser jParser = jFact.createJsonParser(file);	//TODO: Dep?
+			
+			HashMap<Integer, Sprite> sprites = new HashMap<Integer, Sprite>();
+			Sprite sprite = new Sprite();
+			String field;
+			String value;
+			
+			jParser.nextToken();
+			while(jParser.nextToken()!=null)
+			{	
+				field = jParser.getCurrentName();
+				value = jParser.getValueAsString();
+				if(field!=null&&value!=null)
+				{
+					//if one of the regular fields...
+					if(field.equals("height"))
+					{
+						meta.setImageHeight(jParser.getValueAsInt());
+					}
+					else if(field.equals("width"))
+					{
+						meta.setImageWidth(jParser.getValueAsInt());
+					}
+				}
+				else if(jParser.getCurrentToken()==JsonToken.START_ARRAY)
+				{//If it is the beginning of the sprite definitions...
+					while(jParser.nextToken()!=null)
+					{//While there are objects to parse in the array...
+						if(jParser.getCurrentToken()==JsonToken.START_OBJECT)
+						{
+							sprite = new Sprite();
+						}
+						else if(jParser.getCurrentToken()==JsonToken.END_OBJECT)
+						{
+							sprites.put(sprite.getSpriteID(), sprite);
+						}
+						else if(jParser.getCurrentToken()==JsonToken.END_ARRAY)
+						{
+							meta.setSprites(sprites);
+						}
+						else
+						{
+							field = jParser.getCurrentName();
+							value = jParser.getValueAsString();
+							if(field!=null&&value!=null)
+							{
+								if(field.equals("id"))
+								{
+									sprite = new Sprite();
+									sprite.setSpriteID(jParser.getValueAsInt());
+								}
+								else if(field.equals("xmin"))
+								{
+									sprite.setXMin(jParser.getValueAsInt());
+								}
+								else if(field.equals("xmax"))
+								{
+									sprite.setXMax(jParser.getValueAsInt());
+								}
+								else if(field.equals("ymin"))
+								{
+									sprite.setYMin(jParser.getValueAsInt());
+								}
+								else if(field.equals("ymax"))
+								{
+									sprite.setYMax(jParser.getValueAsInt());
+								}
+							}
+						}
+					}
+				}
+			}//while loop
+			return meta;
+		}
+		catch(IOException e)
+		{
 			e.printStackTrace();
 		}
 		return null;

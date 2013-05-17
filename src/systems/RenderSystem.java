@@ -4,13 +4,15 @@ import infopacks.RenderInfoPack;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.lwjgl.opengl.GL11;
 
-import data.TextureData;
+import data.Sprite;
+import data.Texture;
 
 /**
  * This system handles the rendering and drawing of entities.
@@ -35,6 +37,7 @@ public class RenderSystem implements ISystem
 	/**The level of detail in debug messages.*/
 	private Level debugLevel = Level.FINE;
 	
+	private HashMap<Integer, Texture> textures;
 	
 	//////////
 	// INIT
@@ -84,6 +87,7 @@ public class RenderSystem implements ISystem
 	{
 		initLogger();
 		initOpenGL();
+		textures = new HashMap<Integer, Texture>();
 		isRunning = true;
 	}
 	
@@ -110,6 +114,73 @@ public class RenderSystem implements ISystem
 		isRunning = false;
 	}
 	
+	//////////
+	// GETTERS
+	//////////
+	/**
+	 * Get the uMin texture coordinates stored for a given sprite and texture.
+	 * @param textureID		the OpenGL assigned ID of the texture
+	 * @param spriteIndex	the index of the sprite who's coordinate to return
+	 * @return	the uMin texture coordinate of the sprite, 0 if error
+	 */
+	public float getUMin(final int textureID, final int spriteIndex)
+	{
+		Texture texture = textures.get(textureID);
+		if(texture!=null)
+		{
+			return texture.getUMin(spriteIndex);
+		}
+		return 0.0f;
+	}
+	
+	/**
+	 * Get the uMax texture coordinates stored for a given sprite and texture.
+	 * @param textureID		the OpenGL assigned ID of the texture
+	 * @param spriteIndex	the index of the sprite who's coordinate to return
+	 * @return	the uMax texture coordinate of the sprite, 0 if error
+	 */
+	public float getUMax(final int textureID, final int spriteIndex)
+	{
+		Texture texture = textures.get(textureID);
+		if(texture!=null)
+		{
+			return texture.getUMax(spriteIndex);
+		}
+		return 0.0f;
+	}
+	
+	/**
+	 * Get the vMin texture coordinates stored for a given sprite and texture.
+	 * @param textureID		the OpenGL assigned ID of the texture
+	 * @param spriteIndex	the index of the sprite who's coordinate to return
+	 * @return	the vMin texture coordinate of the sprite, 0 if error
+	 */
+	public float getVMin(final int textureID, final int spriteIndex)
+	{
+		Texture texture = textures.get(textureID);
+		if(texture!=null)
+		{
+			return texture.getVMin(spriteIndex);
+		}
+		return 0;
+	}
+	
+	/**
+	 * Get the vMax texture coordinates stored for a given sprite and texture.
+	 * @param textureID		the OpenGL assigned ID of the texture
+	 * @param spriteIndex	the index of the sprite who's coordinate to return
+	 * @return	the vMax texture coordinate of the sprite, 0 if error
+	 */
+	public float getVMax(final int textureID, final int spriteIndex)
+	{
+		Texture texture = textures.get(textureID);
+		if(texture!=null)
+		{
+			return texture.getVMax(spriteIndex);
+		}
+		return 0.0f;
+	}
+	
 	
 	//////////
 	// SYSTEM METHODS
@@ -124,11 +195,13 @@ public class RenderSystem implements ISystem
 				core.getInfoPacksOfType(RenderInfoPack.class);
 		for(RenderInfoPack pack:infoPacks)
 		{
-			float a= 0.25f;
 			//Bind the texture
 			drawQuadAt(pack.getXPos(), pack.getYPos(), pack.getZPos(),
 					pack.getWidth(), pack.getHeight(),
-					0, a, 0, a);
+					getUMin(pack.getTextureID(), pack.getSpriteIndex()),
+					getUMax(pack.getTextureID(), pack.getSpriteIndex()),
+					getVMin(pack.getTextureID(), pack.getSpriteIndex()),
+					getVMax(pack.getTextureID(), pack.getSpriteIndex()));
 		}
 	}
 
@@ -180,13 +253,14 @@ public class RenderSystem implements ISystem
 		GL11.glEnd();
 		GL11.glPopMatrix();
 	}
+
 	
 	/**
 	 * Load a texture and its metadata into the Render system.
 	 * @param buffer	the buffer containing the pixel data of the texture
 	 * @param meta		the metadata related to the texture
 	 */
-	public void createTexture(final ByteBuffer buffer, final TextureData meta)
+	public void createTexture(final ByteBuffer buffer, final Texture meta)
 	{
 		//TODO: Set it so glTexImage2D is automatically fed the size of the texture.
 		//TODO: Make metadata part work.
@@ -198,10 +272,31 @@ public class RenderSystem implements ISystem
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
         
-        //int width = meta.getImageWidth();
-        //int height = meta.getImageHeight();
-        int width = 128;
-        int height = 128;
+        int width = meta.getImageWidth();
+        int height = meta.getImageHeight();
+        
         GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB8, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
+        
+        calcTextureCoordinates(meta);
+        textures.put(textureID, meta);
+	}
+	
+	/**
+	 * Go through a texture's sprites and calculate their texture coordinates.
+	 * @param meta	the Texture you want to go through
+	 */
+	public void calcTextureCoordinates(final Texture meta)
+	{
+		for(int index=0;index<meta.getNumSprites();index++)
+		{ 
+			float uMin = ((float)meta.getXMin(index))/meta.getImageWidth();
+			float uMax = ((float)meta.getXMax(index))/meta.getImageWidth();
+			float vMin = ((float)meta.getYMin(index))/meta.getImageHeight();
+			float vMax = ((float)meta.getYMax(index))/meta.getImageHeight();
+			meta.setSpriteUMin(index, uMin);
+			meta.setSpriteUMax(index, uMax);
+			meta.setSpriteVMin(index, vMin);
+			meta.setSpriteVMax(index, vMax);
+		}
 	}
 }

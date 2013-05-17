@@ -123,6 +123,8 @@ public class EntityCreationSystem implements ISystem
 		player.getComponent(TransformComponent.class).setWidth(64);
 		player.getComponent(TransformComponent.class).setHeight(64);
 		player.addComponent(RenderComponent.class, new RenderComponent(player));
+		player.getComponent(RenderComponent.class).setSpriteIndex(0);
+		player.getComponent(RenderComponent.class).setTextureID(1);
 		player.addComponent(VelocityComponent.class, new VelocityComponent(player));
 		player.getComponent(VelocityComponent.class).setInterval(4);
 		player.getComponent(VelocityComponent.class).setXVelocity(0);
@@ -154,6 +156,8 @@ public class EntityCreationSystem implements ISystem
 		alien.getComponent(TransformComponent.class).setWidth(32);
 		alien.getComponent(TransformComponent.class).setHeight(32);
 		alien.addComponent(RenderComponent.class, new RenderComponent(alien));
+		alien.getComponent(RenderComponent.class).setSpriteIndex(1);
+		alien.getComponent(RenderComponent.class).setTextureID(1);
 		alien.addComponent(VelocityComponent.class, new VelocityComponent(alien));
 		alien.getComponent(VelocityComponent.class).setInterval(200);
 		alien.getComponent(VelocityComponent.class).setXVelocity(0);
@@ -181,6 +185,8 @@ public class EntityCreationSystem implements ISystem
 		fort.getComponent(TransformComponent.class).setWidth(128);
 		fort.getComponent(TransformComponent.class).setHeight(64);
 		fort.addComponent(RenderComponent.class, new RenderComponent(fort));
+		fort.getComponent(RenderComponent.class).setSpriteIndex(2);
+		fort.getComponent(RenderComponent.class).setTextureID(1);
 		fort.addComponent(CollisionComponent.class, new CollisionComponent(fort));
 		fort.getComponent(CollisionComponent.class).setCollisionGroup(4);
 		fort.addComponent(HealthComponent.class, new HealthComponent(fort));
@@ -212,6 +218,8 @@ public class EntityCreationSystem implements ISystem
 		bullet.getComponent(VelocityComponent.class).setInterval(4);
 		bullet.getComponent(VelocityComponent.class).setXVelocity(0);
 		bullet.addComponent(RenderComponent.class, new RenderComponent(bullet));
+		bullet.getComponent(RenderComponent.class).setSpriteIndex(3);
+		bullet.getComponent(RenderComponent.class).setTextureID(1);
 		bullet.addComponent(CollisionComponent.class, new CollisionComponent(bullet));
 		if(owner.getName().equals("ALIEN"))
 		{
