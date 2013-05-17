@@ -27,6 +27,7 @@ import com.jgefroh.systems.ResourceLoader;
 import com.jgefroh.systems.TimerSystem;
 import com.jgefroh.systems.TransformSystem;
 import com.jgefroh.systems.WeaponSystem;
+import com.jgefroh.systems.WinCheckSystem;
 import com.jgefroh.systems.WindowSystem;
 
 
@@ -77,6 +78,7 @@ public class Test_SI
 		core.addSystem(new EventSystem(core), 1);
 		core.addSystem(new HealthCheckSystem(core), 1);
 		core.addSystem(new DamageSystem(core), 1);
+		core.addSystem(new WinCheckSystem(core), 1);
 		rl = new ResourceLoader(core);
 	}
 	

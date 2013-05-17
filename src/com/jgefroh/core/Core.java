@@ -63,6 +63,7 @@ public class Core
 		entities = new ArrayList<IEntity>();
 		systems = new ArrayList<ISystem>();
 		packFactories = new ArrayList<IInfoPackFactory>();
+		LOGGER.log(Level.INFO, "Core started.");
 	}
 	
 	/**
@@ -298,5 +299,15 @@ public class Core
 			}
 		}
 		return null;
+	}
+	
+	public void setDebugLevel(final Level debugLevel)
+	{
+		this.debugLevel = debugLevel;
+	}
+	
+	public Level getDebugLevel()
+	{
+		return this.debugLevel;
 	}
 }
