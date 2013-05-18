@@ -71,6 +71,7 @@ public class ResourceLoader implements ISystem
 		ch.setLevel(debugLevel);
 		LOGGER.addHandler(ch);
 		LOGGER.setLevel(debugLevel);
+		LOGGER.setUseParentHandlers(false);
 	}
 	
 	
@@ -146,11 +147,7 @@ public class ResourceLoader implements ISystem
 	 */
 	public Texture loadTextureMeta(final String path)
 	{
-		if(isValidFile(path))
-		{
-			return convertJSONToMeta(new File(path));
-		}
-		return null;
+		return convertJSONToMeta(new File(path));
 	}
 	
 	/**

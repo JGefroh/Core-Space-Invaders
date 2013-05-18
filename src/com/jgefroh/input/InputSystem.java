@@ -76,6 +76,7 @@ public class InputSystem implements IInputSystem, ISystem
 		ch.setLevel(debugLevel);
 		LOGGER.addHandler(ch);
 		LOGGER.setLevel(debugLevel);
+		LOGGER.setUseParentHandlers(false);
 	}
 	
 	/**

@@ -172,12 +172,10 @@ public class Test_SI
 	
 	public void loadTexture()
 	{
-		System.out.println("test");
 		rl.loadTexture("res/enemy.png");
 		rl.loadTexture("res/fort.png");
 		rl.loadTexture("res/player.png");
 		rl.loadTexture("res/bullet.png");
-		System.out.println("endtest");
 	}
 	
 

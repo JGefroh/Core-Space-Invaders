@@ -50,6 +50,7 @@ public class Core
 		ch.setLevel(debugLevel);
 		LOGGER.addHandler(ch);
 		LOGGER.setLevel(debugLevel);
+		LOGGER.setUseParentHandlers(false);
 	}
 	
 	/**

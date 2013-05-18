@@ -62,6 +62,7 @@ public class TransformSystem implements ISystem
 		ch.setLevel(debugLevel);
 		LOGGER.addHandler(ch);
 		LOGGER.setLevel(debugLevel);
+		LOGGER.setUseParentHandlers(false);
 	}
 	
 	
