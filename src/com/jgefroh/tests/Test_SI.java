@@ -8,6 +8,7 @@ import org.lwjgl.opengl.Display;
 
 import com.jgefroh.core.Core;
 import com.jgefroh.infopacks.AIInfoPackFactory;
+import com.jgefroh.infopacks.AnimationInfoPackFactory;
 import com.jgefroh.infopacks.BulletInfoPackFactory;
 import com.jgefroh.infopacks.CollisionInfoPackFactory;
 import com.jgefroh.infopacks.HealthInfoPackFactory;
@@ -17,6 +18,7 @@ import com.jgefroh.infopacks.RenderInfoPackFactory;
 import com.jgefroh.infopacks.WeaponInfoPackFactory;
 import com.jgefroh.input.InputSystem;
 import com.jgefroh.systems.AISystem;
+import com.jgefroh.systems.AnimationSystem;
 import com.jgefroh.systems.CollisionSystem;
 import com.jgefroh.systems.DamageSystem;
 import com.jgefroh.systems.EntityCreationSystem;
@@ -79,6 +81,7 @@ public class Test_SI
 		core.addSystem(new HealthCheckSystem(core), 1);
 		core.addSystem(new DamageSystem(core), 1);
 		core.addSystem(new WinCheckSystem(core), 1);
+		core.addSystem(new AnimationSystem(core), 1);
 		rl = new ResourceLoader(core);
 	}
 	
@@ -92,6 +95,7 @@ public class Test_SI
 		core.addFactory(new BulletInfoPackFactory());
 		core.addFactory(new AIInfoPackFactory());
 		core.addFactory(new HealthInfoPackFactory());
+		core.addFactory(new AnimationInfoPackFactory());
 	}
 	
 	/**
@@ -170,6 +174,9 @@ public class Test_SI
 	{
 		System.out.println("test");
 		rl.loadTexture("res/enemy.png");
+		rl.loadTexture("res/fort.png");
+		rl.loadTexture("res/player.png");
+		rl.loadTexture("res/bullet.png");
 		System.out.println("endtest");
 	}
 	

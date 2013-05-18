@@ -2,7 +2,6 @@ package com.jgefroh.infopacks;
 
 import com.jgefroh.components.AnimationComponent;
 import com.jgefroh.components.RenderComponent;
-import com.jgefroh.components.AnimationComponent.LoopType;
 import com.jgefroh.core.IEntity;
 import com.jgefroh.core.IInfoPack;
 
@@ -15,58 +14,53 @@ import com.jgefroh.core.IInfoPack;
  */
 public class AnimationInfoPack implements IInfoPack
 {
-	/**The parent/owner of this AnimationInfoPack.*/
-	private IEntity parent;
+	//////////
+	// DATA
+	//////////
+	/**The owner of this AnimationInfoPack.*/
+	private IEntity owner;
 	
-	/**The AnimationComponent belonging to the parent.*/
+	/**The AnimationComponent belonging to the owner.*/
 	private AnimationComponent ac;
 	
-	/**The RenderComponent belonging to the parent.*/
+	/**The RenderComponent belonging to the owner.*/
 	private RenderComponent rc;
+	
+	
 	
 	/**
 	 * Create a new AnimationInfoPack belonging to a specific entity.
-	 * @param parent	the owner of this AnimationInfoPack
+	 * @param owner	the owner of this AnimationInfoPack
 	 */
-	public AnimationInfoPack(final IEntity parent)
+	public AnimationInfoPack(final IEntity owner)
 	{
-		this.parent = parent;
+		this.owner = owner;
 	}
 	
+	@Override
+	public boolean updateReferences()
+	{
+		ac = owner.getComponent(AnimationComponent.class);
+		rc = owner.getComponent(RenderComponent.class);
+		if(ac!=null&&rc!=null)
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	
+	//////////
+	// GETTERS
+	//////////
 	/**
-	 * Get the parent of this AnimationInfoPack.
-	 * @return	the parent of this AnimationInfoPack
+	 * Get the owner of this AnimationInfoPack.
+	 * @return	the owner of this AnimationInfoPack
 	 */
+	@Override
 	public IEntity getOwner()
 	{
-		return this.parent;
-	}
-	
-	/**
-	 * Check to see if the parent is animating.
-	 * @return	true if animating, false otherwise.
-	 */
-	public boolean isAnimating()
-	{
-		return ac.isAnimating();
-	}
-	
-	/**
-	 * Check to see if the parent's animation is reversing.
-	 * @return true if reversing, false otherwise.
-	 */
-	public boolean isReversing()
-	{
-		return ac.isReversing();
-	}
-	
-	/**
-	 * Get the time between frames for the currently played animation.
-	 * @return	the time between frames, in milliseconds.
-	 */
-	public long getFrameDelay()
-	{
-		return ac.getFrameDelay();
+		return this.owner;
 	}
 	
 	/**
@@ -79,15 +73,6 @@ public class AnimationInfoPack implements IInfoPack
 	}
 	
 	/**
-	 * Get the highest frame number of the currently playing animation.
-	 * @return	the highest frame number
-	 */
-	public int getMaxFrame()
-	{
-		return ac.getMaxFrame();
-	}
-	
-	/**
 	 * Get the current frame number of the currently playing animation.
 	 * @return	the current frame number
 	 */
@@ -96,6 +81,35 @@ public class AnimationInfoPack implements IInfoPack
 		return ac.getCurrentFrame();
 	}
 	
+	/**
+	 * Get the sprite that should be displayed.
+	 * @return	the sprite
+	 */
+	public int getAnimationSprite()
+	{
+		return ac.getAnimationSprite();
+	}
+	
+	/**
+	 * Get the time to wait between frame updates.
+	 * @return	the time to wait, in ms.
+	 */
+	public long getInterval()
+	{
+		return ac.getInterval();
+	}
+	
+	/**
+	 * Get the number of frames in the current animation.
+	 * @return	the number of frames
+	 */
+	public int getNumberOfFrames()
+	{
+		return ac.getNumberOfFrames();
+	}
+	//////////
+	// SETTERS
+	//////////
 	/**
 	 * Set the time the animation was last updated
 	 * @param updateTime	the long time the animation was last updated, in ms.
@@ -106,68 +120,21 @@ public class AnimationInfoPack implements IInfoPack
 	}
 	
 	/**
-	 * Get the sprite associated with the current frame of the animation.
-	 * @return	the sprite index number of the current animation frame.
-	 */
-	public int getFrameSprite()
-	{
-		return ac.getFrameSprite();
-	}
-	
-	/**
 	 * Set the sprite index number on the render component.
 	 * @param spriteIndex	the sprite index number of the render component
 	 */
-	public void setSpriteIndex(final int spriteIndex)
+	public void setAnimationSprite(final int spriteID)
 	{
-		rc.setSpriteIndex(spriteIndex);
+		rc.setSpriteID(spriteID);
 	}
 	
 	/**
-	 * Advance to the next frame.
+	 * Set the current frame of the animation.
+	 * @param currentFrame	the current frame of the animation
 	 */
-	public void nextFrame()
-	{
-		ac.nextFrame();
-	}
-	
-	/**
-	 * Get the loop type.
-	 * @return	the loop type of the animation
-	 */
-	public LoopType getLoopType()
-	{
-		return ac.getLoopType();
-	}
-	
-	/**
-	 * Set whether the animation is reversing or not.
-	 * @param isReversing
-	 */
-	public void setReversing(final boolean isReversing)
-	{
-		ac.setReversing(isReversing);
-	}
-	
-	@Override
-	public boolean updateReferences()
-	{
-		ac = parent.getComponent(AnimationComponent.class);
-		rc = parent.getComponent(RenderComponent.class);
-		if(ac!=null&&rc!=null)
-		{
-			return true;
-		}
-		return false;
-	}
-	
-	public void setAnimating(final boolean isAnimating)
-	{
-		ac.setAnimating(isAnimating);
-	}
 	public void setCurrentFrame(final int currentFrame)
 	{
-		ac.setCurrentFrame(0);
+		ac.setCurrentFrame(currentFrame);
 	}
 
 }

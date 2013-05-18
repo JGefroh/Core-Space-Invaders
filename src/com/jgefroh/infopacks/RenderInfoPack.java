@@ -52,9 +52,9 @@ public class RenderInfoPack implements IInfoPack
 	{
 		return this.parent;
 	}
-	public int getSpriteIndex()
+	public int getSpriteID()
 	{
-		return rc.getSpriteIndex();
+		return rc.getSpriteID();
 	}
 	public int getTextureID()
 	{

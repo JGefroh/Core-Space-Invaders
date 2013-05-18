@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 import com.jgefroh.core.IComponent;
 import com.jgefroh.core.IEntity;
-import com.jgefroh.data.AnimationData;
+import com.jgefroh.data.Animation;
 
 
 
@@ -20,9 +20,6 @@ public class AnimationComponent implements IComponent
 	//////////
 	// DATA
 	//////////
-	/**The types of loop that an animation can perform.*/
-	public enum LoopType {LOOPDISABLED, LOOPFROMSTART, LOOPSCAN}
-	
 	/**The owner of this component.*/
 	private IEntity owner;
 	
@@ -32,20 +29,11 @@ public class AnimationComponent implements IComponent
 	/**The name of the animation that is currently being played.*/
 	private String currentAnimation;
 	
-	/**The name of the animation that was previously playing.*/
-	private String previousAnimation;
-	
 	/**The current frame of the animation.*/
 	private int currentFrame;
 	
-	/**FLAG: indicates whether the animation is currently playing or not.*/
-	private boolean isAnimating = true;
-	
-	/**FLAG: indicates whether the animation is playing backwards or not.*/
-	private boolean isReversing = false;
-	
 	/**Holds all of the animation definitions for this entity.*/
-	private HashMap<String, AnimationData> animations;
+	private HashMap<String, Animation> animations;
 
 	
 	//////////
@@ -64,7 +52,7 @@ public class AnimationComponent implements IComponent
 	@Override
 	public void init()
 	{
-		animations = new HashMap<String, AnimationData>();
+		animations = new HashMap<String, Animation>();
 	}
 	
 	
@@ -86,57 +74,28 @@ public class AnimationComponent implements IComponent
 	}
 	
 	/**
-	 * Advance to the next frame of the animation.
+	 * Add an animation.
+	 * @param name				the unique name of the animation
+	 * @param spriteSequence	the sprite indexes that make up the animation
+	 * @param interval			the time to wait between frames
 	 */
-	public void nextFrame()
+	public void addAnimation(final String name, final int[] spriteSequence, 
+								final long interval)
 	{
-		if(isReversing==false)
-		{			
-			this.currentFrame++;
-		}
-		else
-		{
-			this.currentFrame--;
-		}
+		Animation animation = new Animation();
+		animation.setName(name);
+		animation.setSequence(spriteSequence);
+		animation.setInterval(interval);
+		animations.put(name, animation);
 	}
 	
 	/**
-	 * Create an animation.
-	 * @param animationName	the unique name of the animation
-	 * @param frames		the ordered sprite indexes of the animation
-	 * @param delay			the time to wait in between frames
-	 * @param loopType		the kind of looping to perform at the end
+	 * Add an animation.
+	 * @param animation
 	 */
-	public void addAnimation(final String animationName, 
-								final ArrayList<Integer> frames,
-								final int delay, final LoopType loopType)
+	public void addAnimation(final Animation animation)
 	{
-		animations.put(animationName, defineAnimation(animationName, frames, delay, loopType));
-		if(currentAnimation==null)
-		{
-			currentAnimation = animationName;
-		}
-	}
-	
-	/**
-	 * Define an animation to play.
-	 * @param animationName		the unique name of the animation
-	 * @param frames			the ordered sprite indexes of the animation
-	 * @param delay				the time to wait inbetween frames
-	 * @param loopType			the kind of looping to perform at the end
-	 * @return					the Animation
-	 */
-	private AnimationData defineAnimation(final String animationName,
-											final ArrayList<Integer> frames,
-											final int delay,
-											final LoopType loopType)
-	{
-		AnimationData ad = new AnimationData();
-		ad.setName(animationName);
-		ad.setLoopType(loopType);
-		ad.setFrameDelay(delay);
-		ad.setFrames(frames);
-		return ad;
+		animations.put(animation.getName(), animation);
 	}
 	
 	
@@ -150,7 +109,7 @@ public class AnimationComponent implements IComponent
 	}
 	
 	/**
-	 * Get the number of the current animation frame.
+	 * Get the current frame of the animation.
 	 * @return	the number of the current animation frame
 	 */
 	public int getCurrentFrame()
@@ -168,64 +127,56 @@ public class AnimationComponent implements IComponent
 	}
 	
 	/**
-	 * Get the maximum frame number of the current animation.
-	 * @return	the highest frame number of the current animation
-	 */
-	public int getMaxFrame()
-	{
-		return animations.get(currentAnimation).getMaxFrameNumber()-1;
-	}
-	
-	/**
-	 * Get the time to wait before changing frames.
-	 * @return	the time to wait between frames, in ms
-	 */
-	public long getFrameDelay()
-	{
-		return animations.get(currentAnimation).getFrameDelay();
-	}
-	
-	/**
 	 * Get the name of the current animation.
 	 * @return	the name of the current animation
 	 */
 	public String getCurrentAnimation()
 	{
 		return this.currentAnimation;
-	}
+	}	
 	
 	/**
-	 * Get whether the component is currently animating.
-	 * @return	true if the component is current animating, false otherwise
+	 * Get the time to wait before changing frames.
+	 * @return	the time to wait between frames, in ms
 	 */
-	public boolean isAnimating()
+	public long getInterval()
 	{
-		return this.isAnimating;
+		Animation animation = animations.get(currentAnimation);
+		if(animation!=null)
+		{
+			return animation.getInterval();
+		}
+		else
+		{
+			return -1;
+		}
 	}
 	
-	/**
-	 * Get whether the animation is playing forward or in reverse.
-	 * @return	true if the animation is playing forward, false if reverse
-	 */
-	public boolean isReversing()
+	public int getAnimationSprite()
 	{
-		return this.isReversing;
-	}
-	public LoopType getLoopType()
-	{
-		return this.animations.get(currentAnimation).getLoopType();
-	}
-	
-	/**
-	 * Get the sprite index for the current frame of the current animation.
-	 * @return	the int sprite index
-	 */
-	public int getFrameSprite()
-	{
-		return animations.get(currentAnimation).getFrameSprite(currentFrame);
+		Animation animation = animations.get(currentAnimation);
+		if(animation!=null)
+		{
+			return animation.getAnimationSprite(currentFrame);
+		}
+		else
+		{
+			return -1;
+		}
 	}
 	
-	
+	public int getNumberOfFrames()
+	{
+		Animation animation = animations.get(currentAnimation);
+		if(animation!=null)
+		{
+			return animation.getNumberOfFrames();
+		}
+		else
+		{
+			return -1;
+		}
+	}
 	//////////
 	// SETTERS
 	//////////
@@ -233,15 +184,6 @@ public class AnimationComponent implements IComponent
 	public void setOwner(final IEntity owner)
 	{
 		this.owner = owner;
-	}
-	
-	/**
-	 * Set the animation flag.
-	 * @param isAnimating	true if the animation is playing, false otherwise
-	 */
-	public void setAnimating(final boolean isAnimating)
-	{
-		this.isAnimating = isAnimating;
 	}
 	
 	/**
@@ -254,33 +196,16 @@ public class AnimationComponent implements IComponent
 	}
 	
 	/**
-	 * Set the reversal flag
-	 * @param isReversing true if playing in reverse, false otherwise
-	 */
-	public void setReversing(final boolean isReversing)
-	{
-		this.isReversing = isReversing;
-	}
-	
-	/**
-	 * Set the current animation that is playing.
-	 * @param currentAnimation the name of the current animation
-	 */
-	public void setCurrentAnimation(final String currentAnimation)
-	{
-		if(isValidAnimation(currentAnimation))
-		{			
-			this.previousAnimation = this.currentAnimation;
-			this.currentAnimation = currentAnimation;
-		}
-	}
-	
-	/**
 	 * set the time the animation was last updated
 	 * @param lastUpdateTime the time the animation was last updated, in ms
 	 */
 	public void setLastUpdateTime(final long lastUpdateTime)
 	{
 		this.lastUpdateTime = lastUpdateTime;
+	}
+	
+	public void setCurrentAnimation(final String currentAnimation)
+	{
+		this.currentAnimation = currentAnimation;
 	}
 }

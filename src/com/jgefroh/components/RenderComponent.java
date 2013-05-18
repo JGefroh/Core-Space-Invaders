@@ -31,7 +31,7 @@ public class RenderComponent implements IComponent
 	private int textureID;
 	
 	/**The index of the sprite used to render*/
-	private int spriteIndex;
+	private int spriteID;
 	
 	
 	//////////
@@ -53,7 +53,7 @@ public class RenderComponent implements IComponent
 		setVisible(true);
 		setTexturePath(null);
 		setTextureID(-1);
-		setSpriteIndex(-1);
+		setSpriteID(-1);
 	}
 	
 	
@@ -88,9 +88,9 @@ public class RenderComponent implements IComponent
 	 * Get the sprite index of this entity.
 	 * @return	the sprite index of this entity
 	 */
-	public int getSpriteIndex()
+	public int getSpriteID()
 	{
-		return this.spriteIndex;
+		return this.spriteID;
 	}
 
 	/**
@@ -132,11 +132,11 @@ public class RenderComponent implements IComponent
 	
 	/**
 	 * Set the sprite index of the image being drawn.
-	 * @param spriteIndex
+	 * @param spriteID
 	 */
-	public void setSpriteIndex(final int spriteIndex)
+	public void setSpriteID(final int spriteID)
 	{
-		this.spriteIndex = spriteIndex;
+		this.spriteID = spriteID;
 	}
 
 	/**

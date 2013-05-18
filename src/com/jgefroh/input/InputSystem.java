@@ -20,7 +20,6 @@ import com.jgefroh.actions.IAction;
 import com.jgefroh.core.Core;
 import com.jgefroh.core.ISystem;
 import com.jgefroh.infopacks.InputInfoPack;
-import com.jgefroh.systems.AnimationSystem;
 
 
 

@@ -106,7 +106,7 @@ public class RenderSystem implements ISystem
 	public void work()
 	{
 		if(isRunning)
-		{			
+		{					
 			render();
 		}
 	}
@@ -200,12 +200,13 @@ public class RenderSystem implements ISystem
 		for(RenderInfoPack pack:infoPacks)
 		{
 			//Bind the texture
-			drawQuadAt(pack.getXPos(), pack.getYPos(), pack.getZPos(),
+			drawQuadAt(pack.getTextureID(), 
+					pack.getXPos(), pack.getYPos(), pack.getZPos(),
 					pack.getWidth(), pack.getHeight(),
-					getUMin(pack.getTextureID(), pack.getSpriteIndex()),
-					getUMax(pack.getTextureID(), pack.getSpriteIndex()),
-					getVMin(pack.getTextureID(), pack.getSpriteIndex()),
-					getVMax(pack.getTextureID(), pack.getSpriteIndex()));
+					getUMin(pack.getTextureID(), pack.getSpriteID()),
+					getUMax(pack.getTextureID(), pack.getSpriteID()),
+					getVMin(pack.getTextureID(), pack.getSpriteID()),
+					getVMax(pack.getTextureID(), pack.getSpriteID()));
 		}
 	}
 
@@ -230,7 +231,8 @@ public class RenderSystem implements ISystem
 	 * @param vMin		the v-texture coordinate minimum
 	 * @param vMax		the v-texture coordinate maximum
 	 */
-	private void drawQuadAt(final long x, final long y, final long z, final int width, final int height,
+	private void drawQuadAt(final int textureID, 
+							final long x, final long y, final long z, final int width, final int height,
 							final float uMin, final float uMax, final float vMin, final float vMax)
 	{
 
@@ -238,9 +240,9 @@ public class RenderSystem implements ISystem
 		GL11.glTranslatef(x, y, z);	//Move to specified draw location
 		//GL11.glRotatef(x, 0, 0, 1);
 		GL11.glColor3f(1, 1, 1);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
 		GL11.glBegin(GL11.GL_QUADS);
 		{
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, 1);
 
 			GL11.glTexCoord3f(uMin, vMin, z);	//Top Left
 			GL11.glVertex3f(0, 0, z);		//Top Left

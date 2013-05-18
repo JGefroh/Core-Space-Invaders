@@ -6,7 +6,6 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.jgefroh.components.AnimationComponent;
 import com.jgefroh.core.Core;
 import com.jgefroh.core.ISystem;
 import com.jgefroh.infopacks.AnimationInfoPack;
@@ -38,7 +37,7 @@ public class AnimationSystem implements ISystem
 	/**The level of detail in debug messages.*/
 	private Level debugLevel = Level.FINE;
 	
-	
+	private TimerSystem timer;
 	//////////
 	// INIT
 	//////////
@@ -78,15 +77,24 @@ public class AnimationSystem implements ISystem
 	public void start()
 	{
 		LOGGER.log(Level.INFO, "System started.");
-		isRunning = true;
+		timer = core.getSystem(TimerSystem.class);
+		if(timer!=null)
+		{
+			isRunning = true;			
+		}
+		else
+		{
+			isRunning = false;
+			LOGGER.log(Level.SEVERE, "Unable to start system - missing timer.");
+		}
 	}
 
 	@Override
 	public void work()
 	{		
-		if(isRunning)
+		if(timer!=null&&isRunning)
 		{			
-			updateFrames();
+			animate();
 		}
 	}
 
@@ -106,59 +114,37 @@ public class AnimationSystem implements ISystem
 	 * their frames.
 	 * @param entities the ArrayList of entities
 	 */
-	private void updateFrames()
+	private void animate()
 	{
 		ArrayList<AnimationInfoPack> infoPacks = 
 				core.getInfoPacksOfType(AnimationInfoPack.class);
 		for(AnimationInfoPack pack:infoPacks)
 		{
-			if(pack.updateReferences());
-			{
-				if(pack.isAnimating()
-						&&isUpdateTime(pack.getLastUpdateTime(), pack.getFrameDelay()))
-					{//If animations are active and it is time to update...
-						pack.setLastUpdateTime(core.getSystem(TimerSystem.class).getNow());
-						if((pack.isReversing()==false
-								&&pack.getMaxFrame()>pack.getCurrentFrame())
-								|| (pack.isReversing()==true&&0<pack.getCurrentFrame()))
-						{//If it is not at the last frame in either direction
-							pack.nextFrame();
-						}
-						else
-						{//else if at the last frame in either direction
-							if(pack.getLoopType()==AnimationComponent.LoopType.LOOPFROMSTART)
-							{//if looping from beginning of the animation
-								pack.setCurrentFrame(0);
-							}
-							else if(pack.getLoopType()==AnimationComponent.LoopType.LOOPSCAN)
-							{//if playing the animation in the opposite direction
-								pack.setReversing(!pack.isReversing());
-							}
-							else
-							{//stop playing the animation
-								pack.setAnimating(false);
-								pack.setCurrentFrame(0);
-							}
-						}
-						pack.setSpriteIndex(pack.getFrameSprite());
-					}
+
+			if(timer.isUpdateTime(pack.getInterval(), pack.getLastUpdateTime()))
+			{	
+				nextFrame(pack);
+				pack.setLastUpdateTime(timer.getNow());
 			}
 		}
 	}
 	
 	/**
-	 * Check to see if it is time to update the animation.
-	 * @param lastUpdateTime	the time the animation was last updated
-	 * @param frameDelay		the time to wait until updating the animation
-	 * @return					true if time to update, false otherwise.
+	 * Advance the frame of the animation.
+	 * @param pack	the AnimationInfoPack of the entity
 	 */
-	public boolean isUpdateTime(final long lastUpdateTime, final long frameDelay)
+	public void nextFrame(final AnimationInfoPack pack)
 	{
-		//TODO: Remove direct references, go through Core or pass time?
-		if(core.getSystem(TimerSystem.class).getNow()-lastUpdateTime>=frameDelay)
+		int currentFrame = pack.getCurrentFrame();
+		int numberOfFrames = pack.getNumberOfFrames();
+		if(currentFrame<=numberOfFrames-1)
 		{
-			return true;
+			pack.setAnimationSprite(pack.getAnimationSprite());
+			pack.setCurrentFrame(currentFrame+1);
 		}
-		return false;
+		else
+		{
+			pack.setCurrentFrame(0);
+		}
 	}
 }
