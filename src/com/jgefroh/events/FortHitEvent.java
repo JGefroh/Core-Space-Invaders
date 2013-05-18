@@ -1,5 +1,6 @@
 package com.jgefroh.events;
 
+import com.jgefroh.components.RenderComponent;
 import com.jgefroh.core.Core;
 import com.jgefroh.core.IEntity;
 import com.jgefroh.systems.DamageSystem;
@@ -34,6 +35,8 @@ public class FortHitEvent implements IEvent
 	{
 		core.getSystem(WeaponSystem.class).hit(source, target);
 		core.getSystem(DamageSystem.class).damage(1, source, target);
+		int spriteID = target.getComponent(RenderComponent.class).getSpriteID();
+		target.getComponent(RenderComponent.class).setSpriteID(spriteID+1);
 		core.removeEntity(source);
 	}
 }
