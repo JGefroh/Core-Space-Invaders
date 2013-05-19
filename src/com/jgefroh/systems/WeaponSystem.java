@@ -104,10 +104,13 @@ public class WeaponSystem implements ISystem
 
 		for(BulletInfoPack each:infoPacks)
 		{
-			if(each.getYPos()>=1050||each.getYPos()<=-16)
+			if(each.isDirty()==false)
 			{
-				destroyBullet(each);
-				setReady(each.getBulletOwner());
+				if(each.getYPos()>=1050||each.getYPos()<=-16)
+				{
+					destroyBullet(each);
+					setReady(each.getBulletOwner());
+				}
 			}
 		}
 		
@@ -115,15 +118,18 @@ public class WeaponSystem implements ISystem
 			= core.getInfoPacksOfType(WeaponInfoPack.class);
 		for(WeaponInfoPack each:weaponPacks)
 		{
-			if(each.isFireRequested()&&each.isReady())
+			if(each.isDirty()==false)
 			{
-				createBullet(each);
-				each.setFireRequested(false);
-				each.setReady(false);
-			}
-			else
-			{
-				each.setFireRequested(false);
+				if(each.isFireRequested()&&each.isReady())
+				{
+					createBullet(each);
+					each.setFireRequested(false);
+					each.setReady(false);
+				}
+				else
+				{
+					each.setFireRequested(false);
+				}
 			}
 		}
 	}

@@ -4,7 +4,7 @@ import com.jgefroh.core.IComponent;
 import com.jgefroh.core.IEntity;
 
 /**
- * This class contains data related to the object's positioning.
+ * Contains data related to the object's internal position.
  * @author Joseph Gefroh
  */
 public class TransformComponent implements IComponent

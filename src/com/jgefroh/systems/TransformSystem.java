@@ -114,13 +114,16 @@ public class TransformSystem implements ISystem
 
 		for(MovementInfoPack each:packs)
 		{
-			if(timer.isUpdateTime(each.getInterval(), each.getLastUpdated()))
+			if(each.isDirty()==false)
 			{
-				each.setLastUpdated(timer.getNow());
-				int newX = each.getXPos()+each.getXVelocity();
-				int newY = each.getYPos()+each.getYVelocity();
-				each.setXPos(newX);
-				each.setYPos(newY);
+				if(timer.isUpdateTime(each.getInterval(), each.getLastUpdated()))
+				{
+					each.setLastUpdated(timer.getNow());
+					int newX = each.getXPos()+each.getXVelocity();
+					int newY = each.getYPos()+each.getYVelocity();
+					each.setXPos(newX);
+					each.setYPos(newY);
+				}
 			}
 		}
 	}

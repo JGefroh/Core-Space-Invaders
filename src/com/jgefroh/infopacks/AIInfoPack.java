@@ -7,42 +7,86 @@ import com.jgefroh.core.IInfoPack;
 
 
 /**
- * Acts as an intermediary between the AnimationSystem and an entity's
- * AnimationComponent.
+ * Intended to be used by the AISystem.
+ * 
+ * Controls access to the following components:
+ * AIComponent
+ * TransformComponent
+ * 
  * @author Joseph Gefroh
- *
  */
 public class AIInfoPack implements IInfoPack
 {
-	private IEntity parent;
+	//////////
+	// DATA
+	//////////
+	
+	/**The entity associated with this InfoPack.*/
+	private IEntity owner;
+	
+	/**A component this InfoPack depends on.*/
 	private AIComponent ac;
+	
+	/**A component this InfoPack depends on.*/
 	private TransformComponent tc;
 	
-
-	public AIInfoPack(final IEntity parent)
-	{
-		this.parent = parent;
-	}
-
-	public IEntity getOwner()
-	{
-		return this.parent;
-	}
+	/**Flag that indicates the InfoPack is invalid and unreliable.*/
+	private boolean isDirty;
 
 	
+	//////////
+	// INIT
+	//////////
+	/**
+	 * Create a new instance of this InfoPack.
+	 * @param owner	the entity associated with this InfoPack
+	 */
+	public AIInfoPack(final IEntity owner)
+	{
+		this.owner = owner;
+	}
+	
+	//////////
+	// GETTERS
+	//////////
+	@Override
+	public boolean isDirty()
+	{
+		if(owner.hasChanged())
+		{
+			tc = owner.getComponent(TransformComponent.class);
+			ac = owner.getComponent(AIComponent.class);			
+			if(tc==null||ac==null)
+			{
+				setDirty(true);
+				return true;
+			}
+		}
+		setDirty(false);
+		return false;
+	}
+	
+	@Override
+	public IEntity getOwner()
+	{
+		return this.owner;
+	}
+	
+	/**
+	 * @see TransformComponent#getXPos()
+	 */
 	public int getXPos()
 	{
 		return tc.getXPos();
 	}
+	
+	
+	//////////
+	// SETTERS
+	//////////
 	@Override
-	public boolean updateReferences()
+	public void setDirty(final boolean isDirty)
 	{
-		tc = parent.getComponent(TransformComponent.class);
-		ac = parent.getComponent(AIComponent.class);
-		if(tc!=null&&ac!=null)
-		{
-			return true;
-		}
-		return false;
+		this.isDirty = isDirty;
 	}
 }

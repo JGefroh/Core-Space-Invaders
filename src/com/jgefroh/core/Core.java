@@ -21,6 +21,9 @@ import java.util.logging.Logger;
  */
 public class Core
 {
+	//////////
+	// DATA
+	//////////
 	//TODO: Use iterator for concurrent modification of ALs.
 	/**Holds all of the InfoPacks associated with an entity.*/
 	private HashMap<IEntity, ArrayList<IInfoPack>> infoPacks;
@@ -41,6 +44,10 @@ public class Core
 	/**The level of detail in debug messages.*/
 	private Level debugLevel = Level.OFF;
 	
+	
+	//////////
+	// INIT
+	//////////
 	/**
 	 * Initialize the Logger's settings.
 	 */
@@ -105,6 +112,19 @@ public class Core
 				entityPacks.add(infoPack);
 				infoPacks.put(entity, entityPacks);
 			}
+		}
+	}
+	
+	/**
+	 * Begin using an InfoPack factory to generate InfoPacks of a specific type.
+	 * @param factory	the Factory to begin using
+	 */
+	public void addFactory(final IInfoPackFactory factory)
+	{
+		if(factory!=null&&packFactories.contains(factory)==false)
+		{			
+			LOGGER.log(Level.FINE, "Adding factory: " + factory);
+			packFactories.add(factory);
 		}
 	}
 
@@ -211,6 +231,29 @@ public class Core
 	}
 	
 	/**
+	 * Get a specific InfoPack belonging to a specific entity.
+	 * @param entity	the Entity that owns the InfoPack
+	 * @param type		the type of InfoPack to get
+	 * @return	an InfoPack of the type requested, null if not found.
+	 */
+	public <T extends IInfoPack>T getInfoPackFrom(final IEntity entity, 
+													final Class<T> type)
+	{
+		ArrayList<IInfoPack> packs = infoPacks.get(entity);
+		if(packs!=null)
+		{
+			for(IInfoPack each:packs)
+			{
+				if(each.getClass()==type)
+				{
+					return (T)each;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Get a system of a specific type
 	 * @param t	the Class type of system
 	 * @return	the System, if found. Null otherwise.
@@ -247,19 +290,6 @@ public class Core
 	}
 	
 	/**
-	 * Begin using an InfoPack factory to generate InfoPacks of a specific type.
-	 * @param factory	the Factory to begin using
-	 */
-	public void addFactory(final IInfoPackFactory factory)
-	{
-		if(factory!=null&&packFactories.contains(factory)==false)
-		{			
-			LOGGER.log(Level.FINE, "Adding factory: " + factory);
-			packFactories.add(factory);
-		}
-	}
-	
-	/**
 	 * Generate InfoPacks with known factories for the given entity.
 	 * @param entity	the Entity to generate InfoPacks for
 	 */
@@ -272,36 +302,13 @@ public class Core
 			for(IInfoPackFactory each:packFactories)
 			{
 				IInfoPack pack = each.generate(entity);
-				if(pack!=null&&pack.updateReferences())
+				if(pack!=null&&pack.isDirty()==false)
 				{					
 					addInfoPack(entity, pack);
 				}
 			}
 			entity.setChanged(false);
 		}
-	}
-	
-	/**
-	 * Get a specific InfoPack belonging to a specific entity.
-	 * @param entity	the Entity that owns the InfoPack
-	 * @param type		the type of InfoPack to get
-	 * @return	an InfoPack of the type requested, null if not found.
-	 */
-	public <T extends IInfoPack>T getInfoPackFrom(final IEntity entity, 
-													final Class<T> type)
-	{
-		ArrayList<IInfoPack> packs = infoPacks.get(entity);
-		if(packs!=null)
-		{
-			for(IInfoPack each:packs)
-			{
-				if(each.getClass()==type)
-				{
-					return (T)each;
-				}
-			}
-		}
-		return null;
 	}
 	
 	public void setDebugLevel(final Level debugLevel)

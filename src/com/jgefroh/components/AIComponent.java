@@ -4,7 +4,7 @@ import com.jgefroh.core.IComponent;
 import com.jgefroh.core.IEntity;
 
 /**
- * This class acts as a marker indicating the AI should control this entity.
+ * Acts as a marker to indicate that the AI should control the owning entity.
  * @author Joseph Gefroh
  */
 public class AIComponent implements IComponent

@@ -103,9 +103,12 @@ public class BodySystem implements ISystem
 				core.getInfoPacksOfType(BodyInfoPack.class);
 		for(BodyInfoPack pack:infoPacks)
 		{
-			if(timer.isUpdateTime(pack.getTimeUntilDecay(), pack.getLastUpdateTime()))
-			{	
-				core.removeEntity(pack.getOwner());
+			if(pack.isDirty()==false)
+			{
+				if(timer.isUpdateTime(pack.getTimeUntilDecay(), pack.getLastUpdateTime()))
+				{	
+					core.removeEntity(pack.getOwner());
+				}
 			}
 		}
 	}

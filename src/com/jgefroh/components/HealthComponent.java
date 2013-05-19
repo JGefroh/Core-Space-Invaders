@@ -4,7 +4,7 @@ import com.jgefroh.core.IComponent;
 import com.jgefroh.core.IEntity;
 
 /**
- * This class contains data related to the health of an entity using a
+ * Contains data related to the health of an entity using a
  * traditional "hit points" perspective.
  * @author Joseph Gefroh
  */

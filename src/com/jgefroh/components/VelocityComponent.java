@@ -4,7 +4,7 @@ import com.jgefroh.core.IComponent;
 import com.jgefroh.core.IEntity;
 
 /**
- * This component contains data used to move objects smoothly.
+ * Contains data used to move entities.
  * @author Joseph Gefroh
  */
 public class VelocityComponent implements IComponent

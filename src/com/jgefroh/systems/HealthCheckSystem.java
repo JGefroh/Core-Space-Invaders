@@ -93,11 +93,14 @@ public class HealthCheckSystem implements ISystem
 		= core.getInfoPacksOfType(HealthInfoPack.class);
 		for(HealthInfoPack each:packs)
 		{
-			if(each.getCurHealth()<=0)
+			if(each.isDirty()==false)
 			{
-				core.removeEntity(each.getOwner());
-				core.getSystem(EventSystem.class)
-					.notify("DEAD", each.getOwner(), each.getOwner());
+				if(each.getCurHealth()<=0)
+				{
+					core.removeEntity(each.getOwner());
+					core.getSystem(EventSystem.class)
+						.notify("DEAD", each.getOwner(), each.getOwner());
+				}
 			}
 		}
 	}

@@ -111,10 +111,13 @@ public class AnimationSystem implements ISystem
 				core.getInfoPacksOfType(AnimationInfoPack.class);
 		for(AnimationInfoPack pack:infoPacks)
 		{
-			if(timer.isUpdateTime(pack.getInterval(), pack.getLastUpdateTime()))
-			{	
-				nextFrame(pack);
-				pack.setLastUpdateTime(timer.getNow());
+			if(pack.isDirty()==false)
+			{
+				if(timer.isUpdateTime(pack.getInterval(), pack.getLastUpdateTime()))
+				{	
+					nextFrame(pack);
+					pack.setLastUpdateTime(timer.getNow());
+				}
 			}
 		}
 	}

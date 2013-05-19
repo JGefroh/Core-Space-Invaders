@@ -4,7 +4,7 @@ import com.jgefroh.core.IComponent;
 import com.jgefroh.core.IEntity;
 
 /**
- * This class contains all of the information necessary to render this object.
+ * Contains data necessary to render the entity.
  * @author Joseph Gefroh
  */
 public class RenderComponent implements IComponent

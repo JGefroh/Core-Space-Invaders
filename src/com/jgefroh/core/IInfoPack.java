@@ -9,12 +9,22 @@ package com.jgefroh.core;
  */
 public interface IInfoPack
 {
-	/**Get the owner of this info pack.*/
+	/**
+	 * Return the entity associated with the InfoPack.
+	 * @return	the entity that is considered the owner of the InfoPack
+	 */
 	public IEntity getOwner();
+
+	/**
+	 * Check to see if the InfoPack is invalid or unreliable.
+	 * @return	true if the InfoPack is unreliable, false otherwise.
+	 */
+	public boolean isDirty();
+	
 	
 	/**
-	 * Update the component references for this object.
-	 * @return
+	 * Set the flag that indicates the InfoPack is invalid.
+	 * @param isDirty	set to true if the InfoPack is unreliable, false if OK
 	 */
-	public boolean updateReferences();
+	public void setDirty(final boolean isDirty);
 }

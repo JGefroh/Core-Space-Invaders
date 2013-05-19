@@ -7,8 +7,7 @@ import com.jgefroh.core.IEntity;
 
 
 /**
- * This class contains all of the data necessary for an entity
- * to react to input.
+ * Contains data necessary for an entity to reach to input.
  * @author Joseph Gefroh
  */
 public class InputComponent implements IComponent

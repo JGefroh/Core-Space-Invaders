@@ -10,7 +10,7 @@ import com.jgefroh.data.Animation;
 
 
 /**
- * This class contains data necesary to keep track of the current animation.
+ * Contains data to keep track of animations for the entity.
  * @author Joseph Gefroh
  */
 public class AnimationComponent implements IComponent

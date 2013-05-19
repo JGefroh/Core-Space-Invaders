@@ -4,8 +4,7 @@ import com.jgefroh.core.IComponent;
 import com.jgefroh.core.IEntity;
 
 /**
- * This class contains information related to the firing rate and readiness
- * of an entity's weapons - SPACE INVADERS SPECIFIC
+ * Contains data related to the firing rate and readiness of an entity's guns.
  * @author Joseph Gefroh
  */
 public class WeaponComponent implements IComponent

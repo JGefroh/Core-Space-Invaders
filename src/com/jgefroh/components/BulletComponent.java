@@ -4,8 +4,7 @@ import com.jgefroh.core.IComponent;
 import com.jgefroh.core.IEntity;
 
 /**
- * This class contains data necessary to keep track of bullets
- * and bullet ownership.
+ * Contains data necessary to keep track of bullets and bullet owners.
  * @author Joseph Gefroh
  */
 public class BulletComponent implements IComponent

@@ -116,24 +116,28 @@ public class AISystem implements ISystem
 		boolean switched = false;
 		for(AIInfoPack each:packs)
 		{
-			//SHOOT
-			shoot(each.getOwner());
-			if(isMovingLeft==true)
-			{				
-				if(each.getXPos()<=0)
-				{
-					switched = true;
-				}
-				core.getSystem(TransformSystem.class).setXVelocity(each.getOwner(), -movementSpeed);
-			}
-			else if(isMovingLeft==false)
+			if(each.isDirty()==false)
 			{
-				if(each.getXPos()>=1648)
+				//SHOOT
+				shoot(each.getOwner());
+				if(isMovingLeft==true)
+				{				
+					if(each.getXPos()<=0)
+					{
+						switched = true;
+					}
+					core.getSystem(TransformSystem.class).setXVelocity(each.getOwner(), -movementSpeed);
+				}
+				else if(isMovingLeft==false)
 				{
-					switched = true;
-				}			
-				core.getSystem(TransformSystem.class).setXVelocity(each.getOwner(), movementSpeed);
+					if(each.getXPos()>=1648)
+					{
+						switched = true;
+					}			
+					core.getSystem(TransformSystem.class).setXVelocity(each.getOwner(), movementSpeed);
+				}
 			}
+
 		}
 		if(switched==true)
 		{
@@ -141,8 +145,11 @@ public class AISystem implements ISystem
 			movementInterval-=20;
 			for(AIInfoPack each:packs)
 			{
-				core.getSystem(TransformSystem.class).shiftPosition(each.getOwner(), 0, 25);
-				core.getSystem(TransformSystem.class).setInterval(each.getOwner(), movementInterval);
+				if(each.isDirty()==false)
+				{
+					core.getSystem(TransformSystem.class).shiftPosition(each.getOwner(), 0, 25);
+					core.getSystem(TransformSystem.class).setInterval(each.getOwner(), movementInterval);
+				}
 			}
 		}
 	}

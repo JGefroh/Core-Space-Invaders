@@ -4,7 +4,7 @@ import com.jgefroh.core.IComponent;
 import com.jgefroh.core.IEntity;
 
 /**
- * This class contains data that allows an object to collide.
+ * Contains data that allows objects to collide.
  * @author Joseph Gefroh
  */
 public class CollisionComponent implements IComponent

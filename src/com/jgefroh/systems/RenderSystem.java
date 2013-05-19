@@ -189,14 +189,17 @@ public class RenderSystem implements ISystem
 				core.getInfoPacksOfType(RenderInfoPack.class);
 		for(RenderInfoPack pack:infoPacks)
 		{
-			//Bind the texture
-			drawQuadAt(pack.getTextureID(), 
-					pack.getXPos(), pack.getYPos(), pack.getZPos(),
-					pack.getWidth(), pack.getHeight(),
-					getUMin(pack.getTextureID(), pack.getSpriteID()),
-					getUMax(pack.getTextureID(), pack.getSpriteID()),
-					getVMin(pack.getTextureID(), pack.getSpriteID()),
-					getVMax(pack.getTextureID(), pack.getSpriteID()));
+			if(pack.isDirty()==false)
+			{
+				//Bind the texture
+				drawQuadAt(pack.getTextureID(), 
+						pack.getXPos(), pack.getYPos(), pack.getZPos(),
+						pack.getWidth(), pack.getHeight(),
+						getUMin(pack.getTextureID(), pack.getSpriteID()),
+						getUMax(pack.getTextureID(), pack.getSpriteID()),
+						getVMin(pack.getTextureID(), pack.getSpriteID()),
+						getVMax(pack.getTextureID(), pack.getSpriteID()));
+			}
 		}
 	}
 

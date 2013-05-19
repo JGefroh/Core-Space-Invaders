@@ -7,56 +7,65 @@ import com.jgefroh.core.IInfoPack;
 
 
 /**
- * Acts as an intermediary between the AnimationSystem and an entity's
- * AnimationComponent.
+ * Intended to be used by the AnimationSystem.
+ * 
+ * Controls access to the following components:
+ * AnimationComponent
+ * RenderComponent
+ * 
  * @author Joseph Gefroh
- *
  */
 public class AnimationInfoPack implements IInfoPack
 {
 	//////////
 	// DATA
 	//////////
-	/**The owner of this AnimationInfoPack.*/
+	/**The entity associated with this InfoPack.*/
 	private IEntity owner;
 	
-	/**The AnimationComponent belonging to the owner.*/
+	/**A component this InfoPack depends on.*/
 	private AnimationComponent ac;
 	
-	/**The RenderComponent belonging to the owner.*/
+	/**A component this InfoPack depends on.*/
 	private RenderComponent rc;
 	
+	/**Flag that indicates the InfoPack is invalid and unreliable.*/
+	private boolean isDirty;
 	
 	
+	//////////
+	// INIT
+	//////////
 	/**
-	 * Create a new AnimationInfoPack belonging to a specific entity.
-	 * @param owner	the owner of this AnimationInfoPack
+	 * Create a new instance of this InfoPack.
+	 * @param owner	the entity associated with this InfoPack
 	 */
 	public AnimationInfoPack(final IEntity owner)
 	{
 		this.owner = owner;
 	}
 	
-	@Override
-	public boolean updateReferences()
-	{
-		ac = owner.getComponent(AnimationComponent.class);
-		rc = owner.getComponent(RenderComponent.class);
-		if(ac!=null&&rc!=null)
-		{
-			return true;
-		}
-		return false;
-	}
-	
 	
 	//////////
 	// GETTERS
 	//////////
-	/**
-	 * Get the owner of this AnimationInfoPack.
-	 * @return	the owner of this AnimationInfoPack
-	 */
+	@Override
+	public boolean isDirty()
+	{
+		if(owner.hasChanged())
+		{
+			ac = owner.getComponent(AnimationComponent.class);
+			rc = owner.getComponent(RenderComponent.class);			
+			if(ac==null||rc==null)
+			{
+				setDirty(true);
+				return true;
+			}
+		}
+		setDirty(false);
+		return false;
+	}
+	
 	@Override
 	public IEntity getOwner()
 	{
@@ -64,26 +73,7 @@ public class AnimationInfoPack implements IInfoPack
 	}
 	
 	/**
-	 * Get the time the animation was last updated, in milliseconds.
-	 * @return
-	 */
-	public long getLastUpdateTime()
-	{
-		return ac.getLastUpdateTime();
-	}
-	
-	/**
-	 * Get the current frame number of the currently playing animation.
-	 * @return	the current frame number
-	 */
-	public int getCurrentFrame()
-	{
-		return ac.getCurrentFrame();
-	}
-	
-	/**
-	 * Get the sprite that should be displayed.
-	 * @return	the sprite
+	 * @see AnimationComponent#getAnimationSprite()
 	 */
 	public int getAnimationSprite()
 	{
@@ -91,37 +81,51 @@ public class AnimationInfoPack implements IInfoPack
 	}
 	
 	/**
-	 * Get the time to wait between frame updates.
-	 * @return	the time to wait, in ms.
+	 * @see AnimationComponent#getCurrentFrame()
+	 */
+	public int getCurrentFrame()
+	{
+		return ac.getCurrentFrame();
+	}
+
+
+	/**
+	 * @see AnimationComponent#getInterval()
 	 */
 	public long getInterval()
 	{
 		return ac.getInterval();
 	}
+
+
+	/**
+	 * @see AnimationComponent#getLastUpdateTime()
+	 */
+	public long getLastUpdateTime()
+	{
+		return ac.getLastUpdateTime();
+	}
 	
 	/**
-	 * Get the number of frames in the current animation.
-	 * @return	the number of frames
+	 * @see AnimationComponent#getNumberOfFrames()
 	 */
 	public int getNumberOfFrames()
 	{
 		return ac.getNumberOfFrames();
 	}
+
+
 	//////////
 	// SETTERS
 	//////////
-	/**
-	 * Set the time the animation was last updated
-	 * @param updateTime	the long time the animation was last updated, in ms.
-	 */
-	public void setLastUpdateTime(final long updateTime)
+	@Override
+	public void setDirty(final boolean isDirty)
 	{
-		ac.setLastUpdateTime(updateTime);
+		this.isDirty = isDirty;
 	}
 	
 	/**
-	 * Set the sprite index number on the render component.
-	 * @param spriteIndex	the sprite index number of the render component
+	 * @see RenderComponent#setSpriteID(int)
 	 */
 	public void setAnimationSprite(final int spriteID)
 	{
@@ -129,12 +133,18 @@ public class AnimationInfoPack implements IInfoPack
 	}
 	
 	/**
-	 * Set the current frame of the animation.
-	 * @param currentFrame	the current frame of the animation
+	 * @see AnimationComponent#setCurrentFrame(int)
 	 */
 	public void setCurrentFrame(final int currentFrame)
 	{
 		ac.setCurrentFrame(currentFrame);
 	}
-
+	
+	/**
+	 * @see AnimationComponent#setLastUpdateTime(long)
+	 */
+	public void setLastUpdateTime(final long updateTime)
+	{
+		ac.setLastUpdateTime(updateTime);
+	}
 }

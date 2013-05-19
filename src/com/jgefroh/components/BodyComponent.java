@@ -6,7 +6,7 @@ import com.jgefroh.core.IEntity;
 
 
 /**
- * This class contains data neccessary to keep track of corpses.
+ * Contains data that controls corpse decay times.
  * @author Joseph Gefroh
  */
 public class BodyComponent implements IComponent

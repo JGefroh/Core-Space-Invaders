@@ -92,7 +92,7 @@ public class GravitySystem implements ISystem
 				= core.getInfoPacksOfType(GravityInfoPack.class);
 		for(GravityInfoPack each:infoPacks)
 		{
-			if(each.updateReferences())
+			if(each.isDirty()==false)
 			{
 				if(core.getSystem(TimerSystem.class).getNow()-each.getLastUpdate()>=each.getUpdateInterval())
 				{//If it is time to make them fall again...

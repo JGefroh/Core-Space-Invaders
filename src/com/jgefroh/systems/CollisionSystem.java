@@ -100,16 +100,23 @@ public class CollisionSystem implements ISystem
 
 		for(CollisionInfoPack each:packs)
 		{
-			for(CollisionInfoPack pack:packs)
+			if(each.isDirty()==false)
 			{
-				if(checkCollidesWith(each.getGroup(), pack.getGroup())&&each!=pack)
+				for(CollisionInfoPack pack:packs)
 				{
-					if(checkCollided(each, pack))
+					if(pack.isDirty()==false)
 					{
-						core.getSystem(EventSystem.class).notify("COLLISION", each.getOwner(), pack.getOwner());
+						if(checkCollidesWith(each.getGroup(), pack.getGroup())&&each!=pack)
+						{
+							if(checkCollided(each, pack))
+							{
+								core.getSystem(EventSystem.class).notify("COLLISION", each.getOwner(), pack.getOwner());
+							}
+						}
 					}
 				}
 			}
+
 		}
 	}
 	
