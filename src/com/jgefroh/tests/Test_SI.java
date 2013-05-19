@@ -9,6 +9,7 @@ import org.lwjgl.opengl.Display;
 import com.jgefroh.core.Core;
 import com.jgefroh.infopacks.AIInfoPackFactory;
 import com.jgefroh.infopacks.AnimationInfoPackFactory;
+import com.jgefroh.infopacks.BodyInfoPackFactory;
 import com.jgefroh.infopacks.BulletInfoPackFactory;
 import com.jgefroh.infopacks.CollisionInfoPackFactory;
 import com.jgefroh.infopacks.HealthInfoPackFactory;
@@ -19,6 +20,7 @@ import com.jgefroh.infopacks.WeaponInfoPackFactory;
 import com.jgefroh.input.InputSystem;
 import com.jgefroh.systems.AISystem;
 import com.jgefroh.systems.AnimationSystem;
+import com.jgefroh.systems.BodySystem;
 import com.jgefroh.systems.CollisionSystem;
 import com.jgefroh.systems.DamageSystem;
 import com.jgefroh.systems.EntityCreationSystem;
@@ -82,6 +84,7 @@ public class Test_SI
 		core.addSystem(new DamageSystem(core), 1);
 		core.addSystem(new WinCheckSystem(core), 1);
 		core.addSystem(new AnimationSystem(core), 1);
+		core.addSystem(new BodySystem(core), 1);
 		rl = new ResourceLoader(core);
 	}
 	
@@ -96,6 +99,7 @@ public class Test_SI
 		core.addFactory(new AIInfoPackFactory());
 		core.addFactory(new HealthInfoPackFactory());
 		core.addFactory(new AnimationInfoPackFactory());
+		core.addFactory(new BodyInfoPackFactory());
 	}
 	
 	/**
@@ -151,9 +155,9 @@ public class Test_SI
 		core.getSystem(EntityCreationSystem.class).createAlien(900, 250);
 		core.getSystem(EntityCreationSystem.class).createAlien(1000, 250);
 		
-		core.getSystem(EntityCreationSystem.class).createFort(500, 850);
-		core.getSystem(EntityCreationSystem.class).createFort(1000, 850);
-		core.getSystem(EntityCreationSystem.class).createFort(1500, 850);
+		core.getSystem(EntityCreationSystem.class).createFort(210, 850);
+		core.getSystem(EntityCreationSystem.class).createFort(776, 850);
+		core.getSystem(EntityCreationSystem.class).createFort(1400, 850);
 		
 		//Set Collision Groups
 		//0 = player

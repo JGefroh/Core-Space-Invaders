@@ -1,7 +1,9 @@
 package com.jgefroh.events;
 
+import com.jgefroh.components.TransformComponent;
 import com.jgefroh.core.Core;
 import com.jgefroh.core.IEntity;
+import com.jgefroh.systems.EntityCreationSystem;
 import com.jgefroh.systems.WeaponSystem;
 
 
@@ -32,6 +34,7 @@ public class AlienHitEvent implements IEvent
 	public void execute(final IEntity entity, final IEntity target)
 	{		
 		core.getSystem(WeaponSystem.class).hit(entity, target);
+		core.getSystem(EntityCreationSystem.class).createAlienBody(entity.getComponent(TransformComponent.class).getXPos(), entity.getComponent(TransformComponent.class).getYPos());
 		core.removeEntity(entity);
 		core.removeEntity(target);
 	}

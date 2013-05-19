@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import com.jgefroh.components.AIComponent;
 import com.jgefroh.components.AnimationComponent;
+import com.jgefroh.components.BodyComponent;
 import com.jgefroh.components.BulletComponent;
 import com.jgefroh.components.CollisionComponent;
 import com.jgefroh.components.HealthComponent;
@@ -248,5 +249,24 @@ public class EntityCreationSystem implements ISystem
 			bullet.getComponent(VelocityComponent.class).setYVelocity(-10);
 		}
 		core.addEntity(bullet);
+	}
+	
+	public void createAlienBody(final int x, final int y)
+	{
+		IEntity alien = new Entity();
+		alien.setName("ALIEN_BODY");
+		alien.addComponent(TransformComponent.class, new TransformComponent(alien));
+		alien.getComponent(TransformComponent.class).setXPos(x);
+		alien.getComponent(TransformComponent.class).setYPos(y);
+		alien.getComponent(TransformComponent.class).setWidth(32);
+		alien.getComponent(TransformComponent.class).setHeight(32);
+		alien.addComponent(RenderComponent.class, new RenderComponent(alien));
+		alien.getComponent(RenderComponent.class).setSpriteID(2);
+		alien.getComponent(RenderComponent.class).setTextureID(1);
+		alien.addComponent(BodyComponent.class, new BodyComponent(alien));
+		alien.getComponent(BodyComponent.class).setTimeUntilDecay(500);
+		long time = core.getSystem(TimerSystem.class).getNow();
+		alien.getComponent(BodyComponent.class).setLastUpdateTime(time);
+		core.addEntity(alien);
 	}
 }
