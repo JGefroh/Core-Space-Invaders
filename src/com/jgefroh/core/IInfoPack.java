@@ -1,6 +1,6 @@
 package com.jgefroh.core;
 
-
+//TODO: Remove
 /**
  * Provides an interface to deal with sending data to a system
  * @author Joseph Gefroh

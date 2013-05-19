@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  * updates their associated InfoPacks.
  * @author Joseph Gefroh
  * @version 0.1.0
- * @since	16MAY13
+ * @since	18MAY13
  */
 public class Core
 {
@@ -39,7 +39,7 @@ public class Core
 		= Logger.getLogger(Core.class.getName());
 	
 	/**The level of detail in debug messages.*/
-	private Level debugLevel = Level.FINE;
+	private Level debugLevel = Level.OFF;
 	
 	/**
 	 * Initialize the Logger's settings.
@@ -76,7 +76,7 @@ public class Core
 	{
 		if(entity!=null&&entities.contains(entity)==false)
 		{//if the entity exists and it is not already being tracked...
-			LOGGER.log(Level.FINER, "Adding new entity: " + entity);
+			LOGGER.log(Level.FINER, "Tracking entity: " + entity);
 			entities.add(entity);
 			generateInfoPacks(entity);
 		}
@@ -91,7 +91,8 @@ public class Core
 	{	
 		if(infoPack!=null&&infoPacks.containsValue(infoPack)==false)
 		{//If the infopack is not already being tracked
-			LOGGER.log(Level.FINER, "Adding " + infoPack + " to: " + entity);
+			LOGGER.log(Level.FINEST, "Tracking " + infoPack + " belonging to: " 
+						+ entity);
 			ArrayList<IInfoPack> entityPacks = infoPacks.get(entity);
 			if(entityPacks!=null)
 			{//If an arraylist already exists for the info pack
@@ -122,7 +123,7 @@ public class Core
 	{
 		if(system!=null&&systems.contains(system)==false)
 		{//If the system exists and is not already being tracked...
-			LOGGER.log(Level.FINER, "Adding system: " + system 
+			LOGGER.log(Level.FINE, "Adding system: " + system 
 						+ " with priority: " + priority);
 			system.start();
 			if(priority>=0)
@@ -142,7 +143,7 @@ public class Core
 	 */
 	public void removeEntity(final IEntity entity)
 	{
-		LOGGER.log(Level.FINER, "Removing entity: " + entity);
+		LOGGER.log(Level.FINER, "Untracking entity: " + entity);
 		if(entity!=null)
 		{
 			entities.remove(entity);
@@ -162,7 +163,8 @@ public class Core
 					infoPacks.get(infoPack.getOwner());
 			if(entityPacks!=null)
 			{
-				LOGGER.log(Level.FINER, "Removing infoPack: " + infoPack);
+				LOGGER.log(Level.FINEST, "Untracking infoPack " + infoPack 
+						+ "belonging to: " + infoPack.getOwner());
 				entityPacks.remove(infoPack);
 			}
 		}
@@ -176,7 +178,7 @@ public class Core
 	{
 		if(system!=null)
 		{
-			LOGGER.log(Level.FINER, "Removing system: " + system);
+			LOGGER.log(Level.FINE, "Untracking system: " + system);
 			system.stop();
 			systems.remove(system);
 		}
@@ -252,7 +254,7 @@ public class Core
 	{
 		if(factory!=null&&packFactories.contains(factory)==false)
 		{			
-			LOGGER.log(Level.FINER, "Adding factory: " + factory);
+			LOGGER.log(Level.FINE, "Adding factory: " + factory);
 			packFactories.add(factory);
 		}
 	}
@@ -265,7 +267,7 @@ public class Core
 	{
 		if(entity!=null)
 		{
-			LOGGER.log(Level.FINER, "Generating infoPacks for: " + entity);
+			LOGGER.log(Level.FINEST, "Generating infoPacks for: " + entity);
 			infoPacks.remove(entity);
 			for(IInfoPackFactory each:packFactories)
 			{

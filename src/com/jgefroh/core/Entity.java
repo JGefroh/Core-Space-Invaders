@@ -42,6 +42,7 @@ public class Entity implements IEntity
 	 * @param type	Type is the key used to store the components in the hashmap.
 	 * @return		the component that fits the type.
 	 */
+	@Override
 	public <T>T getComponent(Class<T> type)
 	{
 		T t = (T)components.get(type);
@@ -69,6 +70,7 @@ public class Entity implements IEntity
 	 * has changed or not.
 	 * @return true if it has changed, false otherwise
 	 */
+	@Override
 	public boolean hasChanged()
 	{
 		return hasChanged;
@@ -83,6 +85,7 @@ public class Entity implements IEntity
 	 * has changed.
 	 * @param	hasChanged set to true if the entity has changed, false if not.
 	 */
+	@Override
 	public void setChanged(final boolean hasChanged)
 	{
 		this.hasChanged = hasChanged;
@@ -92,6 +95,7 @@ public class Entity implements IEntity
 	 * Set the name of the entity.
 	 * @param name	the non-unique name of the entity
 	 */
+	@Override
 	public void setName(final String name)
 	{
 		this.name = name;
@@ -105,6 +109,7 @@ public class Entity implements IEntity
 	 * @param type
 	 * @param component
 	 */
+	@Override
 	public <T extends IComponent> void addComponent(Class<T> type, T component)
 	{
 		components.put(type, (IComponent)component);

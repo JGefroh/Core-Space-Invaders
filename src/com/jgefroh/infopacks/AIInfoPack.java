@@ -45,6 +45,4 @@ public class AIInfoPack implements IInfoPack
 		}
 		return false;
 	}
-	
-
 }

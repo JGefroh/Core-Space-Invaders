@@ -9,8 +9,8 @@ package com.jgefroh.core;
 public interface ISystem
 {
 	/**
-	 * Initialize the system.
-	 * This is called automatically when the Core begins tracking the system.
+	 * Initialize the system with default values.
+	 * This should be called when the system is created.
 	 */
 	public void init();
 	
@@ -31,4 +31,18 @@ public interface ISystem
 	 * This is called automatically when the Core stops tracking the system.
 	 */
 	public void stop();
+	
+	/**
+	 * Tell the system to do something. A response can also be received.
+	 * This is an experimental feature to test cross-system communication.
+	 */
+	//public String send(final String message);
+	
+	/**
+	 * Get the name of the system.
+	 * This is an experimental feature to test cross-system communication.
+	 * It facilitates obtaining a reference to a system without knowing
+	 * the exact class name.
+	 */
+	//public void getName(final String name);
 }

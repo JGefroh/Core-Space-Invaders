@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import com.jgefroh.core.Core;
 import com.jgefroh.core.ISystem;
+import com.jgefroh.core.LoggerFactory;
 import com.jgefroh.infopacks.AnimationInfoPack;
 
 
@@ -30,12 +31,14 @@ public class AnimationSystem implements ISystem
 	/**Flag that shows whether the system is running or not.*/
 	private boolean isRunning;
 	
-	/**Logger for debug purposes.*/
-	private final static Logger LOGGER 
-		= Logger.getLogger(AnimationSystem.class.getName());
-	
 	/**The level of detail in debug messages.*/
 	private Level debugLevel = Level.FINE;
+	
+	/**Logger for debug purposes.*/
+	private final Logger LOGGER 
+		= LoggerFactory.getLogger(this.getClass(), debugLevel);
+	
+
 	
 	private TimerSystem timer;
 	//////////
@@ -51,18 +54,6 @@ public class AnimationSystem implements ISystem
 		init();
 	}
 	
-	/**
-	 * Initialize the Logger with default settings.
-	 */
-	private void initLogger()
-	{
-		ConsoleHandler ch = new ConsoleHandler();
-		ch.setLevel(debugLevel);
-		LOGGER.addHandler(ch);
-		LOGGER.setLevel(debugLevel);
-		LOGGER.setUseParentHandlers(false);
-	}
-	
 	
 	//////////
 	// ISYSTEM INTERFACE
@@ -70,7 +61,6 @@ public class AnimationSystem implements ISystem
 	@Override
 	public void init()
 	{
-		initLogger();
 		isRunning = true;
 	}
 	

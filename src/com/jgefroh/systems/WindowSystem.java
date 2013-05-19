@@ -11,6 +11,7 @@ import org.lwjgl.opengl.DisplayMode;
 
 import com.jgefroh.core.Core;
 import com.jgefroh.core.ISystem;
+import com.jgefroh.core.LoggerFactory;
 
 
 
@@ -32,12 +33,12 @@ public class WindowSystem implements ISystem
 	/**Flag that shows whether the system is running or not.*/
 	private boolean isRunning;
 	
-	/**Logger for debug purposes.*/
-	private final static Logger LOGGER 
-		= Logger.getLogger(WindowSystem.class.getName());
-	
 	/**The level of detail in debug messages.*/
 	private Level debugLevel = Level.FINE;
+	
+	/**Logger for debug purposes.*/
+	private final Logger LOGGER 
+		= LoggerFactory.getLogger(this.getClass(), debugLevel);
 	
 	/**Flag that shows if vSync is enabled or disabled.*/
 	private boolean vSyncEnabled;
@@ -82,17 +83,6 @@ public class WindowSystem implements ISystem
 		}
 	}
 	
-	/**
-	 * Initialize the Logger with default settings.
-	 */
-	private void initLogger()
-	{
-		ConsoleHandler ch = new ConsoleHandler();
-		ch.setLevel(debugLevel);
-		LOGGER.addHandler(ch);
-		LOGGER.setLevel(debugLevel);
-		LOGGER.setUseParentHandlers(false);
-	}
 	
 	//////////
 	// ISYSTEM INTERFACE
@@ -100,7 +90,6 @@ public class WindowSystem implements ISystem
 	@Override
 	public void init()
 	{
-		initLogger();
 		this.isRunning = true;
 	}
 	

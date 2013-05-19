@@ -3,7 +3,7 @@ package com.jgefroh.events;
 import com.jgefroh.core.IEntity;
 
 /**
- * Interface that describes an event.
+ * Interface that describes an event. This does way too much.
  * @author Joseph Gefroh
  *
  */

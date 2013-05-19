@@ -12,6 +12,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.jgefroh.core.Core;
 import com.jgefroh.core.ISystem;
+import com.jgefroh.core.LoggerFactory;
 import com.jgefroh.data.Sprite;
 import com.jgefroh.data.Texture;
 import com.jgefroh.infopacks.RenderInfoPack;
@@ -33,12 +34,12 @@ public class RenderSystem implements ISystem
 	/**Flag that shows whether the system is running or not.*/
 	private boolean isRunning;
 	
-	/**Logger for debug purposes.*/
-	private final static Logger LOGGER 
-		= Logger.getLogger(RenderSystem.class.getName());
-	
 	/**The level of detail in debug messages.*/
 	private Level debugLevel = Level.FINE;
+	
+	/**Logger for debug purposes.*/
+	private final Logger LOGGER 
+		= LoggerFactory.getLogger(this.getClass(), debugLevel);
 	
 	/**Holds the texture metadata.*/
 	private HashMap<Integer, Texture> textures;
@@ -56,17 +57,6 @@ public class RenderSystem implements ISystem
 		init();
 	}
 	
-	/**
-	 * Initialize the Logger with default settings.
-	 */
-	private void initLogger()
-	{
-		ConsoleHandler ch = new ConsoleHandler();
-		ch.setLevel(debugLevel);
-		LOGGER.addHandler(ch);
-		LOGGER.setLevel(debugLevel);
-		LOGGER.setUseParentHandlers(false);
-	}
 	
 	/**
 	 * Initialize OpenGL settings.
@@ -90,7 +80,6 @@ public class RenderSystem implements ISystem
 	@Override
 	public void init()
 	{
-		initLogger();
 		initOpenGL();
 		textures = new HashMap<Integer, Texture>();
 		isRunning = true;
