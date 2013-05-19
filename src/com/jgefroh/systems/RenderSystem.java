@@ -44,6 +44,10 @@ public class RenderSystem implements ISystem
 	/**Holds the texture metadata.*/
 	private HashMap<Integer, Texture> textures;
 	
+	/**Holds texture IDs associated with an image name.*/
+	private HashMap<String, Integer> idMan;
+	
+	
 	//////////
 	// INIT
 	//////////
@@ -82,6 +86,7 @@ public class RenderSystem implements ISystem
 	{
 		initOpenGL();
 		textures = new HashMap<Integer, Texture>();
+		idMan = new HashMap<String, Integer>();
 		isRunning = true;
 	}
 	
@@ -191,7 +196,18 @@ public class RenderSystem implements ISystem
 		{
 			if(pack.isDirty()==false)
 			{
-				//Bind the texture
+				if(pack.getTextureID()==-1)
+				{//If the component doesn't know its textureID...
+					Integer id = idMan.get(pack.getPath());
+					if(id!=null)
+					{
+						pack.setTextureID(id);
+					}
+					//If ID doesn't exist, texture isn't loaded.
+					//Ask resource loader to load texture here to enable
+					//"streaming".
+				}
+				
 				drawQuadAt(pack.getTextureID(), 
 						pack.getXPos(), pack.getYPos(), pack.getZPos(),
 						pack.getWidth(), pack.getHeight(),
@@ -261,10 +277,11 @@ public class RenderSystem implements ISystem
 	 */
 	public void createTexture(final ByteBuffer buffer, final Texture meta)
 	{
-		//TODO: Set it so glTexImage2D is automatically fed the size of the texture.
-		//TODO: Make metadata part work.
+		LOGGER.log(Level.FINE, "Creating OpenGL texture for " + meta.getPath());
+
 		int textureID = GL11.glGenTextures();
-		
+        meta.setTextureID(textureID);
+        
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
@@ -278,6 +295,9 @@ public class RenderSystem implements ISystem
         
         calcTextureCoordinates(meta);
         textures.put(textureID, meta);
+        idMan.put(meta.getPath(), textureID);
+        LOGGER.log(Level.FINE, "Texture " + meta.getPath() + " loaded (ID: "
+        				+ meta.getTextureID() + ").");
 	}
 	
 	/**
@@ -286,6 +306,9 @@ public class RenderSystem implements ISystem
 	 */
 	public void calcTextureCoordinates(final Texture meta)
 	{
+		LOGGER.log(Level.FINE, "Calculating UV coordinates for " 
+						+ meta.getPath());
+
 		for(int index=0;index<meta.getNumSprites();index++)
 		{ 
 			float uMin = ((float)meta.getXMin(index))/meta.getImageWidth();

@@ -117,7 +117,7 @@ public class EntityCreationSystem implements ISystem
 		player.getComponent(TransformComponent.class).setHeight(64);
 		player.addComponent(RenderComponent.class, new RenderComponent(player));
 		player.getComponent(RenderComponent.class).setSpriteID(0);
-		player.getComponent(RenderComponent.class).setTextureID(3);
+		player.getComponent(RenderComponent.class).setTexturePath("res\\player.png");
 		player.addComponent(VelocityComponent.class, new VelocityComponent(player));
 		player.getComponent(VelocityComponent.class).setInterval(4);
 		player.getComponent(VelocityComponent.class).setXVelocity(0);
@@ -150,15 +150,13 @@ public class EntityCreationSystem implements ISystem
 		alien.getComponent(TransformComponent.class).setHeight(32);
 		alien.addComponent(RenderComponent.class, new RenderComponent(alien));
 		alien.getComponent(RenderComponent.class).setSpriteID(1);
-		alien.getComponent(RenderComponent.class).setTextureID(2);
 		alien.addComponent(VelocityComponent.class, new VelocityComponent(alien));
 		alien.getComponent(VelocityComponent.class).setInterval(200);
 		alien.getComponent(VelocityComponent.class).setXVelocity(0);
 		alien.addComponent(CollisionComponent.class, new CollisionComponent(alien));
 		alien.getComponent(CollisionComponent.class).setCollisionGroup(1);
 		alien.addComponent(AIComponent.class, new AIComponent(alien));
-		alien.getComponent(RenderComponent.class).setTextureID(1);
-		alien.getComponent(RenderComponent.class).setTexturePath("res/enemy.png");
+		alien.getComponent(RenderComponent.class).setTexturePath("res\\enemy.png");
 		alien.addComponent(WeaponComponent.class, new WeaponComponent(alien));
 		int[] a = {0, 1};
 		alien.addComponent(AnimationComponent.class, new AnimationComponent(alien));
@@ -186,7 +184,7 @@ public class EntityCreationSystem implements ISystem
 		fort.getComponent(TransformComponent.class).setHeight(64);
 		fort.addComponent(RenderComponent.class, new RenderComponent(fort));
 		fort.getComponent(RenderComponent.class).setSpriteID(0);
-		fort.getComponent(RenderComponent.class).setTextureID(2);
+		fort.getComponent(RenderComponent.class).setTexturePath("res\\fort.png");
 		fort.addComponent(CollisionComponent.class, new CollisionComponent(fort));
 		fort.getComponent(CollisionComponent.class).setCollisionGroup(4);
 		fort.addComponent(HealthComponent.class, new HealthComponent(fort));
@@ -219,7 +217,7 @@ public class EntityCreationSystem implements ISystem
 		bullet.getComponent(VelocityComponent.class).setXVelocity(0);
 		bullet.addComponent(RenderComponent.class, new RenderComponent(bullet));
 		bullet.getComponent(RenderComponent.class).setSpriteID(0);
-		bullet.getComponent(RenderComponent.class).setTextureID(4);
+		bullet.getComponent(RenderComponent.class).setTexturePath("res\\bullet.png");
 		bullet.addComponent(CollisionComponent.class, new CollisionComponent(bullet));
 		int[] a = {0, 1};
 		bullet.addComponent(AnimationComponent.class, new AnimationComponent(bullet));
@@ -250,7 +248,7 @@ public class EntityCreationSystem implements ISystem
 		alien.getComponent(TransformComponent.class).setHeight(32);
 		alien.addComponent(RenderComponent.class, new RenderComponent(alien));
 		alien.getComponent(RenderComponent.class).setSpriteID(2);
-		alien.getComponent(RenderComponent.class).setTextureID(1);
+		alien.getComponent(RenderComponent.class).setTexturePath("res\\enemy.png");
 		alien.addComponent(BodyComponent.class, new BodyComponent(alien));
 		alien.getComponent(BodyComponent.class).setTimeUntilDecay(500);
 		long time = core.getSystem(TimerSystem.class).getNow();

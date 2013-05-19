@@ -210,6 +210,8 @@ public class ResourceLoader implements ISystem
 	{//TODO: parse Json, change to interface so it can parse anything.
 		//TODO: Error check
 		Texture meta = new Texture();
+		meta.setPath(file.getPath().replace(".meta", ".png"));
+		
 		try
 		{
 			JsonFactory jFact = new JsonFactory();

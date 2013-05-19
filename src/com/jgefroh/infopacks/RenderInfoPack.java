@@ -133,6 +133,14 @@ public class RenderInfoPack implements IInfoPack
 	{
 		return rc.getTextureID();
 	}
+	
+	/**
+	 * @see RenderComponent#getTexturePath()
+	 */
+	public String getPath()
+	{
+		return rc.getTexturePath();
+	}
 
 	
 	//////////
@@ -142,5 +150,13 @@ public class RenderInfoPack implements IInfoPack
 	public void setDirty(final boolean isDirty)
 	{
 		this.isDirty = isDirty;
+	}
+	
+	/**
+	 * @see RenderComponent#setTextureID(int)
+	 */
+	public void setTextureID(final int textureID)
+	{
+		rc.setTextureID(textureID);
 	}
 }

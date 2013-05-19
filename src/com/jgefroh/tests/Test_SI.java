@@ -165,7 +165,6 @@ public class Test_SI
 		//2 = player bullet
 		//3 = alien bullet
 		//4 = fort
-		
 		core.getSystem(CollisionSystem.class).setCollision(0, 1, true);	//player, alien
 		core.getSystem(CollisionSystem.class).setCollision(1, 2, true);	//alien, pBullet
 		core.getSystem(CollisionSystem.class).setCollision(0, 3, true);	//player, aBullet
