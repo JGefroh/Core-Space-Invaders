@@ -17,7 +17,7 @@ public interface IInfoPack
 
 	/**
 	 * Check to see if the InfoPack is invalid or unreliable.
-	 * @return	true if the InfoPack is unreliable, false otherwise.
+	 * @return	true if the InfoPack is unreliable, false otherwise
 	 */
 	public boolean isDirty();
 	
