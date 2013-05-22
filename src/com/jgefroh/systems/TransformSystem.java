@@ -1,8 +1,7 @@
 package com.jgefroh.systems;
 
 
-import java.util.ArrayList;
-import java.util.logging.ConsoleHandler;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -109,11 +108,12 @@ public class TransformSystem implements ISystem
 	 */
 	public void move()
 	{
-		ArrayList<MovementInfoPack> packs 
+		Iterator<MovementInfoPack> packs 
 			= core.getInfoPacksOfType(MovementInfoPack.class);
 
-		for(MovementInfoPack each:packs)
+		while(packs.hasNext())
 		{
+			MovementInfoPack each = packs.next();
 			if(each.isDirty()==false)
 			{
 				if(timer.isUpdateTime(each.getInterval(), each.getLastUpdated()))

@@ -1,8 +1,7 @@
 package com.jgefroh.systems;
 
 
-import java.util.ArrayList;
-import java.util.logging.ConsoleHandler;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -99,10 +98,12 @@ public class BodySystem implements ISystem
 	 */
 	private void decay()
 	{
-		ArrayList<BodyInfoPack> infoPacks = 
+		Iterator<BodyInfoPack> infoPacks = 
 				core.getInfoPacksOfType(BodyInfoPack.class);
-		for(BodyInfoPack pack:infoPacks)
+		
+		while(infoPacks.hasNext())
 		{
+			BodyInfoPack pack = infoPacks.next();
 			if(pack.isDirty()==false)
 			{
 				if(timer.isUpdateTime(pack.getTimeUntilDecay(), pack.getLastUpdateTime()))

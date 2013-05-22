@@ -2,9 +2,8 @@ package com.jgefroh.systems;
 
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.ConsoleHandler;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,7 +12,6 @@ import org.lwjgl.opengl.GL11;
 import com.jgefroh.core.Core;
 import com.jgefroh.core.ISystem;
 import com.jgefroh.core.LoggerFactory;
-import com.jgefroh.data.Sprite;
 import com.jgefroh.data.Texture;
 import com.jgefroh.infopacks.RenderInfoPack;
 
@@ -190,10 +188,11 @@ public class RenderSystem implements ISystem
 	public void render()
 	{
 		newFrame();
-		ArrayList<RenderInfoPack> infoPacks = 
+		Iterator<RenderInfoPack> packs = 
 				core.getInfoPacksOfType(RenderInfoPack.class);
-		for(RenderInfoPack pack:infoPacks)
+		while(packs.hasNext())
 		{
+			RenderInfoPack pack = packs.next();
 			if(pack.isDirty()==false)
 			{
 				if(pack.getTextureID()==-1)
@@ -216,6 +215,7 @@ public class RenderSystem implements ISystem
 						getVMin(pack.getTextureID(), pack.getSpriteID()),
 						getVMax(pack.getTextureID(), pack.getSpriteID()));
 			}
+
 		}
 	}
 

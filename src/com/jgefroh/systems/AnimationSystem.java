@@ -1,8 +1,7 @@
 package com.jgefroh.systems;
 
 
-import java.util.ArrayList;
-import java.util.logging.ConsoleHandler;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -107,10 +106,11 @@ public class AnimationSystem implements ISystem
 	 */
 	private void animate()
 	{
-		ArrayList<AnimationInfoPack> infoPacks = 
+		Iterator<AnimationInfoPack> infoPacks = 
 				core.getInfoPacksOfType(AnimationInfoPack.class);
-		for(AnimationInfoPack pack:infoPacks)
+		while(infoPacks.hasNext())
 		{
+			AnimationInfoPack pack = infoPacks.next();
 			if(pack.isDirty()==false)
 			{
 				if(timer.isUpdateTime(pack.getInterval(), pack.getLastUpdateTime()))

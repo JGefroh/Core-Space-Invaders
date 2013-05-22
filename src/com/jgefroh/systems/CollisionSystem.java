@@ -3,6 +3,7 @@ package com.jgefroh.systems;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -95,15 +96,20 @@ public class CollisionSystem implements ISystem
 	public void checkAll()
 	{
 		//TODO: Use better method.
-		ArrayList<CollisionInfoPack> packs =
+		Iterator<CollisionInfoPack> packs =
 				core.getInfoPacksOfType(CollisionInfoPack.class);
 
-		for(CollisionInfoPack each:packs)
+
+		while(packs.hasNext())
 		{
+			CollisionInfoPack each = packs.next();
 			if(each.isDirty()==false)
 			{
-				for(CollisionInfoPack pack:packs)
+				Iterator<CollisionInfoPack> packs2 =
+						core.getInfoPacksOfType(CollisionInfoPack.class);
+				while(packs2.hasNext())
 				{
+					CollisionInfoPack pack = packs2.next();
 					if(pack.isDirty()==false)
 					{
 						if(checkCollidesWith(each.getGroup(), pack.getGroup())&&each!=pack)

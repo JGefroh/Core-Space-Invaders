@@ -1,8 +1,7 @@
 package com.jgefroh.systems;
 
 
-import java.util.ArrayList;
-import java.util.logging.ConsoleHandler;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -10,7 +9,6 @@ import com.jgefroh.core.Core;
 import com.jgefroh.core.ISystem;
 import com.jgefroh.core.LoggerFactory;
 import com.jgefroh.infopacks.AIInfoPack;
-import com.jgefroh.infopacks.HealthInfoPack;
 
 /**
  * This system goes through all entities with health and marks ones with no
@@ -91,9 +89,9 @@ public class WinCheckSystem implements ISystem
 	private void aWinnerIsYou()
 	{
 		//TODO: make this restart the game and increase difficulty.
-		ArrayList<AIInfoPack> packs 
+		Iterator<AIInfoPack> packs 
 		= core.getInfoPacksOfType(AIInfoPack.class);
-		if(packs.size()<=0)
+		if(packs.hasNext()==false)
 		{
 			System.out.println("GAME OVER - You Win!");
 			System.exit(0);

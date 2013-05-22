@@ -2,6 +2,7 @@ package com.jgefroh.input;
 
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -216,9 +217,10 @@ public class InputSystem implements IInputSystem, ISystem
 		if(action!=null)
 		{
 			String command = action.getCommand();
-			ArrayList<InputInfoPack> packs = core.getInfoPacksOfType(InputInfoPack.class);
-			for(InputInfoPack each:packs)
+			Iterator<InputInfoPack> packs = core.getInfoPacksOfType(InputInfoPack.class);
+			while(packs.hasNext())
 			{
+				InputInfoPack each = packs.next();
 				if(each.isInterested(command))
 				{
 					action.execute(each.getOwner());

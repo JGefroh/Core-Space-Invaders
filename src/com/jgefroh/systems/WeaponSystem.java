@@ -2,7 +2,7 @@ package com.jgefroh.systems;
 
 
 import java.util.ArrayList;
-import java.util.logging.ConsoleHandler;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,6 +13,7 @@ import com.jgefroh.core.IEntity;
 import com.jgefroh.core.ISystem;
 import com.jgefroh.core.LoggerFactory;
 import com.jgefroh.infopacks.BulletInfoPack;
+import com.jgefroh.infopacks.CollisionInfoPack;
 import com.jgefroh.infopacks.WeaponInfoPack;
 
 
@@ -99,11 +100,12 @@ public class WeaponSystem implements ISystem
 	public void weaponCheck()
 	{
 		//TODO: Make independent (TOO COUPLED).
-		ArrayList<BulletInfoPack> infoPacks 
+		Iterator<BulletInfoPack> packs 
 			= core.getInfoPacksOfType(BulletInfoPack.class);
 
-		for(BulletInfoPack each:infoPacks)
+		while(packs.hasNext())
 		{
+			BulletInfoPack each = packs.next();
 			if(each.isDirty()==false)
 			{
 				if(each.getYPos()>=1050||each.getYPos()<=-16)
@@ -114,10 +116,11 @@ public class WeaponSystem implements ISystem
 			}
 		}
 		
-		ArrayList<WeaponInfoPack> weaponPacks 
+		Iterator<WeaponInfoPack> weaponPacks 
 			= core.getInfoPacksOfType(WeaponInfoPack.class);
-		for(WeaponInfoPack each:weaponPacks)
+		while(weaponPacks.hasNext())
 		{
+			WeaponInfoPack each = weaponPacks.next();
 			if(each.isDirty()==false)
 			{
 				if(each.isFireRequested()&&each.isReady())

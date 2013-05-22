@@ -1,17 +1,15 @@
 package com.jgefroh.systems;
 
 
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
-import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.jgefroh.core.Core;
-import com.jgefroh.core.LoggerFactory;
-import com.jgefroh.core.System;
 import com.jgefroh.core.IEntity;
 import com.jgefroh.core.ISystem;
+import com.jgefroh.core.LoggerFactory;
 import com.jgefroh.infopacks.AIInfoPack;
 import com.jgefroh.infopacks.WeaponInfoPack;
 
@@ -111,11 +109,12 @@ public class AISystem implements ISystem
 	 */
 	private void moveAndShoot()
 	{//TODO: Fix this stupid mess of a method.
-		ArrayList<AIInfoPack> packs
+		Iterator<AIInfoPack> packs
 		= core.getInfoPacksOfType(AIInfoPack.class);
 		boolean switched = false;
-		for(AIInfoPack each:packs)
+		while(packs.hasNext())
 		{
+			AIInfoPack each = packs.next();
 			if(each.isDirty()==false)
 			{
 				//SHOOT
@@ -143,8 +142,9 @@ public class AISystem implements ISystem
 		{
 			isMovingLeft = !isMovingLeft;
 			movementInterval-=20;
-			for(AIInfoPack each:packs)
+			while(packs.hasNext())
 			{
+				AIInfoPack each = packs.next();
 				if(each.isDirty()==false)
 				{
 					core.getSystem(TransformSystem.class).shiftPosition(each.getOwner(), 0, 25);

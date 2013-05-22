@@ -1,11 +1,10 @@
 package com.jgefroh.systems;
 
 
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.jgefroh.components.RenderComponent;
 import com.jgefroh.core.Core;
 import com.jgefroh.core.ISystem;
 import com.jgefroh.core.LoggerFactory;
@@ -89,10 +88,11 @@ public class HealthCheckSystem implements ISystem
 	 */
 	private void checkHealth()
 	{
-		ArrayList<HealthInfoPack> packs 
+		Iterator<HealthInfoPack> packs 
 		= core.getInfoPacksOfType(HealthInfoPack.class);
-		for(HealthInfoPack each:packs)
+		while(packs.hasNext())
 		{
+			HealthInfoPack each = packs.next();
 			if(each.isDirty()==false)
 			{
 				if(each.getCurHealth()<=0)

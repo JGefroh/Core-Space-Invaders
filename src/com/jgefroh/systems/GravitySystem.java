@@ -1,8 +1,7 @@
 package com.jgefroh.systems;
 
 
-import java.util.ArrayList;
-import java.util.logging.ConsoleHandler;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -88,10 +87,11 @@ public class GravitySystem implements ISystem
 	private void gravitate()
 	{
 		//TODO: Ugly.
-		ArrayList<GravityInfoPack> infoPacks 
+		Iterator<GravityInfoPack> packs 
 				= core.getInfoPacksOfType(GravityInfoPack.class);
-		for(GravityInfoPack each:infoPacks)
+		while(packs.hasNext())
 		{
+			GravityInfoPack each = packs.next();
 			if(each.isDirty()==false)
 			{
 				if(core.getSystem(TimerSystem.class).getNow()-each.getLastUpdate()>=each.getUpdateInterval())
