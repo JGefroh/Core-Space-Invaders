@@ -2,20 +2,19 @@ package com.jgefroh.actions;
 
 import com.jgefroh.core.Core;
 import com.jgefroh.core.IEntity;
-import com.jgefroh.systems.StatSystem;
-import com.jgefroh.systems.WeaponSystem;
+import com.jgefroh.systems.TransformSystem;
 
 
-public class ActionShoot implements IAction
+public class ActionClick implements IAction
 {
-	private final String command = "SHOOT";
+	private final String command = "LEFTCLICK";
 	private Core core;
 	
-	public ActionShoot(final Core core)
+	public ActionClick(final Core core)
 	{
 		this.core = core;
 	}
-	
+
 	@Override
 	public String getCommand()
 	{
@@ -25,7 +24,7 @@ public class ActionShoot implements IAction
 	@Override
 	public void execute(final IEntity entity)
 	{
-		core.getSystem(WeaponSystem.class).fire(entity);
+		core.send("INPUT_LEFT_CLICK", "");
 	}
 
 }

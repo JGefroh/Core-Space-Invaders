@@ -13,9 +13,8 @@ import com.jgefroh.infopacks.AnimationInfoPack;
 
 /**
  * This system handles changing the sprite image at the required intervals.
- * The AnimationSystem keeps track of frames and animation sequences for 
- * entities. It provides methods to start and stop animations. 
  * @author Joseph Gefroh
+ * @version 0.3.0
  */
 public class AnimationSystem implements ISystem
 {
@@ -30,6 +29,12 @@ public class AnimationSystem implements ISystem
 	/**Flag that shows whether the system is running or not.*/
 	private boolean isRunning;
 	
+	/**The time to wait between executions of the system.*/
+	private long waitTime;
+	
+	/**The time this System was last executed, in ms.*/
+	private long last;
+	
 	/**The level of detail in debug messages.*/
 	private Level debugLevel = Level.FINE;
 	
@@ -39,12 +44,11 @@ public class AnimationSystem implements ISystem
 	
 
 	
-	private TimerSystem timer;
 	//////////
 	// INIT
 	//////////
 	/**
-	 * Create a new AnimationSystem
+	 * Create a new instance of this System.
 	 * @param core	a reference to the Core controlling this system
 	 */
 	public AnimationSystem(final Core core)
@@ -61,30 +65,22 @@ public class AnimationSystem implements ISystem
 	public void init()
 	{
 		isRunning = true;
+		core.setInterested(this, "ADVANCE_FRAME");
 	}
 	
 	@Override
 	public void start()
 	{
 		LOGGER.log(Level.INFO, "System started.");
-		timer = core.getSystem(TimerSystem.class);
-		if(timer!=null)
-		{
-			isRunning = true;			
-		}
-		else
-		{
-			isRunning = false;
-			LOGGER.log(Level.SEVERE, "Unable to start system - missing timer.");
-		}
+		isRunning = true;			
 	}
 
 	@Override
-	public void work()
+	public void work(final long now)
 	{		
-		if(timer!=null&&isRunning)
+		if(isRunning)
 		{			
-			animate();
+			animate(now);
 		}
 	}
 
@@ -95,7 +91,38 @@ public class AnimationSystem implements ISystem
 		isRunning = false;
 	}
 	
+	@Override
+	public long getWait()
+	{
+		return this.waitTime;
+	}
+
+	@Override
+	public long	getLast()
+	{
+		return this.last;
+	}
 	
+	@Override
+	public void setWait(final long waitTime)
+	{
+		this.waitTime = waitTime;
+	}
+	
+	@Override
+	public void setLast(final long last)
+	{
+		this.last = last;
+	}
+	
+	@Override
+	public void recv(final String id, final String... message)
+	{
+		if(id.equals("ADVANCE_FRAME"))
+		{
+			nextFrame(core.getInfoPackFrom(message[0], AnimationInfoPack.class));
+		}
+	}
 	//////////
 	// SYSTEM METHODS
 	//////////
@@ -104,7 +131,7 @@ public class AnimationSystem implements ISystem
 	 * their frames.
 	 * @param entities the ArrayList of entities
 	 */
-	private void animate()
+	private void animate(final long now)
 	{
 		Iterator<AnimationInfoPack> infoPacks = 
 				core.getInfoPacksOfType(AnimationInfoPack.class);
@@ -113,10 +140,10 @@ public class AnimationSystem implements ISystem
 			AnimationInfoPack pack = infoPacks.next();
 			if(pack.isDirty()==false)
 			{
-				if(timer.isUpdateTime(pack.getInterval(), pack.getLastUpdateTime()))
+				if(now-pack.getLastUpdateTime()>=pack.getInterval())
 				{	
 					nextFrame(pack);
-					pack.setLastUpdateTime(timer.getNow());
+					pack.setLastUpdateTime(now);
 				}
 			}
 		}
@@ -128,16 +155,21 @@ public class AnimationSystem implements ISystem
 	 */
 	public void nextFrame(final AnimationInfoPack pack)
 	{
-		int currentFrame = pack.getCurrentFrame();
-		int numberOfFrames = pack.getNumberOfFrames();
-		if(currentFrame<=numberOfFrames-1)
+		if(pack!=null)
 		{
-			pack.setAnimationSprite(pack.getAnimationSprite());
-			pack.setCurrentFrame(currentFrame+1);
-		}
-		else
-		{
-			pack.setCurrentFrame(0);
+			int currentFrame = pack.getCurrentFrame();
+			int numberOfFrames = pack.getNumberOfFrames();
+			if(currentFrame<=numberOfFrames-1)
+			{
+				//If the end of the animation has not yet been reached...
+				pack.setAnimationSprite(pack.getAnimationSprite());
+				pack.setCurrentFrame(currentFrame+1);
+			}
+			else
+			{
+				//Restart the animation from the first frame.
+				pack.setCurrentFrame(0);
+			}
 		}
 	}
 }

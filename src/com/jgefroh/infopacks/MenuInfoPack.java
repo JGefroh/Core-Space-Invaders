@@ -1,21 +1,20 @@
 package com.jgefroh.infopacks;
 
-import com.jgefroh.components.RenderComponent;
+import com.jgefroh.components.HealthComponent;
+import com.jgefroh.components.MenuComponent;
 import com.jgefroh.components.TransformComponent;
 import com.jgefroh.core.IEntity;
 import com.jgefroh.core.IInfoPack;
 
-
 /**
- * Intended to be used by the RenderSystem.
+ * Intended to be used by the MenuSystem.
  * 
  * Controls access to the following components:
+ * MenuComponent
  * TransformComponent
- * RenderComponent
- * 
  * @author Joseph Gefroh
  */
-public class RenderInfoPack implements IInfoPack
+public class MenuInfoPack implements IInfoPack
 {
 	//////////
 	// DATA
@@ -24,13 +23,14 @@ public class RenderInfoPack implements IInfoPack
 	private IEntity owner;
 	
 	/**A component this InfoPack depends on.*/
-	private TransformComponent tc;
+	private MenuComponent mc;
 	
-	/**A component this InfoPack depends on.*/
-	private RenderComponent rc;
+	private TransformComponent tc;
 	
 	/**Flag that indicates the InfoPack is invalid and unreliable.*/
 	private boolean isDirty;
+	
+	
 	//////////
 	// INIT
 	//////////
@@ -38,9 +38,10 @@ public class RenderInfoPack implements IInfoPack
 	 * Create a new instance of this InfoPack.
 	 * @param owner	the entity associated with this InfoPack
 	 */
-	public RenderInfoPack(final IEntity owner)
+	public MenuInfoPack(final IEntity owner)
 	{
 		this.owner = owner;
+		isDirty();
 	}
 	
 	
@@ -48,13 +49,19 @@ public class RenderInfoPack implements IInfoPack
 	// GETTERS
 	//////////
 	@Override
+	public IEntity getOwner()
+	{
+		return this.owner;
+	}
+	
+	@Override
 	public boolean isDirty()
 	{
 		if(owner.hasChanged())
 		{
+			mc = owner.getComponent(MenuComponent.class);
 			tc = owner.getComponent(TransformComponent.class);
-			rc = owner.getComponent(RenderComponent.class);			
-			if(tc==null||rc==null)
+			if(mc==null||tc==null)
 			{
 				setDirty(true);
 				return true;
@@ -64,16 +71,18 @@ public class RenderInfoPack implements IInfoPack
 		return false;
 	}
 	
-	@Override
-	public IEntity getOwner()
+	/**
+	 * @see MenuComponent#isSelected()
+	 */
+	public boolean isSelected()
 	{
-		return this.owner;
+		return mc.isSelected();
 	}
 	
 	/**
 	 * @see TransformComponent#getXPos() 
 	 */
-	public long getXPos()
+	public int getXPos()
 	{
 		return tc.getXPos();
 	}	
@@ -81,7 +90,7 @@ public class RenderInfoPack implements IInfoPack
 	/**
 	 * @see TransformComponent#getYPos() 
 	 */
-	public long getYPos()
+	public int getYPos()
 	{
 		return tc.getYPos();
 	}
@@ -89,7 +98,7 @@ public class RenderInfoPack implements IInfoPack
 	/**
 	 * @see TransformComponent#getZPos() 
 	 */
-	public long getZPos()
+	public int getZPos()
 	{
 		return tc.getZPos();
 	}
@@ -109,40 +118,6 @@ public class RenderInfoPack implements IInfoPack
 	{
 		return tc.getHeight();
 	}
-	
-	/**
-	 * @see RenderComponent#isVisible() 
-	 */
-	public boolean isVisible()
-	{
-		return rc.isVisible();
-	}
-	
-	/**
-	 * @see RenderComponent#getSpriteID() 
-	 */	
-	public int getSpriteID()
-	{
-		return rc.getSpriteID();
-	}
-	
-	/**
-	 * @see RenderComponent#getTextureID() 
-	 */
-	public int getTextureID()
-	{
-		return rc.getTextureID();
-	}
-	
-	/**
-	 * @see RenderComponent#getTexturePath()
-	 */
-	public String getPath()
-	{
-		return rc.getTexturePath();
-	}
-
-	
 	//////////
 	// SETTERS
 	//////////
@@ -152,19 +127,15 @@ public class RenderInfoPack implements IInfoPack
 		this.isDirty = isDirty;
 	}
 	
-	/**
-	 * @see RenderComponent#setTextureID(int)
-	 */
-	public void setTextureID(final int textureID)
+	public void setSelected(final boolean isSelected)
 	{
-		rc.setTextureID(textureID);
+		mc.setSelected(isSelected);
 	}
 
-	/**
-	 * @see RenderComponent#setSpriteID(int)
-	 */
-	public void setSpriteID(final int id)
+
+	public String getCommand()
 	{
-		rc.setSpriteID(id);
+		return mc.getCommand();
 	}
+
 }

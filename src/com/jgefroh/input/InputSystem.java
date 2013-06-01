@@ -1,22 +1,20 @@
 package com.jgefroh.input;
 
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
-import com.jgefroh.actions.ActionMoveDown;
+import com.jgefroh.actions.ActionClick;
+import com.jgefroh.actions.ActionMenu;
 import com.jgefroh.actions.ActionMoveLeft;
 import com.jgefroh.actions.ActionMoveRight;
-import com.jgefroh.actions.ActionMoveUp;
-import com.jgefroh.actions.ActionQuit;
+import com.jgefroh.actions.ActionPause;
 import com.jgefroh.actions.ActionShoot;
 import com.jgefroh.actions.ActionStopX;
-import com.jgefroh.actions.ActionStopY;
 import com.jgefroh.actions.IAction;
 import com.jgefroh.core.Core;
 import com.jgefroh.core.ISystem;
@@ -32,7 +30,7 @@ import com.jgefroh.infopacks.InputInfoPack;
  * according to the binds associated with the inputs.
  * @author Joseph Gefroh
  */
-public class InputSystem implements IInputSystem, ISystem
+public class InputSystem implements ISystem, IInputSystem
 {
 	//////////
 	// DATA
@@ -42,6 +40,12 @@ public class InputSystem implements IInputSystem, ISystem
 	
 	/**Flag that shows whether the system is running or not.*/
 	private boolean isRunning;
+	
+	/**The time to wait between executions of the system.*/
+	private long waitTime;
+	
+	/**The time this System was last executed, in ms.*/
+	private long last;
 	
 	/**The level of detail in debug messages.*/
 	private Level debugLevel = Level.FINE;
@@ -77,18 +81,17 @@ public class InputSystem implements IInputSystem, ISystem
 	{
 		//TODO: Move somewhere else.
 		BindMap kbs = new BindMap();
-		kbs.bind(Keyboard.KEY_W, new ActionMoveUp(core), InputSystem.HOLD);
-		kbs.bind(Keyboard.KEY_S, new ActionMoveDown(core), InputSystem.HOLD);
 		kbs.bind(Keyboard.KEY_A, new ActionMoveLeft(core), InputSystem.HOLD);
 		kbs.bind(Keyboard.KEY_D, new ActionMoveRight(core), InputSystem.HOLD);
-		kbs.bind(Keyboard.KEY_W, new ActionStopY(core), InputSystem.RELEASE);
-		kbs.bind(Keyboard.KEY_S, new ActionStopY(core), InputSystem.RELEASE);
+		kbs.bind(Keyboard.KEY_P, new ActionPause(core), InputSystem.RELEASE);
 		kbs.bind(Keyboard.KEY_A, new ActionStopX(core), InputSystem.RELEASE);
 		kbs.bind(Keyboard.KEY_D, new ActionStopX(core), InputSystem.RELEASE);
 		kbs.bind(Keyboard.KEY_SPACE, new ActionShoot(core), InputSystem.PRESS);
-		kbs.bind(Keyboard.KEY_ESCAPE, new ActionQuit(core), InputSystem.PRESS);
+		kbs.bind(Keyboard.KEY_ESCAPE, new ActionMenu(core), InputSystem.PRESS);
 		setBindSystem(IInputSystem.KEYBOARD, kbs);
-		setBindSystem(IInputSystem.MOUSE, new BindMap());
+		BindMap mb = new BindMap();
+			mb.bind(0, new ActionClick(core), InputSystem.RELEASE);
+		setBindSystem(IInputSystem.MOUSE, mb);
 	}
 	
 	//////////
@@ -99,7 +102,8 @@ public class InputSystem implements IInputSystem, ISystem
 	{
 		kir = new InputDevice_Keyboard(this);
 		mir = new InputDevice_Mouse(this);
-		initBinds();	
+		initBinds();
+		core.setInterested(this,"REQUEST_CURSOR_POSITION");
 	}
 	
 	@Override
@@ -108,10 +112,9 @@ public class InputSystem implements IInputSystem, ISystem
 		LOGGER.log(Level.INFO, "System started.");
 		isRunning = true;
 	}
-
-
+	
 	@Override
-	public void work()
+	public void work(final long now)
 	{
 		if(isRunning)
 		{
@@ -127,7 +130,38 @@ public class InputSystem implements IInputSystem, ISystem
 		isRunning = false;
 	}
 	
+	@Override
+	public long getWait()
+	{
+		return this.waitTime;
+	}
+
+	@Override
+	public long	getLast()
+	{
+		return this.last;
+	}
 	
+	@Override
+	public void setWait(final long waitTime)
+	{
+		this.waitTime = waitTime;
+	}
+	
+	@Override
+	public void setLast(final long last)
+	{
+		this.last = last;
+	}
+	
+	@Override
+	public void recv(final String id, final String... message)
+	{
+		if(id.equals("REQUEST_CURSOR_POSITION"))
+		{
+			core.send("INPUT_CURSOR_POSITION", Mouse.getX() +"", Mouse.getY()+"");
+		}
+	}
 	//////////
 	// IIINPUTSYSTEM INTERFACE
 	//////////
@@ -203,7 +237,7 @@ public class InputSystem implements IInputSystem, ISystem
 				action = mbs.getActionOnRelease(keyCode);
 				break;
 			case MOVE:
-				action = mbs.getActionOnPress(type);
+				core.send("CURSOR_POSITION_CHANGE", Mouse.getX()+"", Mouse.getY()+"");
 		}
 		processAction(action);
 	}

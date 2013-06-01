@@ -1,11 +1,9 @@
 package com.jgefroh.systems;
 
-import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.lwjgl.LWJGLException;
-import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
@@ -17,8 +15,12 @@ import com.jgefroh.core.LoggerFactory;
 
 /**
  * Handles the window the game runs in.
+ * 
+ * This system depends on LWJGL and assumes a LWJGL rendering environment.
+ * 
+ * Date: 31MAY13
  * @author Joseph Gefroh
- *
+ * @version 0.2.0
  */
 public class WindowSystem implements ISystem
 {
@@ -31,7 +33,14 @@ public class WindowSystem implements ISystem
 	private Core core;
 	
 	/**Flag that shows whether the system is running or not.*/
+	@SuppressWarnings("unused")
 	private boolean isRunning;
+	
+	/**The time to wait between executions of the system.*/
+	private long waitTime;
+	
+	/**The time this System was last executed, in ms.*/
+	private long last;
 	
 	/**The level of detail in debug messages.*/
 	private Level debugLevel = Level.FINE;
@@ -41,17 +50,11 @@ public class WindowSystem implements ISystem
 		= LoggerFactory.getLogger(this.getClass(), debugLevel);
 	
 	/**Flag that shows if vSync is enabled or disabled.*/
+	@SuppressWarnings("unused")
 	private boolean vSyncEnabled;
 	
 	/**Flag that shows if the window border is enabled or disabled.*/
 	private boolean borderEnabled;
-	
-	/**The last number of Frames Per Second.*/
-	private long lastFPS = 0;
-	
-	/**The current number of Frames Per Second.*/
-	private long fps = 0;
-	
 	
 	//////////
 	// INIT
@@ -62,8 +65,9 @@ public class WindowSystem implements ISystem
 	 * @param height	the desired height of the window
 	 * @param title		the desired title of the window
 	 */
-	public WindowSystem(final int width, final int height, final String title)
+	public WindowSystem(final Core core, final int width, final int height, final String title)
 	{
+		this.core = core;
 		init();
 		setSize(width, height);
 		setTitle(title);
@@ -71,7 +75,6 @@ public class WindowSystem implements ISystem
 		//setDisplayMode(findDisplayMode(2560, 1440));
 		setDisplayMode(new DisplayMode(width, height));
 		setVSyncEnabled(true);
-		lastFPS = getTime();
 		try
 		{			
 			Display.create();
@@ -79,6 +82,7 @@ public class WindowSystem implements ISystem
 		catch(LWJGLException e)
 		{
 			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, "Unable to create Display; exiting...");
 			System.exit(-1);
 		}
 	}
@@ -91,6 +95,9 @@ public class WindowSystem implements ISystem
 	public void init()
 	{
 		this.isRunning = true;
+		core.setInterested(this, "REQUEST_WINDOW_WIDTH");
+		core.setInterested(this, "REQUEST_WINDOW_HEIGHT");
+
 	}
 	
 	@Override
@@ -101,11 +108,8 @@ public class WindowSystem implements ISystem
 	}
 	
 	@Override
-	public void work()
+	public void work(final long now)
 	{
-		if(isRunning)
-		{
-		}
 	}
 
 	@Override
@@ -115,14 +119,56 @@ public class WindowSystem implements ISystem
 		isRunning = false;
 	}
 	
+	@Override
+	public long getWait()
+	{
+		return this.waitTime;
+	}
+
+	@Override
+	public long	getLast()
+	{
+		return this.last;
+	}
+	
+	@Override
+	public void setWait(final long waitTime)
+	{
+		this.waitTime = waitTime;
+	}
+	
+	@Override
+	public void setLast(final long last)
+	{
+		this.last = last;
+	}
+	
+	/**
+	 * Acts on the following messages:
+	 * REQUEST_WINDOW_HEIGHT
+	 * REQUEST_WINDOW_WIDTH
+	 */
+	@Override
+	public void recv(final String id, final String... message)
+	{
+		LOGGER.log(Level.FINER, "Received message: " + id);
+		if(id.equals("REQUEST_WINDOW_WIDTH"))
+		{
+			core.send("WINDOW_WIDTH", Display.getWidth() + "");
+		}
+		else if(id.equals("REQUEST_WINDOW_HEIGHT"))
+		{
+			core.send("WINDOW_HEIGHT", Display.getHeight() + "");
+		}
+	}
 	
 	//////////
 	// SYSTEM METHODS
 	//////////
 	/**
-	 * Set the size of the window.
-	 * @param width		the int width of the window
-	 * @param height	the int height of the window
+	 * Sets the size of the window.
+	 * @param width		the pixel width of the window
+	 * @param height	the pixel height of the window
 	 * @throws IllegalArgumentException	thrown if either width or height <=0
 	 */
 	public void setSize(final int width, final int height) throws IllegalArgumentException
@@ -131,31 +177,39 @@ public class WindowSystem implements ISystem
 		{
 			try
 			{
+				LOGGER.log(Level.FINE, "Window resize request: " 
+							+ width + "X" + height);
 				Display.setDisplayMode(new DisplayMode(width, height));
 			}
 			catch(LWJGLException e)
 			{
+				LOGGER.log(Level.SEVERE, "Unable to resize window to: " 
+							+ width + "X" + height);
 				e.printStackTrace();
 			}
 		}
 		else
 		{
+			LOGGER.log(Level.SEVERE, "Bad size provided: " 
+					+ width + "wX" + height + "h");
 			throw new IllegalArgumentException(
-					"Error | Width and height must be > 0");
+					"Error | Window width and height must be > 0");
 		}
 	}
 	
 	/**
-	 * Find a compatible display mode.
+	 * Finds a compatible display mode.
 	 * @param width		the desired width
 	 * @param height	the desired height
-	 * @return	a compatible display mode
+	 * @return			a compatible display mode
 	 */
 	public DisplayMode findDisplayMode(final int width, final int height)
 	{
 		DisplayMode[] displayModes;
 		try
 		{
+			LOGGER.log(Level.FINE, "Attempting to locate display mode: " 
+								+ width + "X" + height);
 			displayModes = Display.getAvailableDisplayModes();
 			
 			for(DisplayMode each:displayModes)
@@ -181,38 +235,17 @@ public class WindowSystem implements ISystem
 		{
 			e.printStackTrace();
 		}
+		LOGGER.log(Level.WARNING, "Unable to locate compatible display mode: " 
+							+ width + "X" + height);
 		return new DisplayMode(width, height);
 	}
 	
-	/**
-	 * Calculate the Frames-Per-Second of the window and display as its title.
-	 */
-	public void updateFPS()
-	{
-		if(getTime() - lastFPS > 1000)
-		{
-			setTitle("FPS: " + fps);
-			fps = 0;
-			lastFPS += 1000;
-		}
-		fps++;
-	}
-
-	/**
-	 * Get the time, in ms.
-	 * @return	the time
-	 */
-	private long getTime()
-	{
-		return (Sys.getTime() * 1000) / Sys.getTimerResolution();
-	}
-
 	//////////
 	// GETTERS
 	//////////
 	/**
-	 * Return the width of the window.
-	 * @return	the int width of the window
+	 * Returns the width of the window.
+	 * @return	the pixel width of the window
 	 */
 	public int getWidth()
 	{
@@ -220,8 +253,8 @@ public class WindowSystem implements ISystem
 	}
 	
 	/**
-	 * Return the height of the window.
-	 * @return	the int height of the window
+	 * Returns the height of the window.
+	 * @return	the pixel height of the window
 	 */
 	public int getHeight()
 	{
@@ -273,7 +306,7 @@ public class WindowSystem implements ISystem
 	}
 	
 	/**
-	 * Set the title of the window.
+	 * Sets the title of the window.
 	 * @param title		the String title of the window
 	 */
 	public void setTitle(final String title)
@@ -281,7 +314,7 @@ public class WindowSystem implements ISystem
 		Display.setTitle(title);
 	}
 	/**
-	 * Adjust whether the window's border is drawn.
+	 * Adjusts whether the window's border is drawn.
 	 * @param border	true to draw the border, false to remove.
 	 */
 	public void setBorderEnabled(final boolean border)
@@ -291,7 +324,7 @@ public class WindowSystem implements ISystem
 	}
 	
 	/**
-	 * Adjust whether Vertical Sync is enabled or disabled.
+	 * Adjusts whether Vertical Sync is enabled or disabled.
 	 * @param vSync	true to enable Vertical Sync, false to disable.
 	 */
 	public void setVSyncEnabled(final boolean vSync)

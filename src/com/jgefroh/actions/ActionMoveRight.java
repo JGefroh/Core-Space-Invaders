@@ -27,9 +27,9 @@ public class ActionMoveRight implements IAction
 	{
 		int xPos = entity.getComponent(TransformComponent.class).getXPos();
 		int width = entity.getComponent(TransformComponent.class).getWidth();
-		if(xPos+width<=1680-5)
+		if(xPos+width<=1680-10)
 		{			
-			core.getSystem(TransformSystem.class).setXVelocity(entity, 5);
+			core.getSystem(TransformSystem.class).setXVelocity(entity, 10);
 		}
 		else
 		{

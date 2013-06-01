@@ -29,15 +29,18 @@ public class TransformSystem implements ISystem
 	/**Flag that shows whether the system is running or not.*/
 	private boolean isRunning;
 	
+	/**The time to wait between executions of the system.*/
+	private long waitTime;
+	
+	/**The time this System was last executed, in ms.*/
+	private long last;
+	
 	/**The level of detail in debug messages.*/
 	private Level debugLevel = Level.FINE;
 	
 	/**Logger for debug purposes.*/
 	private final Logger LOGGER 
 		= LoggerFactory.getLogger(this.getClass(), debugLevel);
-
-	/**A reference to the timer*/
-	private TimerSystem timer;	//TODO: Remove reference, pass time per loop?
 	
 	
 	//////////
@@ -66,29 +69,16 @@ public class TransformSystem implements ISystem
 	@Override
 	public void start()
 	{
-		this.timer = core.getSystem(TimerSystem.class);
-		if(this.timer!=null)
-		{	
-			LOGGER.log(Level.INFO, "System started.");
-			this.isRunning = true;
-		}
-		else
-		{
-			LOGGER.log(Level.WARNING, "Failed to start (no timer)");
-			this.isRunning = false;
-		}
+		LOGGER.log(Level.INFO, "System started.");
+		this.isRunning = true;
 	}
 
 	@Override
-	public void work()
+	public void work(final long now)
 	{
-		if(this.isRunning&&this.timer!=null)
+		if(isRunning)
 		{
-			move();			
-		}
-		else
-		{
-			stop();
+			move(now);			
 		}
 	}
 
@@ -99,6 +89,35 @@ public class TransformSystem implements ISystem
 		this.isRunning = false;
 	}
 	
+	@Override
+	public long getWait()
+	{
+		return this.waitTime;
+	}
+
+	@Override
+	public long	getLast()
+	{
+		return this.last;
+	}
+	
+	@Override
+	public void setWait(final long waitTime)
+	{
+		this.waitTime = waitTime;
+	}
+	
+	@Override
+	public void setLast(final long last)
+	{
+		this.last = last;
+	}
+	
+	@Override
+	public void recv(final String id, final String... message)
+	{
+		
+	}
 	
 	//////////
 	// SYSTEM METHODS
@@ -106,7 +125,7 @@ public class TransformSystem implements ISystem
 	/**
 	 * Moves all entities that are requesting moves based on their velocities.
 	 */
-	public void move()
+	public void move(final long now)
 	{
 		Iterator<MovementInfoPack> packs 
 			= core.getInfoPacksOfType(MovementInfoPack.class);
@@ -116,9 +135,9 @@ public class TransformSystem implements ISystem
 			MovementInfoPack each = packs.next();
 			if(each.isDirty()==false)
 			{
-				if(timer.isUpdateTime(each.getInterval(), each.getLastUpdated()))
+				if(now-each.getLastUpdated()>=each.getInterval())
 				{
-					each.setLastUpdated(timer.getNow());
+					each.setLastUpdated(now);
 					int newX = each.getXPos()+each.getXVelocity();
 					int newY = each.getYPos()+each.getYVelocity();
 					each.setXPos(newX);

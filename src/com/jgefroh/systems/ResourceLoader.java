@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
-import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,6 +13,7 @@ import javax.imageio.ImageIO;
 import org.lwjgl.BufferUtils;
 
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.jgefroh.core.Core;
@@ -42,6 +42,12 @@ public class ResourceLoader implements ISystem
 	/**Flag that shows whether the system is running or not.*/
 	private boolean isRunning;
 	
+	/**The time to wait between executions of the system.*/
+	private long waitTime;
+	
+	/**The time this System was last executed, in ms.*/
+	private long last;
+	
 	/**The level of detail in debug messages.*/
 	private Level debugLevel = Level.OFF;
 	
@@ -54,7 +60,7 @@ public class ResourceLoader implements ISystem
 	// INIT
 	//////////	
 	/**
-	 * Create a new ResourceLoader.
+	 * Create a new instance of this {@code System}.
 	 * @param core	a reference to the core Controlling this system
 	 */
 	public ResourceLoader(final Core core)
@@ -81,7 +87,7 @@ public class ResourceLoader implements ISystem
 	}
 
 	@Override
-	public void work()
+	public void work(final long now)
 	{
 		if(isRunning)
 		{			
@@ -95,6 +101,35 @@ public class ResourceLoader implements ISystem
 		isRunning = false;
 	}
 	
+	@Override
+	public long getWait()
+	{
+		return this.waitTime;
+	}
+
+	@Override
+	public long	getLast()
+	{
+		return this.last;
+	}
+	
+	@Override
+	public void setWait(final long waitTime)
+	{
+		this.waitTime = waitTime;
+	}
+	
+	@Override
+	public void setLast(final long last)
+	{
+		this.last = last;
+	}
+	
+	@Override
+	public void recv(final String id, final String... message)
+	{
+		
+	}
 	
 	//////////
 	// SYSTEM METHODS
@@ -207,8 +242,7 @@ public class ResourceLoader implements ISystem
 	}
 	
 	private Texture convertJSONToMeta(final File file)
-	{//TODO: parse Json, change to interface so it can parse anything.
-		//TODO: Error check
+	{
 		Texture meta = new Texture();
 		meta.setPath(file.getPath().replace(".meta", ".png"));
 		
@@ -266,6 +300,10 @@ public class ResourceLoader implements ISystem
 									sprite = new Sprite();
 									sprite.setSpriteID(jParser.getValueAsInt());
 								}
+								else if(field.equals("name"))
+								{
+									sprite.setName(jParser.getValueAsString());
+								}
 								else if(field.equals("xmin"))
 								{
 									sprite.setXMin(jParser.getValueAsInt());
@@ -289,10 +327,17 @@ public class ResourceLoader implements ISystem
 			}//while loop
 			return meta;
 		}
+		catch(JsonParseException e)
+		{
+			LOGGER.log(Level.SEVERE, "Error parsing " + file.getPath());
+			e.printStackTrace();
+			System.exit(-1);
+		}
 		catch(IOException e)
 		{
 			e.printStackTrace();
 		}
+
 		return null;
 	}
 }

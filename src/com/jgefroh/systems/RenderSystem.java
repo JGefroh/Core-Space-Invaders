@@ -12,6 +12,7 @@ import org.lwjgl.opengl.GL11;
 import com.jgefroh.core.Core;
 import com.jgefroh.core.ISystem;
 import com.jgefroh.core.LoggerFactory;
+import com.jgefroh.data.Sprite;
 import com.jgefroh.data.Texture;
 import com.jgefroh.infopacks.RenderInfoPack;
 
@@ -31,6 +32,12 @@ public class RenderSystem implements ISystem
 	
 	/**Flag that shows whether the system is running or not.*/
 	private boolean isRunning;
+	
+	/**The time to wait between executions of the system.*/
+	private long waitTime;
+	
+	/**The time this System was last executed, in ms.*/
+	private long last;
 	
 	/**The level of detail in debug messages.*/
 	private Level debugLevel = Level.FINE;
@@ -67,9 +74,10 @@ public class RenderSystem implements ISystem
 	{
 		GL11.glDepthFunc(GL11.GL_LEQUAL);
 		GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_FASTEST);	//Hint to increase performance (do once)
-		GL11.glEnable(GL11.GL_BLEND);	//Enables blending? (do once)
-		GL11.glEnable(GL11.GL_TEXTURE_2D);	//Enables blending? (do once)
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		//GL11.glEnable(GL11.GL_BLEND);	//Enables blending? (do once)
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL11.glEnable(GL11.GL_BLEND);
+ 		GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
 		GL11.glOrtho(0, 1680, 1050, 0, -1, 100);
@@ -96,7 +104,7 @@ public class RenderSystem implements ISystem
 	}
 
 	@Override
-	public void work()
+	public void work(final long now)
 	{
 		if(isRunning)
 		{					
@@ -109,6 +117,36 @@ public class RenderSystem implements ISystem
 	{
 		LOGGER.log(Level.INFO, "System stopped.");
 		isRunning = false;
+	}
+	
+	@Override
+	public long getWait()
+	{
+		return this.waitTime;
+	}
+
+	@Override
+	public long	getLast()
+	{
+		return this.last;
+	}
+	
+	@Override
+	public void setWait(final long waitTime)
+	{
+		this.waitTime = waitTime;
+	}
+	
+	@Override
+	public void setLast(final long last)
+	{
+		this.last = last;
+	}
+	
+	@Override
+	public void recv(final String id, final String... message)
+	{
+		
 	}
 	
 	//////////
@@ -206,14 +244,14 @@ public class RenderSystem implements ISystem
 					//Ask resource loader to load texture here to enable
 					//"streaming".
 				}
-				
 				drawQuadAt(pack.getTextureID(), 
-						pack.getXPos(), pack.getYPos(), pack.getZPos(),
+						pack.getXPos()-pack.getWidth()/2, pack.getYPos()-pack.getHeight()/2, pack.getZPos(),
 						pack.getWidth(), pack.getHeight(),
 						getUMin(pack.getTextureID(), pack.getSpriteID()),
 						getUMax(pack.getTextureID(), pack.getSpriteID()),
 						getVMin(pack.getTextureID(), pack.getSpriteID()),
 						getVMax(pack.getTextureID(), pack.getSpriteID()));
+
 			}
 
 		}
@@ -233,6 +271,7 @@ public class RenderSystem implements ISystem
 	 * Draw a textured quad.
 	 * @param x			the x-position on screen to draw.
 	 * @param y			the y-position on screen to draw.
+	 * @param z			the z-position on screen to draw. (NOT USED)
 	 * @param width		the width of the quad
 	 * @param height	the height of the quad
 	 * @param uMin		the u-texture coordinate minimum
@@ -308,17 +347,29 @@ public class RenderSystem implements ISystem
 	{
 		LOGGER.log(Level.FINE, "Calculating UV coordinates for " 
 						+ meta.getPath());
-
-		for(int index=0;index<meta.getNumSprites();index++)
-		{ 
-			float uMin = ((float)meta.getXMin(index))/meta.getImageWidth();
-			float uMax = ((float)meta.getXMax(index))/meta.getImageWidth();
-			float vMin = ((float)meta.getYMin(index))/meta.getImageHeight();
-			float vMax = ((float)meta.getYMax(index))/meta.getImageHeight();
-			meta.setSpriteUMin(index, uMin);
-			meta.setSpriteUMax(index, uMax);
-			meta.setSpriteVMin(index, vMin);
-			meta.setSpriteVMax(index, vMax);
+		System.out.println(meta);
+		Iterator<Sprite> sprites = meta.getSpriteIterator();
+		while(sprites.hasNext())
+		{
+			int id = sprites.next().getSpriteID();
+			
+			float uMin = ((float)meta.getXMin(id))/meta.getImageWidth();
+			float uMax = ((float)meta.getXMax(id))/meta.getImageWidth();
+			float vMin = ((float)meta.getYMin(id))/meta.getImageHeight();
+			float vMax = ((float)meta.getYMax(id))/meta.getImageHeight();
+			meta.setSpriteUMin(id, uMin);
+			meta.setSpriteUMax(id, uMax);
+			meta.setSpriteVMin(id, vMin);
+			meta.setSpriteVMax(id, vMax);
 		}
+	}
+	
+	/**
+	 * 
+	 */
+	public void setOrtho(final int width, final int height)
+	{
+		GL11.glLoadIdentity();
+		GL11.glOrtho(0, width, height, 0, -1, 100);
 	}
 }

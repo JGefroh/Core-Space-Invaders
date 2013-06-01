@@ -1,7 +1,6 @@
 package com.jgefroh.systems;
 
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,7 +12,6 @@ import com.jgefroh.core.IEntity;
 import com.jgefroh.core.ISystem;
 import com.jgefroh.core.LoggerFactory;
 import com.jgefroh.infopacks.BulletInfoPack;
-import com.jgefroh.infopacks.CollisionInfoPack;
 import com.jgefroh.infopacks.WeaponInfoPack;
 
 
@@ -36,6 +34,12 @@ public class WeaponSystem implements ISystem
 	/**Flag that shows whether the system is running or not.*/
 	private boolean isRunning;
 	
+	/**The time to wait between executions of this system.*/
+	private long waitTime;
+	
+	/**The time this System was last run, in ms.*/
+	private long last;
+	
 	/**The level of detail in debug messages.*/
 	private Level debugLevel = Level.FINE;
 	
@@ -48,7 +52,7 @@ public class WeaponSystem implements ISystem
 	// INIT
 	//////////
 	/**
-	 * Create a new WeaponSystem.
+	 * Create a new instance of this {@code System}.
 	 * @param core	 a reference to the Core controlling this system
 	 */
 	public WeaponSystem(final Core core)
@@ -65,6 +69,7 @@ public class WeaponSystem implements ISystem
 	public void init()
 	{
 		this.isRunning = true;
+		core.setInterested(this, "BULLET_HIT");
 	}
 	
 	@Override
@@ -75,7 +80,7 @@ public class WeaponSystem implements ISystem
 	}
 
 	@Override
-	public void work()
+	public void work(final long now)
 	{
 		if(isRunning)
 		{
@@ -90,7 +95,41 @@ public class WeaponSystem implements ISystem
 		isRunning = false;
 	}
 	
+	@Override
+	public long getWait()
+	{
+		return this.waitTime;
+	}
 
+	@Override
+	public long	getLast()
+	{
+		return this.last;
+	}
+	
+	@Override
+	public void setWait(final long waitTime)
+	{
+		this.waitTime = waitTime;
+	}
+	
+	@Override
+	public void setLast(final long last)
+	{
+		this.last = last;
+	}
+	
+	@Override
+	public void recv(final String id, final String... message)
+	{
+		if(id.equals("BULLET_HIT"))
+		{
+			String bulletID = message[0];
+			setReady(core.getInfoPackFrom(bulletID, BulletInfoPack.class));
+			core.removeEntity(bulletID);
+		}
+	}
+	
 	//////////
 	// SYSTEM METHODS
 	//////////
@@ -128,6 +167,7 @@ public class WeaponSystem implements ISystem
 					createBullet(each);
 					each.setFireRequested(false);
 					each.setReady(false);
+					core.send("SHOT_FIRED", each.getOwner().getID());
 				}
 				else
 				{
@@ -164,7 +204,6 @@ public class WeaponSystem implements ISystem
 	 */
 	public void hit(final IEntity entity, final IEntity entityTwo)
 	{
-		//TODO: How little sleep did I get when I wrote this?
 		if(entity.getName().equals("BULLET"))
 		{
 			setReady(entity.getComponent(BulletComponent.class).getBulletOwner());
@@ -194,8 +233,26 @@ public class WeaponSystem implements ISystem
 	 */
 	public void setReady(final IEntity entity)
 	{
-		//TODO: Remove direct component interaction.
-		entity.getComponent(WeaponComponent.class).setReady(true);
+		WeaponComponent wc = entity.getComponent(WeaponComponent.class);
+		if(wc!=null)
+		{
+			wc.setReady(true);
+		}
 	}
-
+	
+	/**
+	 * Set the weapon as ready to be fired.
+	 * @param entity	the entity that is ready to fore
+	 */
+	public void setReady(final BulletInfoPack pack)
+	{
+		if(pack!=null&&pack.getBulletOwner()!=null)
+		{			
+			WeaponInfoPack wip = core.getInfoPackFrom(pack.getBulletOwner(), WeaponInfoPack.class);
+			if(wip!=null)
+			{
+				wip.setReady(true);
+			}
+		}
+	}
 }

@@ -1,7 +1,7 @@
 package com.jgefroh.data;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 
 /**
@@ -350,4 +350,8 @@ public class Texture
 	//////////
 	// METHODS
 	//////////
+	public Iterator<Sprite> getSpriteIterator()
+	{
+		return sprites.values().iterator();
+	}
 }

@@ -13,6 +13,9 @@ public class Sprite
 	/**The ID of the sprite.*/
 	private int spriteID;
 	
+	/**The human readable name of the sprite.*/
+	private String name;
+	
 	/**The pixel X coordinate for the top left corner of the sprite.*/
 	private int xMin;
 	
@@ -59,6 +62,15 @@ public class Sprite
 	public int getSpriteID()
 	{
 		return this.spriteID;
+	}
+	
+	/**
+	 * Get the human readable name of the sprite.
+	 * @return the human readble name of the sprite.
+	 */
+	public String getName()
+	{
+		return this.name;
 	}
 	
 	/**
@@ -146,6 +158,14 @@ public class Sprite
 		this.spriteID = spriteID;
 	}
 	
+	/**
+	 * Set the human readable name of the sprite.
+	 * @param name	the human readable name of the sprite
+	 */
+	public void setName(final String name)
+	{
+		this.name = name;
+	}
 	/**
 	 * Set the pixel X-coordinate for the top left corner of the sprite.
 	 * @param xMin	the pixel X-coordinate

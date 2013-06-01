@@ -4,13 +4,16 @@ package com.jgefroh.systems;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.jgefroh.core.Core;
 import com.jgefroh.core.ISystem;
 import com.jgefroh.core.LoggerFactory;
+import com.jgefroh.effects.AlienCollisionEffect;
+import com.jgefroh.effects.FortCollisionEffect;
+import com.jgefroh.effects.IEffect;
+import com.jgefroh.effects.PlayerCollisionEffect;
 import com.jgefroh.infopacks.CollisionInfoPack;
 
 /**
@@ -28,6 +31,12 @@ public class CollisionSystem implements ISystem
 	/**Flag that shows whether the system is running or not.*/
 	private boolean isRunning;
 	
+	/**The time to wait between executions of the system.*/
+	private long waitTime;
+	
+	/**The time this System was last executed, in ms.*/
+	private long last;
+	
 	/**The level of detail in debug messages.*/
 	private Level debugLevel = Level.FINE;
 	
@@ -38,12 +47,13 @@ public class CollisionSystem implements ISystem
 	/**Contains the collision pairs that determines whether objects collide.*/
 	private boolean[][] collisionTable;
 	
-	
+	/**Stores effects to execute when collisions are detected.*/
+	private ArrayList<IEffect> effects;
 	//////////
 	// INIT
 	//////////
 	/**
-	 * Create a new CollisionSystem.
+	 * Create a new instance of this {@code System}.
 	 * @param core	 a reference to the Core controlling this system
 	 */
 	public CollisionSystem(final Core core)
@@ -61,6 +71,10 @@ public class CollisionSystem implements ISystem
 	{
 		collisionTable = new boolean[9][9];	
 		isRunning = true;
+		effects = new ArrayList<IEffect>();
+		trackEffect(new AlienCollisionEffect(core));
+		trackEffect(new FortCollisionEffect(core));
+		trackEffect(new PlayerCollisionEffect(core));
 	}
 	
 	@Override
@@ -71,7 +85,7 @@ public class CollisionSystem implements ISystem
 	}
 
 	@Override
-	public void work()
+	public void work(final long now)
 	{
 		if(isRunning)
 		{
@@ -86,7 +100,35 @@ public class CollisionSystem implements ISystem
 		isRunning = false;
 	}
 	
+	@Override
+	public long getWait()
+	{
+		return this.waitTime;
+	}
+
+	@Override
+	public long	getLast()
+	{
+		return this.last;
+	}
 	
+	@Override
+	public void setWait(final long waitTime)
+	{
+		this.waitTime = waitTime;
+	}
+	
+	@Override
+	public void setLast(final long last)
+	{
+		this.last = last;
+	}
+	
+	@Override
+	public void recv(final String id, final String... message)
+	{
+		
+	}
 	//////////
 	// SYSTEM METHODS
 	//////////
@@ -116,7 +158,7 @@ public class CollisionSystem implements ISystem
 						{
 							if(checkCollided(each, pack))
 							{
-								core.getSystem(EventSystem.class).notify("COLLISION", each.getOwner(), pack.getOwner());
+								executeCollisionEffects(each, pack);
 							}
 						}
 					}
@@ -166,9 +208,9 @@ public class CollisionSystem implements ISystem
 			final CollisionInfoPack packTwo)
 	{
 		//TODO: This currently offers no way to determine exact collision pos.
-		Rectangle r1 = new Rectangle(packOne.getXPos(), packOne.getYPos(),
+		Rectangle r1 = new Rectangle(packOne.getXPos()-(packOne.getWidth()/2), packOne.getYPos()-(packOne.getHeight()/2),
 						packOne.getWidth(), packOne.getHeight());
-		Rectangle r2 = new Rectangle(packTwo.getXPos(), packTwo.getYPos(),
+		Rectangle r2 = new Rectangle(packTwo.getXPos()-(packTwo.getWidth()/2), packTwo.getYPos()-(packTwo.getHeight()/2),
 				packTwo.getWidth(), packTwo.getHeight());
 		if(r1.intersects(r2))
 		{
@@ -176,4 +218,26 @@ public class CollisionSystem implements ISystem
 		}
 		return false;
 	}
+	
+	/**
+	 * Start tracking an effect.
+	 * @param effect 	the effect to track
+	 */
+	public void trackEffect(final IEffect effect)
+	{
+		effects.add(effect);
+	}
+	
+	public void executeCollisionEffects(final CollisionInfoPack packA, final CollisionInfoPack packB)
+	{
+		for(IEffect each:effects)
+		{
+			if(each.check("COLLISION", packA.getOwner(), packB.getOwner()))
+			{
+				each.execute(packA.getOwner(), packB.getOwner());
+			}
+		}
+	}
+	
+
 }

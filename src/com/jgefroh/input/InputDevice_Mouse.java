@@ -63,7 +63,7 @@ public class InputDevice_Mouse implements IInputDevice
 		{
 			if(Mouse.getEventButton()==-1)
 			{//If mouse movement
-				///irs.notify(InputSystem.MOUSE, -1, -1);
+				irs.notify(InputSystem.MOUSE, -1, InputSystem.MOVE);
 			}
 			else
 			{//If mouse click

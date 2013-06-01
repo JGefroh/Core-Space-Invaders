@@ -27,9 +27,9 @@ public class ActionMoveLeft implements IAction
 	{
 		int xPos = entity.getComponent(TransformComponent.class).getXPos();
 		int width = entity.getComponent(TransformComponent.class).getWidth();
-		if(xPos>=5)
+		if(xPos>=10)
 		{			
-			core.getSystem(TransformSystem.class).setXVelocity(entity, -5);
+			core.getSystem(TransformSystem.class).setXVelocity(entity, -10);
 		}
 		else
 		{

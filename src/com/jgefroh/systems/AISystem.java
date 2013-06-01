@@ -15,14 +15,11 @@ import com.jgefroh.infopacks.WeaponInfoPack;
 
 
 /**
- * This system controls the behavior of the AI for the Space Invaders
- * aliens.
+ * This system controls the behavior of the AI for the alien enemies.
  * @author Joseph Gefroh
  */
 public class AISystem implements ISystem
-{
-	//TODO: Interval and speed should be held by the entity.
-	
+{	
 	//////////
 	// DATA
 	//////////
@@ -34,6 +31,12 @@ public class AISystem implements ISystem
 	
 	/**Time minimum time to wait between movements.*/
 	private int movementInterval;
+	
+	/**The time to wait between executions of the system.*/
+	private long waitTime;
+	
+	/**The time this System was last executed, in ms.*/
+	private long last;
 	
 	/**The speed the aliens move.*/
 	private int movementSpeed;
@@ -55,7 +58,7 @@ public class AISystem implements ISystem
 	// INIT
 	//////////
 	/**
-	 * Create a new AISystem.
+	 * Create a new instance of this System.
 	 * @param core	a reference to the Core controlling this system
 	 */
 	public AISystem(final Core core)
@@ -70,7 +73,6 @@ public class AISystem implements ISystem
 	@Override
 	public void init()
 	{
-		//initLogger();
 		isRunning = true;
 		isMovingLeft = false;
 		movementInterval = 200;
@@ -85,7 +87,7 @@ public class AISystem implements ISystem
 	}
 
 	@Override
-	public void work()
+	public void work(final long now)
 	{
 		if(isRunning)
 		{
@@ -100,7 +102,35 @@ public class AISystem implements ISystem
 		isRunning = false;
 	}
 	
+	@Override
+	public long getWait()
+	{
+		return this.waitTime;
+	}
 	
+	@Override
+	public long	getLast()
+	{
+		return this.last;
+	}
+	
+	@Override
+	public void setWait(final long waitTime)
+	{
+		this.waitTime = waitTime;
+	}
+	
+	@Override
+	public void setLast(final long last)
+	{
+		this.last = last;
+	}
+	
+	@Override
+	public void recv(final String id, final String... message)
+	{
+		
+	}
 	//////////
 	// SYSTEM METHODS
 	//////////
@@ -167,4 +197,5 @@ public class AISystem implements ISystem
 			wip.setFireRequested(true);
 		}
 	}
+
 }

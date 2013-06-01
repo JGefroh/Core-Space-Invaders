@@ -92,7 +92,7 @@ public class RenderComponent implements IComponent
 	{
 		return this.spriteID;
 	}
-
+	
 	/**
 	 * Get the pixel width of this entity.
 	 * @return	the int width of this entity
