@@ -1,5 +1,6 @@
 #Core - Void Attackers
 ==========
+
 Void Attackers is a clone of that classic arcade game we all know and love.
 
 
@@ -28,8 +29,12 @@ It is graphically unimpressive because I have very little artistic talent.
 Have fun!
 ==========
 Current State:
-[The Menu](/ss/31MAY13.jpg)
-[Gameplay](/ss/31MAY13_1.jpg)
-[Victory!](/ss/31MAY13_2.jpg)
+
+![The Menu](/ss/31MAY13.png)
+
+![Gameplay](/ss/31MAY13_1.png)
+
+![Victory](/ss/31MAY13_2.png)
+
 ==========
 [Core](https://github.com/JGefroh/core)
