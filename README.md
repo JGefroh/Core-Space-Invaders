@@ -12,18 +12,14 @@ It is graphically unimpressive because I have very little artistic talent.
 
 
 ###Known Issues:
-1. Different window sizes will cause the game to not function properly.
-2. The code is a messy, inconsistent mish-mash of different ideas.
-3. The program does not close if the window is closed with the X button on the top right.
-4. Timing issue on different computers can cause the game to turn into a bullet-hell shooter.
-5. The aliens do not move downward.
+1. The code is a messy, inconsistent mish-mash of different ideas.
+2. Timing issue on different computers can cause the game to turn into a bullet-hell shooter.
+3. The aliens do not move downward.
 
 ###Upcoming changes:
-1. Fix game to work with any window size
-2. Refactor code to be consistent and remove outdated/unnecessary things.
-3. Close program when X is pressed.
-4. Make consistent timing.
-5. Create a .jar so that it can be launched easily.
+1. Refactor code to be consistent and remove outdated/unnecessary things.
+2. Make consistent timing.
+3. Create a .jar so that it can be launched easily.
 
 
 Have fun!

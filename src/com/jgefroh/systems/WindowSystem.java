@@ -75,6 +75,7 @@ public class WindowSystem implements ISystem
 		//setDisplayMode(findDisplayMode(2560, 1440));
 		setDisplayMode(new DisplayMode(width, height));
 		setVSyncEnabled(true);
+		Display.setResizable(true);
 		try
 		{			
 			Display.create();
@@ -110,6 +111,12 @@ public class WindowSystem implements ISystem
 	@Override
 	public void work(final long now)
 	{
+		if(Display.wasResized())
+		{
+			core.send("WINDOW_RESIZED", "");
+			core.send("WINDOW_WIDTH", getWidth() + "");
+			core.send("WINDOW_HEIGHT", getHeight() + "");
+		}
 	}
 
 	@Override

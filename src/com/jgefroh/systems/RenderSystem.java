@@ -2,12 +2,19 @@ package com.jgefroh.systems;
 
 
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.lwjgl.BufferUtils;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.GLU;
 
 import com.jgefroh.core.Core;
 import com.jgefroh.core.ISystem;
@@ -52,7 +59,6 @@ public class RenderSystem implements ISystem
 	/**Holds texture IDs associated with an image name.*/
 	private HashMap<String, Integer> idMan;
 	
-	
 	//////////
 	// INIT
 	//////////
@@ -80,7 +86,8 @@ public class RenderSystem implements ISystem
  		GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		GL11.glOrtho(0, 1680, 1050, 0, -1, 100);
+		GL11.glViewport(0, 0, 1680, 1050);
+		GL11.glOrtho(0, 1680, 1050, 0, -1, 1);
 	}
 	
 	
@@ -94,6 +101,7 @@ public class RenderSystem implements ISystem
 		textures = new HashMap<Integer, Texture>();
 		idMan = new HashMap<String, Integer>();
 		isRunning = true;
+		core.setInterested(this, "WINDOW_RESIZED");
 	}
 	
 	@Override
@@ -146,7 +154,10 @@ public class RenderSystem implements ISystem
 	@Override
 	public void recv(final String id, final String... message)
 	{
-		
+		if(id.equals("WINDOW_RESIZED"));
+		{
+			resizeDrawableArea(Display.getWidth(), Display.getHeight());
+		}
 	}
 	
 	//////////
@@ -364,12 +375,18 @@ public class RenderSystem implements ISystem
 		}
 	}
 	
-	/**
-	 * 
-	 */
-	public void setOrtho(final int width, final int height)
+	private void resizeDrawableArea(final int width, final int height)
 	{
+		GL11.glMatrixMode(GL11.GL_VIEWPORT);
 		GL11.glLoadIdentity();
-		GL11.glOrtho(0, width, height, 0, -1, 100);
+		GL11.glViewport(0, 0, width, height);
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glLoadIdentity();
+		GL11.glOrtho(0, 1680, 1050, 0, -1, 100);
+	}
+	
+	private void screenToWorld()
+	{
+		
 	}
 }

@@ -12,6 +12,7 @@ import com.jgefroh.actions.ActionClick;
 import com.jgefroh.actions.ActionMenu;
 import com.jgefroh.actions.ActionMoveLeft;
 import com.jgefroh.actions.ActionMoveRight;
+import com.jgefroh.actions.ActionNewGame;
 import com.jgefroh.actions.ActionPause;
 import com.jgefroh.actions.ActionShoot;
 import com.jgefroh.actions.ActionStopX;
@@ -59,7 +60,16 @@ public class InputSystem implements ISystem, IInputSystem
 	private IBindMap kbs;
 	private IBindMap mbs;
 	
+	/**The ratio*/
+	private float screenWorldRatio;
 	
+	private int windowHeight;
+	private int windowWidth;
+	private int windowHeightOrig;
+	private int windowWidthOrig;
+	
+	private float widthRatio;
+	private float heightRatio;
 	//////////
 	// INIT
 	//////////
@@ -88,6 +98,7 @@ public class InputSystem implements ISystem, IInputSystem
 		kbs.bind(Keyboard.KEY_D, new ActionStopX(core), InputSystem.RELEASE);
 		kbs.bind(Keyboard.KEY_SPACE, new ActionShoot(core), InputSystem.PRESS);
 		kbs.bind(Keyboard.KEY_ESCAPE, new ActionMenu(core), InputSystem.PRESS);
+		kbs.bind(Keyboard.KEY_R, new ActionNewGame(core), InputSystem.RELEASE);
 		setBindSystem(IInputSystem.KEYBOARD, kbs);
 		BindMap mb = new BindMap();
 			mb.bind(0, new ActionClick(core), InputSystem.RELEASE);
@@ -104,6 +115,15 @@ public class InputSystem implements ISystem, IInputSystem
 		mir = new InputDevice_Mouse(this);
 		initBinds();
 		core.setInterested(this,"REQUEST_CURSOR_POSITION");
+		core.setInterested(this,"WINDOW_WIDTH");
+		core.setInterested(this,"WINDOW_HEIGHT");
+		
+		this.windowWidth = 1680;
+		this.windowHeight = 1050;
+		this.windowWidthOrig = 1680;
+		this.windowHeightOrig = 1050;
+		this.widthRatio = 1;
+		this.heightRatio = 1;
 	}
 	
 	@Override
@@ -159,7 +179,48 @@ public class InputSystem implements ISystem, IInputSystem
 	{
 		if(id.equals("REQUEST_CURSOR_POSITION"))
 		{
-			core.send("INPUT_CURSOR_POSITION", Mouse.getX() +"", Mouse.getY()+"");
+			core.send("INPUT_CURSOR_POSITION", getMouseX() +"", getMouseY()+"");
+		}
+		else if(id.equals("WINDOW_WIDTH"))
+		{
+			if(message.length>0)
+			{
+				try
+				{
+					this.windowWidth = Integer.parseInt(message[0]);
+					updateWidthRatio();
+				}
+				catch(NumberFormatException e)
+				{
+					LOGGER.log(Level.SEVERE, "Error updating dimension.");
+				}
+			}
+			else
+			{
+				LOGGER.log(Level.SEVERE, "Error updating dimension.");
+
+			}
+		}
+		else if(id.equals("WINDOW_HEIGHT"))
+		{
+			if(message.length>0)
+			{
+				try
+				{
+					this.windowHeight = Integer.parseInt(message[0]);
+					updateHeightRatio();
+				}
+				catch(NumberFormatException e)
+				{
+					LOGGER.log(Level.SEVERE, "Error updating dimension.");
+					e.printStackTrace();
+				}
+			}
+			else
+			{
+				LOGGER.log(Level.SEVERE, "Error updating dimension.");
+
+			}
 		}
 	}
 	//////////
@@ -237,7 +298,7 @@ public class InputSystem implements ISystem, IInputSystem
 				action = mbs.getActionOnRelease(keyCode);
 				break;
 			case MOVE:
-				core.send("CURSOR_POSITION_CHANGE", Mouse.getX()+"", Mouse.getY()+"");
+				core.send("CURSOR_POSITION_CHANGE", getMouseX()+"", getMouseY() + "");
 		}
 		processAction(action);
 	}
@@ -282,5 +343,25 @@ public class InputSystem implements ISystem, IInputSystem
 		{
 			mbs = bindSystem;
 		}
+	}
+	
+	private int getMouseX()
+	{
+		return (int)(Mouse.getX()*this.widthRatio);
+	}
+	
+	private int getMouseY()
+	{
+		return (int)((this.windowHeight-Mouse.getY())*this.heightRatio);
+	}
+	
+	private void updateWidthRatio()
+	{
+		this.widthRatio = (float)this.windowWidthOrig/this.windowWidth;
+	}
+	
+	private void updateHeightRatio()
+	{
+		this.heightRatio = (float)this.windowHeightOrig/this.windowHeight;
 	}
 }

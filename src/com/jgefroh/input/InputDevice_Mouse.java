@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Cursor;
 import org.lwjgl.input.Mouse;
 
 import com.jgefroh.core.ISystem;
@@ -40,6 +41,7 @@ public class InputDevice_Mouse implements IInputDevice
 			Mouse.create();
 			heldBtns = new HashMap<Integer, Boolean>();
 			this.irs = irs;
+
 		}
 		catch (LWJGLException e)
 		{

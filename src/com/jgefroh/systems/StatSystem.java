@@ -5,6 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.jgefroh.core.Core;
+import com.jgefroh.core.IEntity;
 import com.jgefroh.core.ISystem;
 import com.jgefroh.core.LoggerFactory;
 import com.jgefroh.infopacks.ScoreInfoPack;
@@ -168,7 +169,14 @@ public class StatSystem implements ISystem
 	{
 		if(id.equals("SHOT_FIRED"))
 		{
-			incNumShotsFired();
+			if(message.length>0)
+			{
+				IEntity entity = core.getEntityWithID(message[0]);
+				if(entity!=null&&entity.getName().equals("PLAYER"))
+				{
+					incNumShotsFired();
+				}
+			}
 		}
 		else if(id.equals("ADD_SCORE"))
 		{

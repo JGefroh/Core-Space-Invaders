@@ -52,7 +52,7 @@ public class AISystem implements ISystem
 		= LoggerFactory.getLogger(this.getClass(), debugLevel);
 	
 
-	
+	private int windowWidth;
 	
 	//////////
 	// INIT
@@ -129,7 +129,7 @@ public class AISystem implements ISystem
 	@Override
 	public void recv(final String id, final String... message)
 	{
-		
+
 	}
 	//////////
 	// SYSTEM METHODS
@@ -159,7 +159,7 @@ public class AISystem implements ISystem
 				}
 				else if(isMovingLeft==false)
 				{
-					if(each.getXPos()>=1648)
+					if(each.getXPos()>=1680)
 					{
 						switched = true;
 					}			

@@ -23,6 +23,7 @@ import com.jgefroh.input.InputSystem;
 import com.jgefroh.systems.AISystem;
 import com.jgefroh.systems.AnimationSystem;
 import com.jgefroh.systems.CollisionSystem;
+import com.jgefroh.systems.CursorSystem;
 import com.jgefroh.systems.DamageSystem;
 import com.jgefroh.systems.DeadCheckSystem;
 import com.jgefroh.systems.DecaySystem;
@@ -54,6 +55,7 @@ public class Test_SI
 	{
 		Test_SI ts = new Test_SI();
 		ts.loop();
+		System.exit(0);
 	}
 	public Test_SI()
 	{
@@ -74,7 +76,7 @@ public class Test_SI
 	private void initSystems()
 	{
 		core = new Core();
-		core.add(new WindowSystem(core, 1680, 1050, "Core - Void Attackers"));
+		core.add(new WindowSystem(core, 1680, 1050, "Core - Void Attackers"), true);
 		RenderSystem rs = new RenderSystem(core);
 			//rs.setOrtho(core.getSystem(WindowSystem.class).getWidth(), 
 				//	core.getSystem(WindowSystem.class).getHeight());
@@ -101,11 +103,15 @@ public class Test_SI
 			core.add(gs);
 			core.getSystem(GUISystem.class).stop();
 		rl = new ResourceLoader(core);
+		core.add(rl);
 		core.add(new StatSystem(core));
 		core.add(new MenuSystem(core));
 		core.add(new DecaySystem(core));
-		core.add(new GameStateSystem(core));
+		GameStateSystem sys = new GameStateSystem(core);
+		//core.add(new GameStateSystem(core));
+		//WaitSystem n = new WaitSystem(core);
 		core.add(new WaitSystem(core));
+		core.add(new CursorSystem(core));
 	}
 	
 	private void initFactories()
@@ -134,6 +140,7 @@ public class Test_SI
 		{
 			Display.update();
 			core.work();
+			Display.sync(240);
 		}
 	}
 	////////////

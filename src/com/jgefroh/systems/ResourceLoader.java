@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -89,9 +90,7 @@ public class ResourceLoader implements ISystem
 	@Override
 	public void work(final long now)
 	{
-		if(isRunning)
-		{			
-		}
+
 	}
 
 	@Override
@@ -168,7 +167,7 @@ public class ResourceLoader implements ISystem
 	 * @param path	the path of the file to load
 	 * @return the texture meta data
 	 */
-	public Texture loadTextureMeta(final String path)
+	private Texture loadTextureMeta(final String path)
 	{
 		return convertJSONToMeta(new File(path));
 	}
@@ -186,6 +185,18 @@ public class ResourceLoader implements ISystem
 			Texture meta = loadTextureMeta(path.replace(".png", ".meta"));
 			core.getSystem(RenderSystem.class).createTexture(imageData, meta);	
 		}
+	}
+	
+	public IntBuffer loadCursorFromImage(final String path)
+	{
+		if(isValidFile(path))
+		{
+			File file = new File(path);
+			ByteBuffer byteBuff = convertImageToBuffer(file);
+			IntBuffer intBuff = byteBuff.asIntBuffer();
+			return intBuff;
+		}
+		return null;
 	}
 	
 	/**

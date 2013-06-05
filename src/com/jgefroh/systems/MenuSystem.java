@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.lwjgl.input.Mouse;
+
 import com.jgefroh.core.Core;
 import com.jgefroh.core.Entity;
 import com.jgefroh.core.IEntity;
@@ -38,7 +40,7 @@ public class MenuSystem implements ISystem
 	private long last;
 	
 	/**The level of detail in debug messages.*/
-	private Level debugLevel = Level.FINE;
+	private Level debugLevel = Level.ALL;
 	
 	/**Logger for debug purposes.*/
 	private final Logger LOGGER 
@@ -55,7 +57,6 @@ public class MenuSystem implements ISystem
 	
 	/**Flag that indicates the mouse is hovering over a clickable menu item.*/
 	private boolean hovered = false;
-	
 
 	//////////
 	// INIT
@@ -194,8 +195,8 @@ public class MenuSystem implements ISystem
 			{
 				try
 				{
-					mouseX = Integer.parseInt(message[0]);				
-					mouseY = Integer.parseInt(message[1]);					
+					this.mouseX = Integer.parseInt(message[0]);
+					this.mouseY = Integer.parseInt(message[1]);
 				}
 				catch(NumberFormatException e)
 				{
@@ -216,6 +217,8 @@ public class MenuSystem implements ISystem
 		}
 		else if(id.equals("INPUT_LEFT_CLICK"))
 		{
+			System.out.println(this.mouseX +"," + this.mouseY);
+
 			MenuInfoPack pack = 
 					core.getInfoPackFrom(this.selectedMenuItemID, 
 										MenuInfoPack.class);
@@ -236,6 +239,9 @@ public class MenuSystem implements ISystem
 	private void showTitleScreen()
 	{
 		core.removeAllEntities();
+		core.send("REQUEST_WINDOW_HEIGHT", "");
+		core.send("REQUEST_WINDOW_WIDTH", "");
+
 		if(core.isPaused())
 		{
 			core.send("REQUEST_STATE_UNPAUSED", core.now() + "");
@@ -243,7 +249,7 @@ public class MenuSystem implements ISystem
 		EntityCreationSystem ecs = core.getSystem(EntityCreationSystem.class);
 		IEntity entity = new Entity();
 			entity.setName("ALIEN");
-			ecs.makePositionable(entity, 1680/2, 200, 128, 128);
+			ecs.makePositionable(entity, 1680/2, 1050/5, 128, 128);
 			ecs.makeRenderable(entity, "res\\enemy.png", 0);
 			ecs.makeAnimated(entity, "IDLE", 500, 0, 1);
 			ecs.makeArmed(entity);
@@ -259,18 +265,19 @@ public class MenuSystem implements ISystem
 			ecs.makeAIControlled(entity);
 			ecs.makeMoving(entity, 0);
 			core.add(entity);
-		ecs.createMenuOption(1680/2, 800, 128, 48, 1, "REQUEST_NEW_GAME");
-		ecs.createMenuOption(1680/2, 850, 128, 48, 2, "REQUEST_QUIT");
-		ecs.createInputReceiver("LEFTCLICK");
+		ecs.createMenuOption(1680/2, ((1050/20)*13), 128, 48, 1, "REQUEST_NEW_GAME");
+		ecs.createMenuOption(1680/2, ((1050/20)*14), 128, 48, 2, "REQUEST_QUIT");
+		ecs.createInputReceiver("LEFTCLICK", "REQUEST_NEW_GAME");
 		core.send("IN_MENU", true + "");
 	}
 	
 	private boolean checkIfHover(final MenuInfoPack pack)
 	{
-		//TODO:Remove hardcode
 		Rectangle r1 = new Rectangle(pack.getXPos()-(pack.getWidth()/2), pack.getYPos()-(pack.getHeight()/2),
 						pack.getWidth(), pack.getHeight());
-		Point point = new Point(mouseX, 1050-mouseY);
+		Point point = new Point(this.mouseX, this.mouseY);
+
+
 		if(r1.contains(point))
 		{
 			return true;

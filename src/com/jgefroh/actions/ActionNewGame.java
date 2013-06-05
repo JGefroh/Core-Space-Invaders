@@ -1,18 +1,16 @@
 package com.jgefroh.actions;
 
-import org.lwjgl.input.Mouse;
-
 import com.jgefroh.core.Core;
 import com.jgefroh.core.IEntity;
 import com.jgefroh.systems.TransformSystem;
 
 
-public class ActionClick implements IAction
+public class ActionNewGame implements IAction
 {
-	private final String command = "LEFTCLICK";
+	private final String command = "REQUEST_NEW_GAME";
 	private Core core;
 	
-	public ActionClick(final Core core)
+	public ActionNewGame(final Core core)
 	{
 		this.core = core;
 	}
@@ -26,7 +24,8 @@ public class ActionClick implements IAction
 	@Override
 	public void execute(final IEntity entity)
 	{
-		core.send("INPUT_LEFT_CLICK", "");
+		core.send("REQUEST_NEW_GAME", "");
+		System.out.println("LOL");
 	}
 
 }

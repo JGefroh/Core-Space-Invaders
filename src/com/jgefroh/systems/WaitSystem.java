@@ -49,7 +49,7 @@ public class WaitSystem implements ISystem
 	// INIT
 	//////////
 	/**
-	 * Create a new TransformSystem.
+	 * Create a new instance of this {@code System}.
 	 * @param core	 a reference to the Core controlling this system
 	 */
 	public WaitSystem(final Core core)
