@@ -20,7 +20,7 @@ It is graphically unimpressive because I have very little artistic talent.
 
 ###Dependencies
 1. [LWJGL 2.8.5](http://www.lwjgl.org)
-2. [jackson 2.2.0](http://www.jackson.codehaus.org)
+2. [jackson 2.2.0](http://jackson.codehaus.org)
 3. [Core 0.4.0](http://www.github.com/jgefroh/core)
 
 Have fun!
