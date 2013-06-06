@@ -19,9 +19,9 @@ It is graphically unimpressive because I have very little artistic talent.
 2. Make consistent timing.
 
 ###Dependencies
-1. [LWJGL 2.8.5](www.lwjgl.org)
-2. [jackson 2.2.0](www.jackson.codehaus.org)
-3. [Core 0.4.0](www.github.com/jgefroh/core)
+1. [LWJGL 2.8.5](http://www.lwjgl.org)
+2. [jackson 2.2.0](http://www.jackson.codehaus.org)
+3. [Core 0.4.0](http://www.github.com/jgefroh/core)
 
 Have fun!
 
