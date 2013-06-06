@@ -34,7 +34,14 @@ public class PlayerCollisionEffect implements IEffect
 	{
 		if(entity.getName().equals("ALIEN") || target.getName().equals("ALIEN"))
 		{
-			core.send("GAME_OVER");
+			if(entity.getName().equals("PLAYER"))
+			{
+				core.removeEntity(entity);	
+			}
+			else
+			{				
+				core.removeEntity(target);
+			}
 		}
 		else
 		{	

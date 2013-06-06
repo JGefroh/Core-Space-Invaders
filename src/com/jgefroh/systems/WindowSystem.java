@@ -72,8 +72,8 @@ public class WindowSystem implements ISystem
 		setSize(width, height);
 		setTitle(title);
 		setFullScreenEnabled(false);
-		//setDisplayMode(findDisplayMode(2560, 1440));
-		setDisplayMode(new DisplayMode(width, height));
+		setDisplayMode(findDisplayMode(width, height));
+		//setDisplayMode(new DisplayMode(width, height));
 		setVSyncEnabled(true);
 		Display.setResizable(true);
 		try
@@ -290,6 +290,8 @@ public class WindowSystem implements ISystem
 		try
 		{
 			Display.setDisplayMode(displayMode);
+			core.send("WINDOW_WIDTH", Display.getWidth() + "");
+			core.send("WINDOW_HEIGHT", Display.getHeight() + "");
 		}
 		catch (LWJGLException e)
 		{

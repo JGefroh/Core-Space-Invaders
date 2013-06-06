@@ -76,6 +76,7 @@ public class StatSystem implements ISystem
 	@Override
 	public void init()
 	{
+		LOGGER.log(Level.FINE, "Setting system values to default.");
 		isRunning = true;
 		this.totalTimeTaken = 0;
 		this.numShotsFired = 0;
@@ -167,6 +168,8 @@ public class StatSystem implements ISystem
 	@Override
 	public void recv(final String id, final String... message)
 	{
+		LOGGER.log(Level.FINEST, "Received message: " + id);
+
 		if(id.equals("SHOT_FIRED"))
 		{
 			if(message.length>0)
@@ -286,6 +289,8 @@ public class StatSystem implements ISystem
 	 */
 	private void reset()
 	{
+		LOGGER.log(Level.FINE, "Stats reset.");
+
 		this.numShotsFired = 0;
 		this.before = core.now();
 		this.totalTimeTaken = 0;

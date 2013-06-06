@@ -38,12 +38,13 @@ public class CollisionSystem implements ISystem
 	private long last;
 	
 	/**The level of detail in debug messages.*/
-	private Level debugLevel = Level.FINE;
+	private Level debugLevel = Level.INFO;
 	
 	/**Logger for debug purposes.*/
 	private final Logger LOGGER 
 		= LoggerFactory.getLogger(this.getClass(), debugLevel);
 	
+	//Combine with below?
 	/**Contains the collision pairs that determines whether objects collide.*/
 	private boolean[][] collisionTable;
 	
@@ -69,6 +70,7 @@ public class CollisionSystem implements ISystem
 	@Override
 	public void init()
 	{
+		LOGGER.log(Level.FINE, "Setting system values to default.");
 		collisionTable = new boolean[9][9];	
 		isRunning = true;
 		effects = new ArrayList<IEffect>();
@@ -127,7 +129,7 @@ public class CollisionSystem implements ISystem
 	@Override
 	public void recv(final String id, final String... message)
 	{
-		
+		LOGGER.log(Level.FINEST, "Received message: " + id);
 	}
 	//////////
 	// SYSTEM METHODS
@@ -137,36 +139,40 @@ public class CollisionSystem implements ISystem
 	 */
 	public void checkAll()
 	{
-		//TODO: Use better method.
-		Iterator<CollisionInfoPack> packs =
+		//TODO: Change to smarter collision
+		Iterator<CollisionInfoPack> checkThese =
 				core.getInfoPacksOfType(CollisionInfoPack.class);
 
-
-		while(packs.hasNext())
+		while(checkThese.hasNext())
 		{
-			CollisionInfoPack each = packs.next();
-			if(each.isDirty()==false)
+			CollisionInfoPack cipA = checkThese.next();
+			
+			if(cipA.isDirty()==false)
 			{
-				Iterator<CollisionInfoPack> packs2 =
+				Iterator<CollisionInfoPack> checkAgainst =
 						core.getInfoPacksOfType(CollisionInfoPack.class);
-				while(packs2.hasNext())
+				
+				while(checkAgainst.hasNext())
 				{
-					CollisionInfoPack pack = packs2.next();
-					if(pack.isDirty()==false)
+					CollisionInfoPack cipB = checkAgainst.next();
+					
+					if(cipB.isDirty()==false)
 					{
-						if(checkCollidesWith(each.getGroup(), pack.getGroup())&&each!=pack)
+						
+						if(checkCollidesWith(cipA.getGroup(), cipB.getGroup()) 
+												&& cipA!=cipB)
 						{
-							if(checkCollided(each, pack))
+							if(checkCollided(cipA, cipB))
 							{
-								executeCollisionEffects(each, pack);
+								executeCollisionEffects(cipA, cipB);
 							}
 						}
 					}
 				}
 			}
-
 		}
 	}
+	
 	
 	/**
 	 * Set the collision possibility of a pair of collision groups.
@@ -177,7 +183,6 @@ public class CollisionSystem implements ISystem
 	public void setCollision(final int groupOne, final int groupTwo, 
 								final boolean collides)
 	{
-		//TODO: Deal with out of bounds group ids/indexes
 		if(groupOne>=0&&groupTwo>=0
 				&&groupOne<collisionTable.length
 				&&groupTwo<collisionTable.length)
@@ -193,7 +198,7 @@ public class CollisionSystem implements ISystem
 	 * @param groupTwo	the id of the second group
 	 * @return	true if they should collide, false otherwise
 	 */
-	public boolean checkCollidesWith(final int groupOne, final int groupTwo)
+	private boolean checkCollidesWith(final int groupOne, final int groupTwo)
 	{
 		return collisionTable[groupOne][groupTwo];
 	}
@@ -207,7 +212,6 @@ public class CollisionSystem implements ISystem
 	private boolean checkCollided(final CollisionInfoPack packOne, 
 			final CollisionInfoPack packTwo)
 	{
-		//TODO: This currently offers no way to determine exact collision pos.
 		Rectangle r1 = new Rectangle(packOne.getXPos()-(packOne.getWidth()/2), packOne.getYPos()-(packOne.getHeight()/2),
 						packOne.getWidth(), packOne.getHeight());
 		Rectangle r2 = new Rectangle(packTwo.getXPos()-(packTwo.getWidth()/2), packTwo.getYPos()-(packTwo.getHeight()/2),
@@ -223,12 +227,17 @@ public class CollisionSystem implements ISystem
 	 * Start tracking an effect.
 	 * @param effect 	the effect to track
 	 */
-	public void trackEffect(final IEffect effect)
+	private void trackEffect(final IEffect effect)
 	{
 		effects.add(effect);
 	}
 	
-	public void executeCollisionEffects(final CollisionInfoPack packA, final CollisionInfoPack packB)
+	/**
+	 * Executes the effects associated with a collision pair.
+	 * @param packA	the first entity's InfoPack
+	 * @param packB	the second entity's InfoPack
+	 */
+	private void executeCollisionEffects(final CollisionInfoPack packA, final CollisionInfoPack packB)
 	{
 		for(IEffect each:effects)
 		{
@@ -239,5 +248,13 @@ public class CollisionSystem implements ISystem
 		}
 	}
 	
+	/**
+	 * Sets the debug level of this {@code System}.
+	 * @param level	the Level to set
+	 */
+	public void setDebug(final Level level)
+	{
+		this.LOGGER.setLevel(level);
+	}
 
 }

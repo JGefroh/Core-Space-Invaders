@@ -60,6 +60,7 @@ public class DamageSystem implements ISystem
 	@Override
 	public void init()
 	{
+		LOGGER.log(Level.FINE, "Setting system values to default.");
 		isRunning = true;		
 		core.setInterested(this, "FORT_HIT");
 		core.setInterested(this, "PLAYER_HIT");
@@ -101,6 +102,7 @@ public class DamageSystem implements ISystem
 	public void setWait(final long waitTime)
 	{
 		this.waitTime = waitTime;
+		LOGGER.log(Level.FINE, "Wait interval set to: " + waitTime + " ms");
 	}
 	
 	@Override
@@ -112,6 +114,8 @@ public class DamageSystem implements ISystem
 	@Override
 	public void recv(final String id, final String... message)
 	{
+		LOGGER.log(Level.FINEST, "Received message: " + id);
+
 		if(id.equals("FORT_HIT"))
 		{
 			HealthInfoPack pack = core.getInfoPackFrom(message[0], HealthInfoPack.class);
@@ -127,32 +131,27 @@ public class DamageSystem implements ISystem
 	/////////
 	// SYSTEM METHODS
 	/////////
-	/**
-	 * Deal damage to an entity.
-	 * @param amount	the amount of damage to deal
-	 * @param source	the source of the damage
-	 * @param target	the receiver of the damage
-	 */
-	public void damage(final int amount, final IEntity source, final IEntity target)
-	{
-		//TODO: Remove amount, deal based on weapon damage? Too coupled?
-		HealthInfoPack hip = core.getInfoPackFrom(target, HealthInfoPack.class);
-		if(hip!=null)
-		{
-			hip.setCurHealth(hip.getCurHealth()-amount);
-		}
-	}
+
 	
 	/**
 	 * Deal damage to an Entity.
 	 * @param amount	the amount of damage to deal
 	 * @param pack		the HealthInfopack of the entity to damage
 	 */
-	public void damage(final int amount, final HealthInfoPack pack)
+	private void damage(final int amount, final HealthInfoPack pack)
 	{
 		if(pack!=null)
 		{
 			pack.setCurHealth(pack.getCurHealth()-amount);
 		}
+	}
+	
+	/**
+	 * Sets the debug level of this {@code System}.
+	 * @param level	the Level to set
+	 */
+	public void setDebug(final Level level)
+	{
+		this.LOGGER.setLevel(level);
 	}
 }

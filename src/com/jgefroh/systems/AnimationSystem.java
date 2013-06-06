@@ -13,13 +13,15 @@ import com.jgefroh.infopacks.AnimationInfoPack;
 
 /**
  * This system handles changing the sprite image at the required intervals.
+ * 
+ * 
+ * 
+ * DATE: 05JUN13
  * @author Joseph Gefroh
  * @version 0.3.0
  */
 public class AnimationSystem implements ISystem
-{
-	//TODO: Needs update.
-	
+{	
 	//////////
 	// DATA
 	//////////
@@ -36,7 +38,7 @@ public class AnimationSystem implements ISystem
 	private long last;
 	
 	/**The level of detail in debug messages.*/
-	private Level debugLevel = Level.FINE;
+	private Level debugLevel = Level.INFO;
 	
 	/**Logger for debug purposes.*/
 	private final Logger LOGGER 
@@ -64,6 +66,7 @@ public class AnimationSystem implements ISystem
 	@Override
 	public void init()
 	{
+		LOGGER.log(Level.FINE, "Setting system values to default.");
 		isRunning = true;
 		core.setInterested(this, "ADVANCE_FRAME");
 	}
@@ -107,6 +110,7 @@ public class AnimationSystem implements ISystem
 	public void setWait(final long waitTime)
 	{
 		this.waitTime = waitTime;
+		LOGGER.log(Level.FINE, "Wait interval set to: " + waitTime + " ms");
 	}
 	
 	@Override
@@ -118,18 +122,21 @@ public class AnimationSystem implements ISystem
 	@Override
 	public void recv(final String id, final String... message)
 	{
+		LOGGER.log(Level.FINEST, "Received message: " + id);
+
 		if(id.equals("ADVANCE_FRAME"))
 		{
 			nextFrame(core.getInfoPackFrom(message[0], AnimationInfoPack.class));
 		}
 	}
+	
+	
 	//////////
 	// SYSTEM METHODS
 	//////////
 	/**
-	 * Go through all of the entities with AnimationInfoPacks and update
-	 * their frames.
-	 * @param entities the ArrayList of entities
+	 * Updates all animations and advances their frames.
+	 * @param now	the current time
 	 */
 	private void animate(final long now)
 	{
@@ -150,10 +157,10 @@ public class AnimationSystem implements ISystem
 	}
 	
 	/**
-	 * Advance the frame of the animation.
+	 * Advances the frame of the animation.
 	 * @param pack	the AnimationInfoPack of the entity
 	 */
-	public void nextFrame(final AnimationInfoPack pack)
+	private void nextFrame(final AnimationInfoPack pack)
 	{
 		if(pack!=null)
 		{
@@ -171,5 +178,14 @@ public class AnimationSystem implements ISystem
 				pack.setCurrentFrame(0);
 			}
 		}
+	}
+	
+	/**
+	 * Sets the debug level of this {@code System}.
+	 * @param level	the Level to set
+	 */
+	public void setDebug(final Level level)
+	{
+		this.LOGGER.setLevel(level);
 	}
 }

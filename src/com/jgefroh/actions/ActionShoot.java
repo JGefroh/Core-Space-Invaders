@@ -25,7 +25,7 @@ public class ActionShoot implements IAction
 	@Override
 	public void execute(final IEntity entity)
 	{
-		core.getSystem(WeaponSystem.class).fire(entity);
+		core.send("REQUEST_FIRE", entity.getID());
 	}
 
 }

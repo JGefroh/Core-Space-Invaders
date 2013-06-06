@@ -182,7 +182,7 @@ public class EntityCreationSystem implements ISystem
 		player.getComponent(TransformComponent.class).setHeight(64);
 		player.addComponent(new RenderComponent(player));
 		player.getComponent(RenderComponent.class).setSpriteID(0);
-		player.getComponent(RenderComponent.class).setTexturePath("res\\player.png");
+		player.getComponent(RenderComponent.class).setTexturePath("res/player.png");
 		player.addComponent(new VelocityComponent(player));
 		player.getComponent(VelocityComponent.class).setInterval(25);
 		player.getComponent(VelocityComponent.class).setXVelocity(0);
@@ -247,11 +247,16 @@ public class EntityCreationSystem implements ISystem
 		entity.addComponent(wc);
 	}
 	
-	public void makeMoving(final IEntity entity, final int interval)
+	public void makeMoving(final IEntity entity, final int interval, 
+			final int initVelX,
+			final int initVelY)
 	{
 		VelocityComponent vc = new VelocityComponent(entity);
 			vc.setInterval(interval);
+			vc.setXVelocity(initVelX);
+			vc.setYVelocity(initVelY);
 		entity.addComponent(vc);
+		
 	}
 	/**
 	 * Create an alien entity.
@@ -270,12 +275,12 @@ public class EntityCreationSystem implements ISystem
 		alien.addComponent(new RenderComponent(alien));
 		alien.getComponent(RenderComponent.class).setSpriteID(1);
 		alien.addComponent(new VelocityComponent(alien));
-		alien.getComponent(VelocityComponent.class).setInterval(200);
+		alien.addComponent(new AIComponent(alien));
+		alien.getComponent(VelocityComponent.class).setInterval(10);
 		alien.getComponent(VelocityComponent.class).setXVelocity(0);
 		alien.addComponent(new CollisionComponent(alien));
 		alien.getComponent(CollisionComponent.class).setCollisionGroup(1);
-		alien.addComponent(new AIComponent(alien));
-		alien.getComponent(RenderComponent.class).setTexturePath("res\\enemy.png");
+		alien.getComponent(RenderComponent.class).setTexturePath("res/enemy.png");
 		alien.addComponent(new WeaponComponent(alien));
 		int[] a = {0, 1};
 		alien.addComponent(new AnimationComponent(alien));
@@ -306,7 +311,7 @@ public class EntityCreationSystem implements ISystem
 		fort.getComponent(TransformComponent.class).setHeight(64);
 		fort.addComponent(new RenderComponent(fort));
 		fort.getComponent(RenderComponent.class).setSpriteID(0);
-		fort.getComponent(RenderComponent.class).setTexturePath("res\\fort.png");
+		fort.getComponent(RenderComponent.class).setTexturePath("res/fort.png");
 		fort.addComponent(new CollisionComponent(fort));
 		fort.getComponent(CollisionComponent.class).setCollisionGroup(4);
 		fort.addComponent(new HealthComponent(fort));
@@ -342,7 +347,7 @@ public class EntityCreationSystem implements ISystem
 		bullet.getComponent(VelocityComponent.class).setXVelocity(0);
 		bullet.addComponent(new RenderComponent(bullet));
 		bullet.getComponent(RenderComponent.class).setSpriteID(0);
-		bullet.getComponent(RenderComponent.class).setTexturePath("res\\bullet.png");
+		bullet.getComponent(RenderComponent.class).setTexturePath("res/bullet.png");
 		bullet.addComponent(new CollisionComponent(bullet));
 
 		bullet.addComponent(new AnimationComponent(bullet));
@@ -377,7 +382,7 @@ public class EntityCreationSystem implements ISystem
 		alien.getComponent(TransformComponent.class).setHeight(32);
 		alien.addComponent(new RenderComponent(alien));
 		alien.getComponent(RenderComponent.class).setSpriteID(2);
-		alien.getComponent(RenderComponent.class).setTexturePath("res\\enemy.png");
+		alien.getComponent(RenderComponent.class).setTexturePath("res/enemy.png");
 		alien.addComponent(new DecayComponent(alien));
 		alien.getComponent(DecayComponent.class).setTimeUntilDecay(500);
 		alien.getComponent(DecayComponent.class).setLastUpdateTime(core.now());
@@ -394,7 +399,7 @@ public class EntityCreationSystem implements ISystem
 			tc.setXPos(xPos);
 			tc.setYPos(yPos);
 		RenderComponent rc = new RenderComponent(menuOption);
-			rc.setTexturePath("res\\gui.png");
+			rc.setTexturePath("res/gui.png");
 			rc.setSpriteID(spriteID);
 		MenuComponent mc = new MenuComponent(menuOption);
 			mc.setCommand(command);
@@ -499,7 +504,7 @@ public class EntityCreationSystem implements ISystem
 			letter.getComponent(TransformComponent.class).setHeight(size);
 			letter.addComponent(new RenderComponent(letter));
 			letter.getComponent(RenderComponent.class).setSpriteID(index);
-			letter.getComponent(RenderComponent.class).setTexturePath("res\\alphabet.png");
+			letter.getComponent(RenderComponent.class).setTexturePath("res/alphabet.png");
 		core.addEntity(letter);
 		return letter;
 	}

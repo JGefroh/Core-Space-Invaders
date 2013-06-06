@@ -13,16 +13,18 @@ It is graphically unimpressive because I have very little artistic talent.
 
 ###Known Issues:
 1. The code is a messy, inconsistent mish-mash of different ideas.
-2. Timing issue on different computers can cause the game to turn into a bullet-hell shooter.
-3. The aliens do not move downward.
 
 ###Upcoming changes:
 1. Refactor code to be consistent and remove outdated/unnecessary things.
 2. Make consistent timing.
-3. Create a .jar so that it can be launched easily.
 
+###Dependencies
+1. [LWJGL 2.8.5](www.lwjgl.org)
+2. [jackson 2.2.0](www.jackson.codehaus.org)
+3. [Core 0.4.0](www.github.com/jgefroh/core)
 
 Have fun!
+
 ==========
 Current State:
 

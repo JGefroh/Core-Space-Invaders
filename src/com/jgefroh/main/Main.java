@@ -4,6 +4,11 @@ package com.jgefroh.main;
 
 
 
+import java.nio.IntBuffer;
+
+import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Cursor;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
 import com.jgefroh.core.Core;
@@ -23,9 +28,8 @@ import com.jgefroh.input.InputSystem;
 import com.jgefroh.systems.AISystem;
 import com.jgefroh.systems.AnimationSystem;
 import com.jgefroh.systems.CollisionSystem;
-import com.jgefroh.systems.CursorSystem;
 import com.jgefroh.systems.DamageSystem;
-import com.jgefroh.systems.DeadCheckSystem;
+import com.jgefroh.systems.HealthMonitorSystem;
 import com.jgefroh.systems.DecaySystem;
 import com.jgefroh.systems.EntityCreationSystem;
 import com.jgefroh.systems.GUISystem;
@@ -46,18 +50,18 @@ import com.jgefroh.systems.WindowSystem;
  * @author Joseph Gefroh
  *
  */
-public class Test_SI
+public class Main
 {
 	private Core core;
 	private ResourceLoader rl;
 	
 	public static void main(String[] args)
 	{
-		Test_SI ts = new Test_SI();
+		Main ts = new Main();
 		ts.loop();
 		System.exit(0);
 	}
-	public Test_SI()
+	public Main()
 	{
 		init();
 	}
@@ -78,8 +82,6 @@ public class Test_SI
 		core = new Core();
 		core.add(new WindowSystem(core, 1680, 1050, "Core - Void Attackers"), true);
 		RenderSystem rs = new RenderSystem(core);
-			//rs.setOrtho(core.getSystem(WindowSystem.class).getWidth(), 
-				//	core.getSystem(WindowSystem.class).getHeight());
 		core.add(rs, true);
 		
 		TransformSystem tranSys = new TransformSystem(core);
@@ -91,7 +93,7 @@ public class Test_SI
 		AISystem as = new AISystem(core);
 		core.add(as);
 		core.add(new EntityCreationSystem(core));
-		core.add(new DeadCheckSystem(core));
+		core.add(new HealthMonitorSystem(core));
 		core.add(new DamageSystem(core));
 		GameOverCheckSystem wcs = new GameOverCheckSystem(core);
 			wcs.setWait(100);
@@ -111,7 +113,6 @@ public class Test_SI
 		//core.add(new GameStateSystem(core));
 		//WaitSystem n = new WaitSystem(core);
 		core.add(new WaitSystem(core));
-		core.add(new CursorSystem(core));
 	}
 	
 	private void initFactories()
@@ -154,6 +155,25 @@ public class Test_SI
 		rl.loadTexture("res/bullet.png");
 		rl.loadTexture("res/alphabet.png");
 		rl.loadTexture("res/gui.png");
+		IntBuffer ib = rl.loadCursorFromImage("res/cursor.png");
+		Cursor cursor;
+		if(ib!=null)
+		{
+			ib.rewind();
+			try
+			{
+				cursor = new Cursor(16, 16, 8, 8, 1, ib, null);
+				Mouse.setCursorPosition(1680,1050);
+				Mouse.setNativeCursor(cursor);
+				Mouse.setClipMouseCoordinatesToWindow(true);
+				Mouse.setGrabbed(false);
+			}
+			catch (LWJGLException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
 	}
 	
 

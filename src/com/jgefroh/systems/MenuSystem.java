@@ -7,8 +7,6 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.lwjgl.input.Mouse;
-
 import com.jgefroh.core.Core;
 import com.jgefroh.core.Entity;
 import com.jgefroh.core.IEntity;
@@ -78,6 +76,7 @@ public class MenuSystem implements ISystem
 	@Override
 	public void init()
 	{
+		LOGGER.log(Level.FINE, "Setting system values to default.");
 		this.isRunning = true;
 		core.setInterested(this, "REQUEST_SHOW_MENU");
 		core.setInterested(this, "REQUEST_NEW_GAME");
@@ -101,6 +100,7 @@ public class MenuSystem implements ISystem
 			Iterator<MenuInfoPack> packs
 				= core.getInfoPacksOfType(MenuInfoPack.class);
 			core.send("REQUEST_CURSOR_POSITION", "");
+			//Potentially useful for on hover effects, but unneccessary for click.
 			while(packs.hasNext())
 			{
 				hovered = false;
@@ -148,6 +148,7 @@ public class MenuSystem implements ISystem
 	public void setWait(final long waitTime)
 	{
 		this.waitTime = waitTime;
+		LOGGER.log(Level.FINE, "Wait interval set to: " + waitTime + " ms");
 	}
 	
 	@Override
@@ -217,8 +218,6 @@ public class MenuSystem implements ISystem
 		}
 		else if(id.equals("INPUT_LEFT_CLICK"))
 		{
-			System.out.println(this.mouseX +"," + this.mouseY);
-
 			MenuInfoPack pack = 
 					core.getInfoPackFrom(this.selectedMenuItemID, 
 										MenuInfoPack.class);
@@ -239,8 +238,6 @@ public class MenuSystem implements ISystem
 	private void showTitleScreen()
 	{
 		core.removeAllEntities();
-		core.send("REQUEST_WINDOW_HEIGHT", "");
-		core.send("REQUEST_WINDOW_WIDTH", "");
 
 		if(core.isPaused())
 		{
@@ -250,24 +247,24 @@ public class MenuSystem implements ISystem
 		IEntity entity = new Entity();
 			entity.setName("ALIEN");
 			ecs.makePositionable(entity, 1680/2, 1050/5, 128, 128);
-			ecs.makeRenderable(entity, "res\\enemy.png", 0);
+			ecs.makeRenderable(entity, "res/enemy.png", 0);
 			ecs.makeAnimated(entity, "IDLE", 500, 0, 1);
 			ecs.makeArmed(entity);
 			ecs.makeAIControlled(entity);
-			ecs.makeMoving(entity, 200);
+			ecs.makeMoving(entity, 200, 5, 0);
 			core.add(entity);
 			ecs.createDrawableText("VOID ATTACKERS", 1680/2-300, 600, 48, -5);
 		entity = new Entity();
 		entity.setName("MENU_PLAYER");
 			ecs.makePositionable(entity, 1680/2, 900, 64, 64);
-			ecs.makeRenderable(entity, "res\\player.png", 0);
+			ecs.makeRenderable(entity, "res/player.png", 0);
 			ecs.makeArmed(entity);
 			ecs.makeAIControlled(entity);
-			ecs.makeMoving(entity, 0);
+			ecs.makeMoving(entity, 0, 10, 0);
 			core.add(entity);
 		ecs.createMenuOption(1680/2, ((1050/20)*13), 128, 48, 1, "REQUEST_NEW_GAME");
 		ecs.createMenuOption(1680/2, ((1050/20)*14), 128, 48, 2, "REQUEST_QUIT");
-		ecs.createInputReceiver("LEFTCLICK", "REQUEST_NEW_GAME");
+		ecs.createInputReceiver("LEFTCLICK", "REQUEST_NEW_GAME");//Convoluted - fix input system.
 		core.send("IN_MENU", true + "");
 	}
 	
@@ -295,5 +292,12 @@ public class MenuSystem implements ISystem
 		System.exit(0);
 	}
 	
-
+	/**
+	 * Sets the debug level of this {@code System}.
+	 * @param level	the Level to set
+	 */
+	public void setDebug(final Level level)
+	{
+		this.LOGGER.setLevel(level);
+	}
 }

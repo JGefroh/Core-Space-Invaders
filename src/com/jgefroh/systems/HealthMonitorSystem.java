@@ -1,29 +1,22 @@
 package com.jgefroh.systems;
 
-import java.nio.IntBuffer;
+
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Cursor;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
 
 import com.jgefroh.core.Core;
 import com.jgefroh.core.ISystem;
 import com.jgefroh.core.LoggerFactory;
-
-
+import com.jgefroh.infopacks.HealthInfoPack;
 
 /**
- * Handles the displayi and position tracking of the cursor according to LWJGL.
- * 
- * Date: 04JUN13
+ * This system goes through all entities with health and marks ones with no
+ * health as dead.
  * @author Joseph Gefroh
- * @version 0.1.0
  */
-public class CursorSystem implements ISystem
-{	
+public class HealthMonitorSystem implements ISystem
+{
 	//////////
 	// DATA
 	//////////
@@ -31,7 +24,6 @@ public class CursorSystem implements ISystem
 	private Core core;
 	
 	/**Flag that shows whether the system is running or not.*/
-	@SuppressWarnings("unused")
 	private boolean isRunning;
 	
 	/**The time to wait between executions of the system.*/
@@ -41,7 +33,7 @@ public class CursorSystem implements ISystem
 	private long last;
 	
 	/**The level of detail in debug messages.*/
-	private Level debugLevel = Level.FINE;
+	private Level debugLevel = Level.INFO;
 	
 	/**Logger for debug purposes.*/
 	private final Logger LOGGER 
@@ -52,22 +44,22 @@ public class CursorSystem implements ISystem
 	// INIT
 	//////////
 	/**
-	 * Creates a new instance of this {@code System}.
-	 * @param core	a reference to the Core controlling this system
+	 * Create a new instance of this {@code System}.
+	 * @param core	 a reference to the Core controlling this system
 	 */
-	public CursorSystem(final Core core)
+	public HealthMonitorSystem(final Core core)
 	{
 		this.core = core;
 		init();
 	}
+	
+	
 	//////////
 	// ISYSTEM INTERFACE
 	//////////
 	@Override
 	public void init()
 	{
-		this.isRunning = true;
-		loadCursor();
 	}
 	
 	@Override
@@ -76,10 +68,14 @@ public class CursorSystem implements ISystem
 		LOGGER.log(Level.INFO, "System started.");
 		isRunning = true;
 	}
-	
+
 	@Override
 	public void work(final long now)
-	{				
+	{
+		if(isRunning)
+		{
+			checkHealth();
+		}
 	}
 
 	@Override
@@ -105,6 +101,7 @@ public class CursorSystem implements ISystem
 	public void setWait(final long waitTime)
 	{
 		this.waitTime = waitTime;
+		LOGGER.log(Level.FINE, "Wait interval set to: " + waitTime + " ms");
 	}
 	
 	@Override
@@ -112,7 +109,7 @@ public class CursorSystem implements ISystem
 	{
 		this.last = last;
 	}
-
+	
 	@Override
 	public void recv(final String id, final String... message)
 	{
@@ -121,28 +118,33 @@ public class CursorSystem implements ISystem
 	//////////
 	// SYSTEM METHODS
 	//////////
-	private void loadCursor()
+	/**
+	 * Check the health of all entities and destroy those below 0 health.
+	 */
+	private void checkHealth()
 	{
-		ResourceLoader rl =
-					core.getSystem(ResourceLoader.class);
-		if(rl!=null)
+		Iterator<HealthInfoPack> packs 
+		= core.getInfoPacksOfType(HealthInfoPack.class);
+		while(packs.hasNext())
 		{
-			IntBuffer ib = rl.loadCursorFromImage("res\\cursor.png");
-			ib.rewind();
-			Cursor cursor;
-			try
+			HealthInfoPack each = packs.next();
+			if(each.isDirty()==false)
 			{
-				cursor = new Cursor(16, 16, 8, 8, 1, ib, null);
-				Mouse.setCursorPosition(1680,1050);
-				Mouse.setNativeCursor(cursor);
-				Mouse.setClipMouseCoordinatesToWindow(true);
-				Mouse.setGrabbed(false);
-			}
-			catch (LWJGLException e)
-			{
-				e.printStackTrace();
+				if(each.getCurHealth()<=0)
+				{
+					core.removeEntity(each.getOwner());
+				}
 			}
 		}
-
 	}
+	
+	/**
+	 * Sets the debug level of this {@code System}.
+	 * @param level	the Level to set
+	 */
+	public void setDebug(final Level level)
+	{
+		this.LOGGER.setLevel(level);
+	}
+	
 }

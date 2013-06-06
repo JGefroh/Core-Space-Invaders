@@ -124,6 +124,9 @@ public class InputSystem implements ISystem, IInputSystem
 		this.windowHeightOrig = 1050;
 		this.widthRatio = 1;
 		this.heightRatio = 1;
+		
+		core.send("REQUEST_WINDOW_WIDTH", "");
+		core.send("REQUEST_WINDOW_HEIGHT", "");
 	}
 	
 	@Override
@@ -181,6 +184,7 @@ public class InputSystem implements ISystem, IInputSystem
 		{
 			core.send("INPUT_CURSOR_POSITION", getMouseX() +"", getMouseY()+"");
 		}
+		
 		else if(id.equals("WINDOW_WIDTH"))
 		{
 			if(message.length>0)

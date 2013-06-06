@@ -2,19 +2,13 @@ package com.jgefroh.systems;
 
 
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.lwjgl.BufferUtils;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.glu.GLU;
 
 import com.jgefroh.core.Core;
 import com.jgefroh.core.ISystem;
@@ -78,6 +72,8 @@ public class RenderSystem implements ISystem
 	 */
 	private void initOpenGL()
 	{
+		LOGGER.log(Level.FINE, "Setting default OpenGL values.");
+
 		GL11.glDepthFunc(GL11.GL_LEQUAL);
 		GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_FASTEST);	//Hint to increase performance (do once)
 		//GL11.glEnable(GL11.GL_BLEND);	//Enables blending? (do once)
@@ -97,17 +93,22 @@ public class RenderSystem implements ISystem
 	@Override
 	public void init()
 	{
+		LOGGER.log(Level.FINE, "Setting system values to default.");
 		initOpenGL();
 		textures = new HashMap<Integer, Texture>();
 		idMan = new HashMap<String, Integer>();
 		isRunning = true;
 		core.setInterested(this, "WINDOW_RESIZED");
+		core.setInterested(this, "WINDOW_WIDTH");
+		core.setInterested(this, "WINDOW_HEIGHT");
 	}
 	
 	@Override
 	public void start() 
 	{
 		LOGGER.log(Level.INFO, "System started.");
+		core.send("REQUEST_WINDOW_WIDTH", "");
+		core.send("REQUEST_WINDOW_HEIGHT", "");
 		isRunning = true;
 	}
 
@@ -143,6 +144,7 @@ public class RenderSystem implements ISystem
 	public void setWait(final long waitTime)
 	{
 		this.waitTime = waitTime;
+		LOGGER.log(Level.FINE, "Wait interval set to: " + waitTime + " ms");
 	}
 	
 	@Override
@@ -154,7 +156,17 @@ public class RenderSystem implements ISystem
 	@Override
 	public void recv(final String id, final String... message)
 	{
-		if(id.equals("WINDOW_RESIZED"));
+		LOGGER.log(Level.FINEST, "Received message: " + id);
+
+		if(id.equals("WINDOW_RESIZED"))
+		{
+			resizeDrawableArea(Display.getWidth(), Display.getHeight());
+		}
+		else if(id.equals("WINDOW_WIDTH"))
+		{
+			resizeDrawableArea(Display.getWidth(), Display.getHeight());
+		}
+		else if(id.equals("WINDOW_HEIGHT"))
 		{
 			resizeDrawableArea(Display.getWidth(), Display.getHeight());
 		}
@@ -169,7 +181,7 @@ public class RenderSystem implements ISystem
 	 * @param spriteIndex	the index of the sprite who's coordinate to return
 	 * @return	the uMin texture coordinate of the sprite, 0 if error
 	 */
-	public float getUMin(final int textureID, final int spriteIndex)
+	private float getUMin(final int textureID, final int spriteIndex)
 	{
 		Texture texture = textures.get(textureID);
 		if(texture!=null)
@@ -185,7 +197,7 @@ public class RenderSystem implements ISystem
 	 * @param spriteIndex	the index of the sprite who's coordinate to return
 	 * @return	the uMax texture coordinate of the sprite, 0 if error
 	 */
-	public float getUMax(final int textureID, final int spriteIndex)
+	private float getUMax(final int textureID, final int spriteIndex)
 	{
 		Texture texture = textures.get(textureID);
 		if(texture!=null)
@@ -201,7 +213,7 @@ public class RenderSystem implements ISystem
 	 * @param spriteIndex	the index of the sprite who's coordinate to return
 	 * @return	the vMin texture coordinate of the sprite, 0 if error
 	 */
-	public float getVMin(final int textureID, final int spriteIndex)
+	private float getVMin(final int textureID, final int spriteIndex)
 	{
 		Texture texture = textures.get(textureID);
 		if(texture!=null)
@@ -217,7 +229,7 @@ public class RenderSystem implements ISystem
 	 * @param spriteIndex	the index of the sprite who's coordinate to return
 	 * @return	the vMax texture coordinate of the sprite, 0 if error
 	 */
-	public float getVMax(final int textureID, final int spriteIndex)
+	private float getVMax(final int textureID, final int spriteIndex)
 	{
 		Texture texture = textures.get(textureID);
 		if(texture!=null)
@@ -239,9 +251,11 @@ public class RenderSystem implements ISystem
 		newFrame();
 		Iterator<RenderInfoPack> packs = 
 				core.getInfoPacksOfType(RenderInfoPack.class);
+		
 		while(packs.hasNext())
 		{
 			RenderInfoPack pack = packs.next();
+			
 			if(pack.isDirty()==false)
 			{
 				if(pack.getTextureID()==-1)
@@ -251,9 +265,16 @@ public class RenderSystem implements ISystem
 					{
 						pack.setTextureID(id);
 					}
-					//If ID doesn't exist, texture isn't loaded.
-					//Ask resource loader to load texture here to enable
-					//"streaming".
+					else
+					{	
+						//If ID doesn't exist, texture isn't loaded.
+						//Ask resource loader to load texture here to enable
+						//"streaming".
+						LOGGER.log(Level.WARNING, 
+								"Draw requested with unloaded texture: " 
+								+ pack.getPath());
+						idMan.put(pack.getPath(), -1);
+					}
 				}
 				drawQuadAt(pack.getTextureID(), 
 						pack.getXPos()-pack.getWidth()/2, pack.getYPos()-pack.getHeight()/2, pack.getZPos(),
@@ -327,6 +348,7 @@ public class RenderSystem implements ISystem
 	 */
 	public void createTexture(final ByteBuffer buffer, final Texture meta)
 	{
+		//Convert texture to string? BASE64?
 		LOGGER.log(Level.FINE, "Creating OpenGL texture for " + meta.getPath());
 
 		int textureID = GL11.glGenTextures();
@@ -384,9 +406,12 @@ public class RenderSystem implements ISystem
 		GL11.glLoadIdentity();
 		GL11.glOrtho(0, 1680, 1050, 0, -1, 100);
 	}
-	
-	private void screenToWorld()
+	/**
+	 * Sets the debug level of this {@code System}.
+	 * @param level	the Level to set
+	 */
+	public void setDebug(final Level level)
 	{
-		
+		this.LOGGER.setLevel(level);
 	}
 }

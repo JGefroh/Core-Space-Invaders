@@ -70,6 +70,7 @@ public class WeaponSystem implements ISystem
 	{
 		this.isRunning = true;
 		core.setInterested(this, "BULLET_HIT");
+		core.setInterested(this, "REQUEST_FIRE");
 	}
 	
 	@Override
@@ -127,6 +128,13 @@ public class WeaponSystem implements ISystem
 			String bulletID = message[0];
 			setReady(core.getInfoPackFrom(bulletID, BulletInfoPack.class));
 			core.removeEntity(bulletID);
+		}
+		else if(id.equals("REQUEST_FIRE"))
+		{
+			if(message.length>0)
+			{
+				fire(message[0]);	//message[0] expected to be entityID
+			}
 		}
 	}
 	
@@ -213,14 +221,21 @@ public class WeaponSystem implements ISystem
 			setReady(entityTwo.getComponent(BulletComponent.class).getBulletOwner());		
 		}
 	}
+
 	
 	/**
-	 * Set a request to fire the weapon.
-	 * @param entity	the requesting entity
+	 * Sets a request to fire the weapon.
+	 * @param entityID	the ID of the requesting entity
 	 */
-	public void fire(final IEntity entity)
+	public void fire(final String entityID)
 	{
-		entity.getComponent(WeaponComponent.class).setFireRequested(true);
+		WeaponInfoPack pack = 
+			core.getInfoPackFrom(entityID, WeaponInfoPack.class);
+			
+		if(pack!=null)
+		{				
+			pack.setFireRequested(true);
+		}
 	}
 	
 	

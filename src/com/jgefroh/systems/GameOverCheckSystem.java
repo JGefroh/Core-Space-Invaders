@@ -172,5 +172,20 @@ public class GameOverCheckSystem implements ISystem
 			stop();
 			core.send("TIMER_REQUEST",  "LOSE_WAKE_UP_CALL", 3000 + "");
 		}
+		
+		Iterator<AIInfoPack> alienPacks
+			= core.getInfoPacksOfType(AIInfoPack.class);
+		while(alienPacks.hasNext())
+		{
+				AIInfoPack pack = alienPacks.next();
+				if(pack.getYPos()<0)
+				{
+					core.send("EVENT_LOSE", "LOSE");
+					stop();
+					core.send("TIMER_REQUEST",  "LOSE_WAKE_UP_CALL", 3000 + "");
+					this.expectingResponse = true;
+					break;
+				}
+		}
 	}
 }

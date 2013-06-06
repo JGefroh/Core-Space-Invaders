@@ -3,6 +3,7 @@ package com.jgefroh.systems;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
@@ -50,7 +51,7 @@ public class ResourceLoader implements ISystem
 	private long last;
 	
 	/**The level of detail in debug messages.*/
-	private Level debugLevel = Level.OFF;
+	private Level debugLevel = Level.ALL;
 	
 	/**Logger for debug purposes.*/
 	private final Logger LOGGER 
@@ -127,7 +128,8 @@ public class ResourceLoader implements ISystem
 	@Override
 	public void recv(final String id, final String... message)
 	{
-		
+		LOGGER.log(Level.FINEST, "Received message: " + id);
+
 	}
 	
 	//////////
@@ -169,7 +171,13 @@ public class ResourceLoader implements ISystem
 	 */
 	private Texture loadTextureMeta(final String path)
 	{
-		return convertJSONToMeta(new File(path));
+		InputStream is = this.getClass().getClassLoader()
+				.getResourceAsStream(path); 
+		if(is!=null)
+		{
+			return convertStreamToMeta(is, path);
+		}
+		return null;
 	}
 	
 	/**
@@ -178,40 +186,54 @@ public class ResourceLoader implements ISystem
 	 */
 	public void loadTexture(final String path)
 	{
-		if(isValidFile(path)&&isValidFile(path.replace(".png", ".meta")))
+		InputStream is = this.getClass().getClassLoader()
+							.getResourceAsStream(path);  
+		if(is!=null)
 		{
-			File file = new File(path);
-			ByteBuffer imageData = convertImageToBuffer(file);
+			ByteBuffer imageData = convertStreamToBuffer(is, path);
 			Texture meta = loadTextureMeta(path.replace(".png", ".meta"));
-			core.getSystem(RenderSystem.class).createTexture(imageData, meta);	
+			if(imageData!=null&&meta!=null)
+			{				
+				core.getSystem(RenderSystem.class).createTexture(imageData, meta);					
+			}
+		}
+		else
+		{
+			LOGGER.log(Level.WARNING, "Unable to locate resource: " + path);			
 		}
 	}
 	
 	public IntBuffer loadCursorFromImage(final String path)
 	{
-		if(isValidFile(path))
+		InputStream is = this.getClass().getClassLoader()
+								.getResourceAsStream(path);  
+		if(is!=null)
 		{
-			File file = new File(path);
-			ByteBuffer byteBuff = convertImageToBuffer(file);
+			ByteBuffer byteBuff = convertStreamToBuffer(is, path);
 			IntBuffer intBuff = byteBuff.asIntBuffer();
 			return intBuff;
+		}
+		else
+		{
+			LOGGER.log(Level.WARNING, "Unable to locate resource: " + path);			
 		}
 		return null;
 	}
 	
 	/**
-	 * Convert an image file into a byte buffer to send to OpenGL.
+	 * Convert an input stream into a ByteBuffer
 	 * @param file the image file
 	 * @return	a ByteBuffer with the pixel color data of the image
 	 */
-	private ByteBuffer convertImageToBuffer(final File file)
+	private ByteBuffer convertStreamToBuffer(final InputStream is, final String path)
 	{
+
 		try
 		{
 			//Explanation: http://hrboyceiii.blogspot.com/2007/02/bit-shifting-what-is-it-and-why.html
 			int bpp = 4;
 			//Convert the file into a buffered image.
-			BufferedImage bImage = ImageIO.read(file);	
+			BufferedImage bImage = ImageIO.read(is);	
 			//Turn the buffered image into an RGBArray.
 			int[] rgbArray = bImage.getRGB(0, 0, bImage.getWidth(), bImage.getHeight(), null, 0, bImage.getWidth());
 			//Create a buffer to hold the pixel data.
@@ -236,31 +258,33 @@ public class ResourceLoader implements ISystem
 			}
 			
 			buffer.flip();
-			LOGGER.log(Level.INFO, "Successfuly buffered: " + file.getName());
+			LOGGER.log(Level.INFO, "Converted " + path + " to ByteBuffer.");			
 			return buffer;
 		}
 		catch(IOException e)
 		{
-			LOGGER.log(Level.SEVERE, "Error converting: " + file.getName());
+			LOGGER.log(Level.SEVERE, "Error creating: " + path);
 			e.printStackTrace();
 		}
 		catch(ArrayIndexOutOfBoundsException e)
 		{
-			LOGGER.log(Level.SEVERE, "Error converting: " + file.getName());
+			LOGGER.log(Level.SEVERE, "Error creating: " + path);
 			e.printStackTrace();
 		}
+		LOGGER.log(Level.INFO, "Failed to convert " + path + " to ByteBuffer.");			
+
 		return null;
 	}
 	
-	private Texture convertJSONToMeta(final File file)
+	private Texture convertStreamToMeta(final InputStream is, final String path)
 	{
 		Texture meta = new Texture();
-		meta.setPath(file.getPath().replace(".meta", ".png"));
+		meta.setPath(path.replace(".meta", ".png"));
 		
 		try
 		{
 			JsonFactory jFact = new JsonFactory();
-			JsonParser jParser = jFact.createJsonParser(file);	//TODO: Dep?
+			JsonParser jParser = jFact.createJsonParser(is);	//TODO: Dep?
 			
 			HashMap<Integer, Sprite> sprites = new HashMap<Integer, Sprite>();
 			Sprite sprite = new Sprite();
@@ -340,7 +364,7 @@ public class ResourceLoader implements ISystem
 		}
 		catch(JsonParseException e)
 		{
-			LOGGER.log(Level.SEVERE, "Error parsing " + file.getPath());
+			LOGGER.log(Level.SEVERE, "Error parsing " + path);
 			e.printStackTrace();
 			System.exit(-1);
 		}

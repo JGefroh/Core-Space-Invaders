@@ -89,4 +89,9 @@ public class AIInfoPack implements IInfoPack
 	{
 		this.isDirty = isDirty;
 	}
+
+	public int getYPos()
+	{
+		return tc.getYPos();
+	}
 }

@@ -29,7 +29,7 @@ public class DecaySystem implements ISystem
 	private boolean isRunning;
 	
 	/**The level of detail in debug messages.*/
-	private Level debugLevel = Level.FINE;
+	private Level debugLevel = Level.INFO;
 	
 	/**The time to wait between executions of the system.*/
 	private long waitTime;
@@ -101,6 +101,7 @@ public class DecaySystem implements ISystem
 	public void setWait(final long waitTime)
 	{
 		this.waitTime = waitTime;
+		LOGGER.log(Level.FINE, "Wait interval set to: " + waitTime + " ms");
 	}
 	
 	@Override
@@ -132,5 +133,12 @@ public class DecaySystem implements ISystem
 			}
 		}
 	}
-
+	/**
+	 * Sets the debug level of this {@code System}.
+	 * @param level	the Level to set
+	 */
+	public void setDebug(final Level level)
+	{
+		this.LOGGER.setLevel(level);
+	}
 }

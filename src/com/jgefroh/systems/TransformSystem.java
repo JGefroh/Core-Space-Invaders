@@ -64,6 +64,9 @@ public class TransformSystem implements ISystem
 	public void init()
 	{
 		isRunning = true;
+		core.setInterested(this, "SET_XVELOCITY");
+		core.setInterested(this, "SHIFT_Y");
+		core.setInterested(this, "SET_MOVEMENTINTERVAL");
 	}
 
 	@Override
@@ -116,7 +119,58 @@ public class TransformSystem implements ISystem
 	@Override
 	public void recv(final String id, final String... message)
 	{
-		
+		LOGGER.log(Level.FINEST, "Received message: " + id);
+
+		if(id.equals("SET_XVELOCITY"))
+		{
+			if(message.length>=2)
+			{
+				IEntity entity = core.getEntityWithID(message[0]);
+				try
+				{					
+					int requestVel = Integer.parseInt(message[1]);
+					setXVelocity(entity, requestVel);
+				}
+				catch(NumberFormatException e)
+				{
+					LOGGER.log(Level.WARNING, "Unable to set velocity - bad vel.");
+				}
+			}
+		}
+		else if(id.equals("SHIFT_Y"))
+		{
+			if(message.length>=2)
+			{
+				IEntity entity = core.getEntityWithID(message[0]);
+				try
+				{	
+
+					int yShift = Integer.parseInt(message[1]);
+					shiftPosition(entity, 0, yShift);
+				}
+				catch(NumberFormatException e)
+				{
+					LOGGER.log(Level.WARNING, "Unable to shift.");
+				}
+			}
+		}
+		else if(id.equals("SET_MOVEMENTINTERVAL"))
+		{
+			if(message.length>=2)
+			{
+				IEntity entity = core.getEntityWithID(message[0]);
+				try
+				{	
+
+					long newInterval = Long.parseLong(message[1]);
+					setInterval(entity, newInterval);
+				}
+				catch(NumberFormatException e)
+				{
+					LOGGER.log(Level.WARNING, "Unable to shift.");
+				}
+			}
+		}
 	}
 	
 	//////////
@@ -198,7 +252,10 @@ public class TransformSystem implements ISystem
 	{
 		MovementInfoPack pack = 
 				core.getInfoPackFrom(entity, MovementInfoPack.class);
-		pack.setXVelocity(xVel);
+		if(pack!=null)
+		{			
+			pack.setXVelocity(xVel);
+		}
 	}
 	
 	/**
@@ -218,6 +275,10 @@ public class TransformSystem implements ISystem
 	{
 		MovementInfoPack pack =
 				core.getInfoPackFrom(entity, MovementInfoPack.class);
-		pack.setInterval(interval);
+		if(pack!=null)
+		{			
+			pack.setInterval(interval);
+		}
 	}
+	
 }
