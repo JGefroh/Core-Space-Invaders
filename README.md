@@ -11,6 +11,15 @@ As a result, the code is a mix of old and new ideas. I have yet to refactor it.
 It is graphically unimpressive because I have very little artistic talent.
 
 
+###Controls:
+* A - Move Left
+* D - Move Right
+* Spacebar - Shoot
+* R - Start Game
+* P - Pause
+* Escape - Enter Menu
+
+
 ###Known Issues:
 1. The code is a messy, inconsistent mish-mash of different ideas.
 
